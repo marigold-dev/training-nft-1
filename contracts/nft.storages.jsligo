@@ -1,0 +1,12 @@
+//#include "nft.jsligo"
+//const default_storage = 
+
+{
+    administrator: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address,
+    totalSupply: 0 as nat,
+    bids: Map.empty as map<address,bid>, 
+    ledger: Big_map.empty as SINGLEASSET.Ledger.t,
+    token_metadata: ({token_id : 0 as nat , token_info : Map.empty as map<string,bytes>}) as SINGLEASSET.TokenMetadata.t,
+    operators: Big_map.empty as SINGLEASSET.Operators.t
+  }
+  //;

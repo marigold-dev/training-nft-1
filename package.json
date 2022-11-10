@@ -1,0 +1,25 @@
+{
+  "name": "training-nft-1",
+  "version": "1.0.0",
+  "description": "Training n°1 for NFT marketplace",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marigold-dev/training-nft-1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marigold-dev/training-nft-1/issues"
+  },
+  "homepage": "https://github.com/marigold-dev/training-nft-1#readme",
+  "devDependencies": {
+    "@taqueria/plugin-contract-types": "^0.22.2",
+    "@taqueria/plugin-ligo": "^0.22.2",
+    "@taqueria/plugin-taquito": "^0.22.2"
+  }
+}

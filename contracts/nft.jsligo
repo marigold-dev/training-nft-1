@@ -1,0 +1,121 @@
+#import "@ligo/fa/lib/fa2/asset/single_asset.mligo" "SINGLEASSET"
+
+
+/** ERROR MAP FOR UI DISPLAY or TESTS
+    const errorMap : map<string,string> = Map.literal(list([
+      ["0", "Enter a positive and not null amount"],
+      ["1", "Operation not allowed, you need to be administrator"],
+      ["2", "You cannot sell more than your current balance"],
+      ["3", "Cannot find the bid you entered for buying"],
+      ["4", "You entered a quantity to buy than is more than the bid offer quantity"],
+      ["5", "Not enough funds, you need to pay at least quantity * bif price to get the tokens"],
+      ["6", "Cannot find the contract relative to implicit address"],
+    ]));
+*/
+
+type bid = {
+  quantity : nat,
+  price : nat
+};
+
+type storage =
+  {
+    administrator: address,
+    totalSupply: nat,
+    bids: map<address,bid>,  //user sell a bid 
+    ledger: SINGLEASSET.Ledger.t,
+    token_metadata: SINGLEASSET.TokenMetadata.t,
+    operators: SINGLEASSET.Operators.t
+  };
+
+type ret = [list<operation>, storage];
+
+type parameter =
+  | ["Mint", nat, string] //token_id, ipfsUrl for icon
+  | ["Buy", nat, address]  //buy quantity at a seller offer price
+  | ["Sell", nat, nat]  //sell quantity at a price
+  | ["Transfer", SINGLEASSET.transfer]
+  | ["Balance_of", SINGLEASSET.balance_of]
+  | ["Update_operators", SINGLEASSET.update_operators];
+
+const buy = (quantity: nat, seller: address, s: storage) : ret => {
+
+  //search for the bid
+  return match( Map.find_opt(seller,s.bids) , {
+    None : () => failwith("3"),
+    Some : (bid : bid) => {
+      //check if quantity is enough
+      if(quantity > bid.quantity) return failwith("4");
+      //check if amount have been paid enough
+      if(Tezos.get_amount() < (bid.price * quantity) * (1 as mutez)) return failwith("5");
+      
+      // prepare transfer of XTZ to seller
+      const op = Tezos.transaction(unit,(bid.price * quantity) * (1 as mutez),Tezos.get_contract_with_error(seller,"6"));
+
+      //transfer tokens from seller to buyer
+      let ledger = SINGLEASSET.Ledger.decrease_token_amount_for_user(s.ledger)(seller)(quantity);
+      ledger = SINGLEASSET.Ledger.increase_token_amount_for_user(ledger)(Tezos.get_source())(quantity);
+
+      //update new bid
+      const newBid = {...bid,quantity : abs(bid.quantity - quantity)};
+
+      return [list([op]) as list<operation>, {...s, bids : Map.update(seller,Some(newBid),s.bids), ledger : ledger}];
+    }
+  }); 
+};
+
+const sell = (quantity: nat, price: nat, s: storage) : ret => {
+
+  //check balance of seller
+  const sellerBalance = SINGLEASSET.Storage.get_amount_for_owner({ledger:s.ledger,token_metadata:s.token_metadata,operators:s.operators})(Tezos.get_source());
+  if(quantity > sellerBalance) return failwith("2");
+
+  //need to allow the contract itself to be an operator on behalf of the seller
+  const newOperators = SINGLEASSET.Operators.add_operator(s.operators)(Tezos.get_source())(Tezos.get_self_address()); 
+
+  //DECISION CHOICE: if bid already exists, we just override it
+  return [list([]) as list<operation>,{...s,bids:Map.add(Tezos.get_source(),{quantity : quantity, price : price},s.bids),operators:newOperators}];
+};
+
+const mint = (quantity: nat, ipfsUrl: string, s: storage) : ret => {
+   
+   if(quantity <= (0 as nat)) return failwith("0");
+   
+   if(Tezos.get_sender() != s.administrator) return failwith("1");
+   
+   const token_info: map<string, bytes> = 
+     Map.literal(list([
+      ["name",
+       Bytes.pack("Wine NFT marketplace")],
+      ["description",
+       Bytes.pack("Wine NFT marketplace to buy and sell wine bottles")],
+      ["version", Bytes.pack("1.0.0")],
+      ["interfaces", Bytes.pack(["TZIP-12"])],
+      ["thumbnailUri", Bytes.pack(ipfsUrl)]
+      ])) as map<string, bytes>;
+   return [list([]) as list<operation>,
+    {...s,
+     totalSupply: quantity,
+     ledger: Big_map.literal(list([[s.administrator,quantity as nat]])) as SINGLEASSET.Ledger.t,
+     token_metadata: {token_id:0 as nat, token_info:token_info},
+     operators: Big_map.empty as SINGLEASSET.Operators.t}]};
+
+
+const main = ([p, s]: [parameter,storage]): ret => 
+    match(p, {
+     Mint: (p: [int,string]) => mint(p[0],p[1], s),
+     Buy: (p : [nat,address]) => buy(p[0],p[1],s),
+     Sell: (p : [nat,nat]) => sell(p[0],p[1], s),
+     Transfer: (p: SINGLEASSET.transfer) => {
+      const ret2 : [list<operation>, SINGLEASSET.storage] = SINGLEASSET.transfer(p)({ledger:s.ledger,token_metadata:s.token_metadata,operators:s.operators});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
+     },
+     Balance_of: (p: SINGLEASSET.balance_of) => {
+      const ret2 : [list<operation>, SINGLEASSET.storage] = SINGLEASSET.balance_of(p)({ledger:s.ledger,token_metadata:s.token_metadata,operators:s.operators});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
+      },
+     Update_operators: (p: SINGLEASSET.update_operator) => {
+      const ret2 : [list<operation>, SINGLEASSET.storage] = SINGLEASSET.update_ops(p)({ledger:s.ledger,token_metadata:s.token_metadata,operators:s.operators});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
+      }
+     });
