@@ -20,7 +20,7 @@ import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
 
 import { AddCircleOutlined } from "@mui/icons-material";
 import { useFormik } from "formik";
-//import { NFTStorage } from "nft.storage";
+
 import { create } from "ipfs-http-client";
 import * as yup from "yup";
 import { nat } from "./type-aliases";
@@ -44,8 +44,20 @@ export default function MintPage() {
     nftContractAddress,
   } = React.useContext(UserContext) as UserContextType;
 
+  /*
   const client = create({
-    url: `https://${process.env["REACT_APP_IPFS_USER"]}:${process.env["REACT_APP_IPFS_PASSWORD"]}@${process.env["REACT_APP_IPFS_SERVER"]}"`,
+    http: `http://${process.env["REACT_APP_IPFS_USER"]}:${process.env["REACT_APP_IPFS_PASSWORD"]}@${process.env["REACT_APP_IPFS_SERVER"]}`,
+  });
+  */
+  const client = create({
+    url: `http://${process.env["REACT_APP_IPFS_SERVER"]}`,
+    headers: {
+      Authorization: `Basic ${btoa(
+        process.env["REACT_APP_IPFS_USER"] +
+          ":" +
+          process.env["REACT_APP_IPFS_PASSWORD"]
+      )}`,
+    },
   });
 
   const { enqueueSnackbar } = useSnackbar();
@@ -75,7 +87,7 @@ export default function MintPage() {
     try {
       //IPFS
       const created = await client.add(file as ArrayBuffer);
-      const url = `https://${process.env["REACT_APP_IPFS_SERVER"]}/ipfs/${created.path}`;
+      const url = `http://${process.env["REACT_APP_IPFS_SERVER"]}/ipfs/${created.path}`;
       setUrlArr(url);
       console.log("url", url);
 
@@ -112,7 +124,6 @@ export default function MintPage() {
       const reader = new window.FileReader();
       reader.readAsArrayBuffer(data);
       reader.onloadend = () => {
-        console.log("file:", reader.result);
         setFile(reader.result as ArrayBuffer);
       };
     }
@@ -121,7 +132,15 @@ export default function MintPage() {
 
   useEffect(() => {
     (async () => {
-      setOnline(await client.isOnline());
+      try {
+        let online = await client.isOnline();
+        setOnline(online);
+      } catch (error) {
+        console.log("ipfs status online error : ", error);
+        enqueueSnackbar("ipfs status online error :" + JSON.stringify(error), {
+          variant: "error",
+        });
+      }
     })();
   }, []);
 

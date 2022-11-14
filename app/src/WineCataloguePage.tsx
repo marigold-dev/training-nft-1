@@ -1,8 +1,13 @@
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
+import React from "react";
+import { UserContext, UserContextType } from "./App";
 
 export default function WineCataloguePage() {
+  const { nftContrat, nftContratTokenMetadata, userAddress } = React.useContext(
+    UserContext
+  ) as UserContextType;
+
   return (
     <Box
       component="main"
@@ -18,9 +23,11 @@ export default function WineCataloguePage() {
       }}
     >
       <Paper sx={{ maxWidth: 936, margin: "auto", overflow: "hidden" }}>
-        <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
-          WINE Catalogue page
-        </Typography>
+        {nftContratTokenMetadata ? (
+          <div />
+        ) : (
+          "You have to mint a collection first"
+        )}
       </Paper>
     </Box>
   );
