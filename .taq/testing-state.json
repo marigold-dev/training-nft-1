@@ -1,16 +1,59 @@
 {
     "operations": {},
     "tasks": {
-        "@taqueria/plugin-taquito.deploy.1667921502282": {
+        "@taqueria/plugin-taquito.deploy.1668690978429": {
             "task": "deploy",
             "plugin": "@taqueria/plugin-taquito",
-            "time": 1667921502282,
+            "time": 1668690978429,
             "output": [
                 {
                     "contract": "nft.tz",
-                    "address": "KT1N8UHYt14DBZu76pmYrwz1hWrvSMmNExQz",
+                    "address": "KT19HcDiR2XHiBWVvTpCHGfvpD8EXPPhuQud",
                     "alias": "nft",
-                    "destination": "ghostnet"
+                    "balanceInMutez": "0",
+                    "destination": "https://ghostnet.ecadinfra.com"
+                }
+            ]
+        },
+        "@taqueria/plugin-taquito.deploy.1668692702085": {
+            "task": "deploy",
+            "plugin": "@taqueria/plugin-taquito",
+            "time": 1668692702085,
+            "output": [
+                {
+                    "contract": "nft.tz",
+                    "address": "KT1Nhk26rZnjziZA6MRgVoDssGqfCymHY2eL",
+                    "alias": "nft",
+                    "balanceInMutez": "0",
+                    "destination": "https://ghostnet.ecadinfra.com"
+                }
+            ]
+        },
+        "@taqueria/plugin-taquito.deploy.1668693301276": {
+            "task": "deploy",
+            "plugin": "@taqueria/plugin-taquito",
+            "time": 1668693301276,
+            "output": [
+                {
+                    "contract": "nft.tz",
+                    "address": "KT1NWHAjkT81K88hypdDXMjkpmcKhTnBdKHS",
+                    "alias": "nft",
+                    "balanceInMutez": "0",
+                    "destination": "https://ghostnet.ecadinfra.com"
+                }
+            ]
+        },
+        "@taqueria/plugin-taquito.deploy.1668693726505": {
+            "task": "deploy",
+            "plugin": "@taqueria/plugin-taquito",
+            "time": 1668693726505,
+            "output": [
+                {
+                    "contract": "nft.tz",
+                    "address": "KT1Cvm4MaANwMeNVdyfUN4NgxD8NKJcpAbFB",
+                    "alias": "nft",
+                    "balanceInMutez": "0",
+                    "destination": "https://ghostnet.ecadinfra.com"
                 }
             ]
         }

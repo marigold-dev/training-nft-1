@@ -1,19 +1,5 @@
 {
     "language": "en",
-    "plugins": [
-        {
-            "name": "@taqueria/plugin-ligo",
-            "type": "npm"
-        },
-        {
-            "name": "@taqueria/plugin-taquito",
-            "type": "npm"
-        },
-        {
-            "name": "@taqueria/plugin-contract-types",
-            "type": "npm"
-        }
-    ],
     "contractsDir": "contracts",
     "artifactsDir": "artifacts",
     "contracts": {
@@ -33,6 +19,11 @@
             "protocol": "PtKathmankSpLLDALzWw7CGD2j2MtyveTwboEYokqUCP4a1LxMg",
             "accounts": {
                 "taqRootAccount": {
+                    "publicKey": "edpkvGfYw3LyB1UcCahKQk4rF2tvbMUk8GFiTuMjL75uGXrpvKXhjn",
+                    "publicKeyHash": "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
+                    "privateKey": "edsk3QoqBuvdamxouPhin7swCvkQNgq4jP5KZPbwWNnwdZpSpJiEbq"
+                },
+                "taqOperatorAccount": {
                     "publicKey": "edpkvGfYw3LyB1UcCahKQk4rF2tvbMUk8GFiTuMjL75uGXrpvKXhjn",
                     "publicKeyHash": "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
                     "privateKey": "edsk3QoqBuvdamxouPhin7swCvkQNgq4jP5KZPbwWNnwdZpSpJiEbq"
@@ -62,7 +53,7 @@
             "sandboxes": [],
             "aliases": {
                 "nft": {
-                    "address": "KT1N8UHYt14DBZu76pmYrwz1hWrvSMmNExQz"
+                    "address": "KT1Cvm4MaANwMeNVdyfUN4NgxD8NKJcpAbFB"
                 }
             }
         }
@@ -73,5 +64,26 @@
         "john": "3_000_000_000",
         "jane": "3_000_000_000",
         "joe": "3_000_000_000"
-    }
+    },
+    "plugins": [
+        {
+            "name": "@taqueria/plugin-core",
+            "type": "npm"
+        },
+        {
+            "name": "@taqueria/plugin-contract-types",
+            "type": "npm"
+        },
+        {
+            "name": "@taqueria/plugin-ligo",
+            "type": "npm"
+        },
+        {
+            "name": "@taqueria/plugin-taquito",
+            "type": "npm"
+        }
+    ],
+    "projectDir": "/home/zamrokk/training-nft-1",
+    "configFile": "/home/zamrokk/training-nft-1/.taq/config.json",
+    "hash": "bf2ee40b02dddf60120e908846bd92bb5c127785b3e554be30c3f0e3eaddcf16"
 }

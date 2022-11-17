@@ -78,31 +78,31 @@ const sell = (quantity: nat, price: nat, s: storage) : ret => {
   return [list([]) as list<operation>,{...s,bids:Map.add(Tezos.get_source(),{quantity : quantity, price : price},s.bids),operators:newOperators}];
 };
 
-const mint = (quantity: nat, ipfsUrl: string, s: storage) : ret => {
+const mint = (quantity: nat, _ipfsUrl: string, s: storage) : ret => {
    
    if(quantity <= (0 as nat)) return failwith("0");
    
    if(Tezos.get_sender() != s.administrator) return failwith("1");
    
-   const token_info: map<string, bytes> = 
+   /*const token_info: map<string, bytes> = 
      Map.literal(list([
-      ["name",
-       Bytes.pack("Wine NFT marketplace")],
-      ["description",
-       Bytes.pack("Wine NFT marketplace to buy and sell wine bottles")],
-      ["version", Bytes.pack("1.0.0")],
-      ["interfaces", Bytes.pack(["TZIP-12"])],
-      ["thumbnailUri", Bytes.pack(ipfsUrl)],
-      ["symbol",Bytes.pack("WINE")],
-      ["decimals",Bytes.pack("0")]
-      ])) as map<string, bytes>;
-
-    const metadata : bytes = Bytes.pack({
+      ["name", (bytes `Wine NFT marketplace`)],
+      ["description", (bytes `Wine NFT marketplace to buy and sell wine bottles`)],
+      ["version", (bytes `1.0.0`)],
+      ["interfaces", (bytes `["TZIP-12"]`)],
+      ["thumbnailUri", (bytes ipfsUrl)],
+      ["symbol", (bytes `WINE`)],
+      ["decimals", (bytes `0`)]
+     ])) as map<string, bytes>;
+*/
+/*
+    const metadata : bytes = (bytes
+  `{
       name:"FA2",
       description:"Example FA2 implementation",
       version:"0.1.0",
       license:{name:"MIT"},
-      authors:["Pierre-Emmanuel Wulfman<pierre-emmanuel@wulfman.fr>"],
+      authors:["Pierre-Emmanuel Wulfman<pierre-emmanuelwulfman.fr>"],
       homepage:"",
       source:{
         tools:["Ligo"],
@@ -110,14 +110,14 @@ const mint = (quantity: nat, ipfsUrl: string, s: storage) : ret => {
       interfaces:["TZIP-012"],
       errors:(list([]) as list<string>),
       views:(list([]) as list<string>)
-      });
+      }` as bytes);*/
 
     return [list([]) as list<operation>,
           {...s,
      totalSupply: quantity,
      ledger: Big_map.literal(list([[s.administrator,quantity as nat]])) as SINGLEASSET.Ledger.t,
-     metadata : Big_map.literal(list([["",  Bytes.pack("tezos-storage:data") ],["data", metadata]])),
-     token_metadata: Big_map.literal(list([[0 as nat, {token_id: 0 as nat,token_info:token_info}]])),
+     metadata : SINGLEASSET.Metadata.init(),//Big_map.literal(list([["",  Bytes.pack("tezos-storage:data") ],["data", SINGLEASSET.Metadata.metadata]])),
+     token_metadata: Big_map.literal(list([[0 as nat, {token_id: 0 as nat,token_info:SINGLEASSET.TokenMetadata.data0}]])),//token_info}]])),
      operators: Big_map.empty as SINGLEASSET.Operators.t}]};
 
 

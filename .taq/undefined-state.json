@@ -1,0 +1,11 @@
+{
+    "operations": {},
+    "tasks": {
+        "@taqueria/plugin-core.clean.1668690578057": {
+            "task": "clean",
+            "plugin": "@taqueria/plugin-core",
+            "time": 1668690578057,
+            "output": "All Taqueria-related states and docker images cleaned 🧽"
+        }
+    }
+}

@@ -86,15 +86,16 @@ export default function MintPage() {
   ) => {
     try {
       //IPFS
+      /*
       const created = await client.add(file as ArrayBuffer);
       const url = `http://${process.env["REACT_APP_IPFS_SERVER"]}/ipfs/${created.path}`;
       setUrlArr(url);
       console.log("url", url);
-
+*/
       const op = await nftContrat!.methods
         .mint(
           new BigNumber(newTokenDefinition.quantity) as nat,
-          newTokenDefinition.thumbnailUri
+          "ipfs://QmcqsYQn8pTxQr3P1dYpgYxQa6GQPmoBTSWQ8bpuFEuaqe" //newTokenDefinition.thumbnailUri
         )
         .send();
 
@@ -164,11 +165,14 @@ export default function MintPage() {
             <CardHeader
               avatar={
                 <Avatar sx={{ bgcolor: "purple" }} aria-label="recipe">
-                  {nftContratTokenMetadata.token_id} -{" "}
-                  {nftContratTokenMetadata.symbol}
+                  {nftContratTokenMetadata.token_id}
                 </Avatar>
               }
-              title={nftContratTokenMetadata.name}
+              title={
+                nftContratTokenMetadata.symbol +
+                " - " +
+                nftContratTokenMetadata.name
+              }
               subheader="September 14, 2016"
             />
             <CardMedia

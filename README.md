@@ -71,9 +71,10 @@ STORAGE
 
 ```bash
 taq create contract nft.storages.jsligo
-ligo compile contract ./contracts/nft.storages.jsligo --o ./artifacts/nft.default_storage.tz
+#on taq mode with imports etc ...
+#ligo compile contract ./contracts/nft.storages.jsligo --o ./artifacts/nft.default_storage.tz
 ligo compile storage ./contracts/nft.jsligo "$(<./contracts/nft.storages.jsligo)" -o ./artifacts/nft.default_storage.tz
-//taq compile nft.jsligo
+#taq compile nft.jsligo
 ```
 
 DEPLOY
@@ -94,4 +95,6 @@ yarn add @taquito/taquito @taquito/beacon-wallet @airgap/beacon-sdk
 yarn add -D @airgap/beacon-types
 yarn add @dipdup/tzkt-api
 yarn add --dev react-app-rewired process crypto-browserify stream-browserify assert stream-http https-browserify os-browserify url path-browserify
+
+yarn run start
 ```
