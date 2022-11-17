@@ -97,7 +97,20 @@ const mint = (quantity: nat, ipfsUrl: string, s: storage) : ret => {
       ["decimals",Bytes.pack("0")]
       ])) as map<string, bytes>;
 
-    const metadata : bytes = Bytes.pack({name:"FA2",description:"Example FA2 implementation",version:"0.1.0",license:{name:"MIT"},authors:["Pierre-Emmanuel Wulfman<pierre-emmanuel@wulfman.fr>"],homepage:"",source:{tools:["Ligo"],location:"https://github.com/ligolang/contract-catalogue/tree/main/lib/fa2"},interfaces:["TZIP-012"],errors:[],views:[]});
+    const metadata : bytes = Bytes.pack({
+      name:"FA2",
+      description:"Example FA2 implementation",
+      version:"0.1.0",
+      license:{name:"MIT"},
+      authors:["Pierre-Emmanuel Wulfman<pierre-emmanuel@wulfman.fr>"],
+      homepage:"",
+      source:{
+        tools:["Ligo"],
+        location:"https://github.com/ligolang/contract-catalogue/tree/main/lib/fa2"},
+      interfaces:["TZIP-012"],
+      errors:(list([]) as list<string>),
+      views:(list([]) as list<string>)
+      });
 
     return [list([]) as list<operation>,
           {...s,
