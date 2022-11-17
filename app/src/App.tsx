@@ -60,7 +60,14 @@ function App() {
       let m = (await c.tzip12().isTzip12Compliant())
         ? await c.tzip12().getTokenMetadata(0)
         : null;
-      console.log(c, m);
+      console.log(
+        "nftContractAddress",
+        c,
+        "getTokenMetadata 0",
+        m,
+        "NftWalletType",
+        c2
+      );
       setNftContratTokenMetadata(m as ExtendedTokenMetadata);
       setNftContrat(c2);
     })();

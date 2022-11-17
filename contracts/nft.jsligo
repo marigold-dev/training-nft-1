@@ -24,6 +24,7 @@ type storage =
     totalSupply: nat,
     bids: map<address,bid>,  //user sell a bid 
     ledger: SINGLEASSET.Ledger.t,
+    metadata: SINGLEASSET.Metadata.t,
     token_metadata: SINGLEASSET.TokenMetadata.t,
     operators: SINGLEASSET.Operators.t
   };
@@ -67,7 +68,7 @@ const buy = (quantity: nat, seller: address, s: storage) : ret => {
 const sell = (quantity: nat, price: nat, s: storage) : ret => {
 
   //check balance of seller
-  const sellerBalance = SINGLEASSET.Storage.get_amount_for_owner({ledger:s.ledger,token_metadata:s.token_metadata,operators:s.operators})(Tezos.get_source());
+  const sellerBalance = SINGLEASSET.Storage.get_amount_for_owner({ledger:s.ledger,metadata:s.metadata,operators:s.operators,token_metadata:s.token_metadata,})(Tezos.get_source());
   if(quantity > sellerBalance) return failwith("2");
 
   //need to allow the contract itself to be an operator on behalf of the seller
@@ -91,13 +92,19 @@ const mint = (quantity: nat, ipfsUrl: string, s: storage) : ret => {
        Bytes.pack("Wine NFT marketplace to buy and sell wine bottles")],
       ["version", Bytes.pack("1.0.0")],
       ["interfaces", Bytes.pack(["TZIP-12"])],
-      ["thumbnailUri", Bytes.pack(ipfsUrl)]
+      ["thumbnailUri", Bytes.pack(ipfsUrl)],
+      ["symbol",Bytes.pack("WINE")],
+      ["decimals",Bytes.pack("0")]
       ])) as map<string, bytes>;
-   return [list([]) as list<operation>,
-    {...s,
+
+    const metadata : bytes = Bytes.pack({name:"FA2",description:"Example FA2 implementation",version:"0.1.0",license:{name:"MIT"},authors:["Pierre-Emmanuel Wulfman<pierre-emmanuel@wulfman.fr>"],homepage:"",source:{tools:["Ligo"],location:"https://github.com/ligolang/contract-catalogue/tree/main/lib/fa2"},interfaces:["TZIP-012"],errors:[],views:[]});
+
+    return [list([]) as list<operation>,
+          {...s,
      totalSupply: quantity,
      ledger: Big_map.literal(list([[s.administrator,quantity as nat]])) as SINGLEASSET.Ledger.t,
-     token_metadata: {token_id:0 as nat, token_info:token_info},
+     metadata : Big_map.literal(list([["",  Bytes.pack("tezos-storage:data") ],["data", metadata]])),
+     token_metadata: Big_map.literal(list([[0 as nat, {token_id: 0 as nat,token_info:token_info}]])),
      operators: Big_map.empty as SINGLEASSET.Operators.t}]};
 
 
@@ -107,15 +114,15 @@ const main = ([p, s]: [parameter,storage]): ret =>
      Buy: (p : [nat,address]) => buy(p[0],p[1],s),
      Sell: (p : [nat,nat]) => sell(p[0],p[1], s),
      Transfer: (p: SINGLEASSET.transfer) => {
-      const ret2 : [list<operation>, SINGLEASSET.storage] = SINGLEASSET.transfer(p)({ledger:s.ledger,token_metadata:s.token_metadata,operators:s.operators});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
+      const ret2 : [list<operation>, SINGLEASSET.storage] = SINGLEASSET.transfer(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
      },
      Balance_of: (p: SINGLEASSET.balance_of) => {
-      const ret2 : [list<operation>, SINGLEASSET.storage] = SINGLEASSET.balance_of(p)({ledger:s.ledger,token_metadata:s.token_metadata,operators:s.operators});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
+      const ret2 : [list<operation>, SINGLEASSET.storage] = SINGLEASSET.balance_of(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
       },
      Update_operators: (p: SINGLEASSET.update_operator) => {
-      const ret2 : [list<operation>, SINGLEASSET.storage] = SINGLEASSET.update_ops(p)({ledger:s.ledger,token_metadata:s.token_metadata,operators:s.operators});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
+      const ret2 : [list<operation>, SINGLEASSET.storage] = SINGLEASSET.update_ops(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
       }
      });

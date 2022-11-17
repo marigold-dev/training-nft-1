@@ -1,5 +1,5 @@
 {
-  "checksum": "491030b7ebb44124d15839966e371610",
+  "checksum": "7314cf8f7a11738769619a74cb8b3925",
   "root": "training-nft-1@link-dev:./esy.json",
   "node": {
     "training-nft-1@link-dev:./esy.json": {
@@ -8,17 +8,17 @@
       "version": "link-dev:./esy.json",
       "source": { "type": "link-dev", "path": ".", "manifest": "esy.json" },
       "overrides": [],
-      "dependencies": [ "@ligo/fa@1.0.4@d41d8cd9" ],
+      "dependencies": [ "@ligo/fa@1.0.6@d41d8cd9" ],
       "devDependencies": []
     },
-    "@ligo/fa@1.0.4@d41d8cd9": {
-      "id": "@ligo/fa@1.0.4@d41d8cd9",
+    "@ligo/fa@1.0.6@d41d8cd9": {
+      "id": "@ligo/fa@1.0.6@d41d8cd9",
       "name": "@ligo/fa",
-      "version": "1.0.4",
+      "version": "1.0.6",
       "source": {
         "type": "install",
         "source": [
-          "archive:https://beta.packages.ligolang.org/-/api/@ligo/fa/-/@ligo/fa-1.0.4.tgz#sha1:445ddd40cf9311a72aef46eed841b98f4e1c7211"
+          "archive:https://packages.ligolang.org/-/api/@ligo/fa/-/@ligo/fa-1.0.6.tgz#sha1:03e0fd5c23e27d461e1b3e43d27c84ca529df0f7"
         ]
       },
       "overrides": [],
