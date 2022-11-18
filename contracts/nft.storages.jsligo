@@ -2,11 +2,11 @@
 //const default_storage = 
 {
     administrator: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address,
-    totalSupply: 0 as nat,
-    bids: Map.empty as map<address,bid>, 
-    ledger: Big_map.empty as SINGLEASSET.Ledger.t,
-    metadata: Big_map.empty as SINGLEASSET.Metadata.t,
-    token_metadata: Big_map.empty as SINGLEASSET.TokenMetadata.t,
-    operators: Big_map.empty as SINGLEASSET.Operators.t
+    bids: Map.empty as map<nat,bid>, 
+    ledger: Big_map.empty as NFT.Ledger.t,
+    metadata: Big_map.empty as NFT.Metadata.t,
+    token_metadata: Big_map.empty as NFT.TokenMetadata.t,
+    operators: Big_map.empty as NFT.Operators.t,
+    token_ids : list([]) as list<NFT.Storage.token_id>
   }
 //;

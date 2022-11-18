@@ -4,12 +4,13 @@ import { TezosToolkit } from "@taquito/taquito";
 import { TokenMetadata, tzip12, Tzip12Module } from "@taquito/tzip12";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import "./App.css";
-import { NftWalletType } from "./nft.types";
+import { NftWalletType, Storage } from "./nft.types";
 import Paperbase from "./Paperbase";
+import { nat } from "./type-aliases";
 
 export type ExtendedTokenMetadata = TokenMetadata & {
-  thumbnailUri: string;
-  description: string;
+  thumbnailUri?: string;
+  description?: string;
 };
 
 export type UserContextType = {
@@ -20,9 +21,10 @@ export type UserContextType = {
   wallet: BeaconWallet;
   nftContractAddress: string;
   nftContrat: NftWalletType | null;
-  nftContratTokenMetadata: ExtendedTokenMetadata | null;
-  setNftContratTokenMetadata: Dispatch<
-    SetStateAction<ExtendedTokenMetadata | null>
+  setNftContrat: Dispatch<SetStateAction<NftWalletType | null>>;
+  nftContratTokenMetadataMap: Map<number, ExtendedTokenMetadata>;
+  setNftContratTokenMetadataMap: Dispatch<
+    SetStateAction<Map<number, ExtendedTokenMetadata>>
   >;
 };
 
@@ -33,8 +35,9 @@ function App() {
   const [userAddress, setUserAddress] = useState<string>("");
   const [userBalance, setUserBalance] = useState<number>(0);
   const [nftContrat, setNftContrat] = useState<NftWalletType | null>(null);
-  const [nftContratTokenMetadata, setNftContratTokenMetadata] =
-    useState<ExtendedTokenMetadata | null>(null);
+  const [nftContratTokenMetadataMap, setNftContratTokenMetadataMap] = useState<
+    Map<number, ExtendedTokenMetadata>
+  >(new Map());
 
   const [Tezos, setTezos] = useState<TezosToolkit>(
     new TezosToolkit("https://ghostnet.tezos.marigold.dev")
@@ -54,22 +57,20 @@ function App() {
   useEffect(() => {
     (async () => {
       let c = await Tezos.contract.at(nftContractAddress, tzip12);
-      let c2: NftWalletType = await Tezos.wallet.at<NftWalletType>(
+      let nftContrat: NftWalletType = await Tezos.wallet.at<NftWalletType>(
         nftContractAddress
       );
-      let m = (await c.tzip12().isTzip12Compliant())
-        ? await c.tzip12().getTokenMetadata(0)
-        : null;
-      console.log(
-        "nftContractAddress",
-        c,
-        "getTokenMetadata 0",
-        m,
-        "NftWalletType",
-        c2
+      const storage = (await nftContrat.storage()) as Storage;
+      await Promise.all(
+        storage.token_ids.map(async (token_id: nat) => {
+          let tokenMetadata: ExtendedTokenMetadata = await c
+            .tzip12()
+            .getTokenMetadata(token_id.toNumber());
+          nftContratTokenMetadataMap.set(token_id.toNumber(), tokenMetadata);
+        })
       );
-      setNftContratTokenMetadata(m as ExtendedTokenMetadata);
-      setNftContrat(c2);
+      setNftContratTokenMetadataMap(nftContratTokenMetadataMap);
+      setNftContrat(nftContrat);
     })();
   }, []);
 
@@ -83,8 +84,9 @@ function App() {
         wallet,
         nftContractAddress,
         nftContrat,
-        nftContratTokenMetadata,
-        setNftContratTokenMetadata,
+        nftContratTokenMetadataMap,
+        setNftContratTokenMetadataMap,
+        setNftContrat,
       }}
     >
       <Paperbase />

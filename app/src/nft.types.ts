@@ -4,18 +4,21 @@ import { address, BigMap, bytes, contract, MMap, nat } from './type-aliases';
 
 export type Storage = {
     administrator: address;
-    bids: MMap<address, {
+    bids: MMap<nat, {
+        owner: address;
         price: nat;
-        quantity: nat;
     }>;
-    ledger: BigMap<address, nat>;
+    ledger: BigMap<nat, address>;
     metadata: BigMap<string, bytes>;
-    operators: BigMap<address, Array<address>>;
+    operators: BigMap<{
+        0: address;
+        1: address;
+    }, Array<nat>>;
+    token_ids: Array<nat>;
     token_metadata: BigMap<nat, {
         token_id: nat;
         token_info: MMap<string, bytes>;
     }>;
-    totalSupply: nat;
 };
 
 type Methods = {
@@ -42,7 +45,7 @@ type Methods = {
             from_: address;
             txs: Array<{
                 to_: address;
-                amount: nat;
+                token_id: nat;
             }>;
         }>) => Promise<void>;
     add_operator: (
@@ -81,7 +84,7 @@ type MethodsObject = {
             from_: address;
             txs: Array<{
                 to_: address;
-                amount: nat;
+                token_id: nat;
             }>;
         }>) => Promise<void>;
     add_operator: (params: {

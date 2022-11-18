@@ -4,9 +4,8 @@ import React from "react";
 import { UserContext, UserContextType } from "./App";
 
 export default function WineCataloguePage() {
-  const { nftContrat, nftContratTokenMetadata, userAddress } = React.useContext(
-    UserContext
-  ) as UserContextType;
+  const { nftContrat, nftContratTokenMetadataMap, userAddress } =
+    React.useContext(UserContext) as UserContextType;
 
   return (
     <Box
@@ -23,7 +22,7 @@ export default function WineCataloguePage() {
       }}
     >
       <Paper sx={{ maxWidth: 936, margin: "auto", overflow: "hidden" }}>
-        {nftContratTokenMetadata ? (
+        {nftContratTokenMetadataMap?.size != 0 ? (
           <div />
         ) : (
           "You have to mint a collection first"

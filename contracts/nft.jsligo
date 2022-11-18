@@ -1,4 +1,4 @@
-#import "@ligo/fa/lib/fa2/asset/single_asset.mligo" "SINGLEASSET"
+#import "@ligo/fa/lib/fa2/nft/NFT.mligo" "NFT"
 
 
 /** ERROR MAP FOR UI DISPLAY or TESTS
@@ -14,74 +14,68 @@
 */
 
 type bid = {
-  quantity : nat,
+  owner : address,
   price : nat
 };
 
 type storage =
   {
     administrator: address,
-    totalSupply: nat,
-    bids: map<address,bid>,  //user sell a bid 
-    ledger: SINGLEASSET.Ledger.t,
-    metadata: SINGLEASSET.Metadata.t,
-    token_metadata: SINGLEASSET.TokenMetadata.t,
-    operators: SINGLEASSET.Operators.t
+    bids: map<nat,bid>,  //user sell a bid 
+    ledger: NFT.Ledger.t,
+    metadata: NFT.Metadata.t,
+    token_metadata: NFT.TokenMetadata.t,
+    operators: NFT.Operators.t,
+    token_ids : set<NFT.Storage.token_id>
   };
 
 type ret = [list<operation>, storage];
 
 type parameter =
   | ["Mint", nat, string] //token_id, ipfsUrl for icon
-  | ["Buy", nat, address]  //buy quantity at a seller offer price
-  | ["Sell", nat, nat]  //sell quantity at a price
-  | ["Transfer", SINGLEASSET.transfer]
-  | ["Balance_of", SINGLEASSET.balance_of]
-  | ["Update_operators", SINGLEASSET.update_operators];
+  | ["Buy", nat, address]  //buy token_id at a seller offer price
+  | ["Sell", nat, nat]  //sell token_id at a price
+  | ["Transfer", NFT.transfer]
+  | ["Balance_of", NFT.balance_of]
+  | ["Update_operators", NFT.update_operators];
 
-const buy = (quantity: nat, seller: address, s: storage) : ret => {
+const buy = (token_id : nat, seller: address, s: storage) : ret => {
 
   //search for the bid
-  return match( Map.find_opt(seller,s.bids) , {
+  return match( Map.find_opt(token_id,s.bids) , {
     None : () => failwith("3"),
     Some : (bid : bid) => {
-      //check if quantity is enough
-      if(quantity > bid.quantity) return failwith("4");
+
       //check if amount have been paid enough
-      if(Tezos.get_amount() < (bid.price * quantity) * (1 as mutez)) return failwith("5");
+      if(Tezos.get_amount() < bid.price  * (1 as mutez)) return failwith("5");
       
       // prepare transfer of XTZ to seller
-      const op = Tezos.transaction(unit,(bid.price * quantity) * (1 as mutez),Tezos.get_contract_with_error(seller,"6"));
+      const op = Tezos.transaction(unit,bid.price  * (1 as mutez),Tezos.get_contract_with_error(seller,"6"));
 
       //transfer tokens from seller to buyer
-      let ledger = SINGLEASSET.Ledger.decrease_token_amount_for_user(s.ledger)(seller)(quantity);
-      ledger = SINGLEASSET.Ledger.increase_token_amount_for_user(ledger)(Tezos.get_source())(quantity);
+      const ledger = NFT.Ledger.transfer_token_from_user_to_user(s.ledger)(token_id)(Tezos.get_source())(seller);
 
-      //update new bid
-      const newBid = {...bid,quantity : abs(bid.quantity - quantity)};
-
-      return [list([op]) as list<operation>, {...s, bids : Map.update(seller,Some(newBid),s.bids), ledger : ledger}];
+      //remove bid
+      return [list([op]) as list<operation>, {...s, bids : Map.update(token_id,None(),s.bids), ledger : ledger}];
     }
   }); 
 };
 
-const sell = (quantity: nat, price: nat, s: storage) : ret => {
+const sell = (token_id : nat,price: nat, s: storage) : ret => {
 
   //check balance of seller
-  const sellerBalance = SINGLEASSET.Storage.get_amount_for_owner({ledger:s.ledger,metadata:s.metadata,operators:s.operators,token_metadata:s.token_metadata,})(Tezos.get_source());
-  if(quantity > sellerBalance) return failwith("2");
+  const sellerBalance = NFT.Storage.get_balance({ledger:s.ledger,metadata:s.metadata,operators:s.operators,token_metadata:s.token_metadata,token_ids : s.token_ids})(Tezos.get_source())(token_id);
+  if(sellerBalance != (1 as nat)) return failwith("2");
 
   //need to allow the contract itself to be an operator on behalf of the seller
-  const newOperators = SINGLEASSET.Operators.add_operator(s.operators)(Tezos.get_source())(Tezos.get_self_address()); 
+  const newOperators = NFT.Operators.add_operator(s.operators)(Tezos.get_source())(Tezos.get_self_address())(token_id); 
 
   //DECISION CHOICE: if bid already exists, we just override it
-  return [list([]) as list<operation>,{...s,bids:Map.add(Tezos.get_source(),{quantity : quantity, price : price},s.bids),operators:newOperators}];
+  return [list([]) as list<operation>,{...s,bids:Map.add(token_id,{owner : Tezos.get_source(), price : price},s.bids),operators:newOperators}];
 };
 
-const mint = (quantity: nat, _ipfsUrl: string, s: storage) : ret => {
-   
-   if(quantity <= (0 as nat)) return failwith("0");
-   
+const mint = (token_id : nat, _ipfsUrl: string, s: storage) : ret => {
+      
    if(Tezos.get_sender() != s.administrator) return failwith("1");
    
    /*const token_info: map<string, bytes> = 
@@ -114,28 +108,29 @@ const mint = (quantity: nat, _ipfsUrl: string, s: storage) : ret => {
 
     return [list([]) as list<operation>,
           {...s,
-     totalSupply: quantity,
-     ledger: Big_map.literal(list([[s.administrator,quantity as nat]])) as SINGLEASSET.Ledger.t,
-     metadata : SINGLEASSET.Metadata.init(),//Big_map.literal(list([["",  Bytes.pack("tezos-storage:data") ],["data", SINGLEASSET.Metadata.metadata]])),
-     token_metadata: Big_map.literal(list([[0 as nat, {token_id: 0 as nat,token_info:SINGLEASSET.TokenMetadata.data0}]])),//token_info}]])),
-     operators: Big_map.empty as SINGLEASSET.Operators.t}]};
+     ledger: Big_map.add(token_id,s.administrator ,s.ledger) as NFT.Ledger.t,
+     metadata : NFT.Metadata.init(),//Big_map.literal(list([["",  Bytes.pack("tezos-storage:data") ],["data", NFT.Metadata.metadata]])),
+     token_metadata: Big_map.add(token_id, {token_id: token_id,token_info:NFT.TokenMetadata.data0},s.token_metadata),//token_info}]])),
+     operators: Big_map.empty as NFT.Operators.t,
+     token_ids : Set.add(token_id,s.token_ids)
+     }]};
 
 
 const main = ([p, s]: [parameter,storage]): ret => 
     match(p, {
-     Mint: (p: [int,string]) => mint(p[0],p[1], s),
+     Mint: (p: [nat,string]) => mint(p[0],p[1], s),
      Buy: (p : [nat,address]) => buy(p[0],p[1],s),
      Sell: (p : [nat,nat]) => sell(p[0],p[1], s),
-     Transfer: (p: SINGLEASSET.transfer) => {
-      const ret2 : [list<operation>, SINGLEASSET.storage] = SINGLEASSET.transfer(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
+     Transfer: (p: NFT.transfer) => {
+      const ret2 : [list<operation>, NFT.storage] = NFT.transfer(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
      },
-     Balance_of: (p: SINGLEASSET.balance_of) => {
-      const ret2 : [list<operation>, SINGLEASSET.storage] = SINGLEASSET.balance_of(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
+     Balance_of: (p: NFT.balance_of) => {
+      const ret2 : [list<operation>, NFT.storage] = NFT.balance_of(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
       },
-     Update_operators: (p: SINGLEASSET.update_operator) => {
-      const ret2 : [list<operation>, SINGLEASSET.storage] = SINGLEASSET.update_ops(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
+     Update_operators: (p: NFT.update_operator) => {
+      const ret2 : [list<operation>, NFT.storage] = NFT.update_ops(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
       }
      });
