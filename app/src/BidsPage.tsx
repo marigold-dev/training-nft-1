@@ -58,7 +58,7 @@ export default function BidsPage() {
   useEffect(() => {
     (async () => {
       const storage = (await nftContrat?.storage()) as Storage;
-      setQuantity(await storage.ledger.get(userAddress as address));
+      setQuantity(await storage.ledger.get([userAddress as address, 1 as nat]));
       setBid(await storage.bids.get(userAddress as address));
     })();
   }, []);
