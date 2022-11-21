@@ -24,7 +24,9 @@ type storage =
     ledger: MULTIASSET.Ledger.t,
     metadata: MULTIASSET.Metadata.t,
     token_metadata: MULTIASSET.TokenMetadata.t,
-    operators: MULTIASSET.Operators.t
+    operators: MULTIASSET.Operators.t,
+    owner_token_ids : set<[MULTIASSET.Storage.owner,MULTIASSET.Storage.token_id]>,
+    token_ids : set<MULTIASSET.Storage.token_id>
   };
 
 type ret = [list<operation>, storage];
@@ -115,7 +117,9 @@ const mint = (token_id : nat, quantity: nat, _ipfsUrl: string, s: storage) : ret
      ledger: Big_map.add([s.administrator,token_id],quantity as nat,s.ledger) as MULTIASSET.Ledger.t,
      metadata : MULTIASSET.Metadata.init(),//Big_map.literal(list([["",  Bytes.pack("tezos-storage:data") ],["data", MULTIASSET.Metadata.metadata]])),
      token_metadata: Big_map.add(token_id, {token_id: token_id,token_info:MULTIASSET.TokenMetadata.data1},s.token_metadata),//token_info}]])),
-     operators: Big_map.empty as MULTIASSET.Operators.t}]};
+     operators: Big_map.empty as MULTIASSET.Operators.t,
+     owner_token_ids : Set.add([s.administrator,token_id],s.owner_token_ids), 
+     token_ids: Set.add(token_id, s.token_ids)}]};
 
 
 const main = ([p, s]: [parameter,storage]): ret => 
@@ -124,15 +128,15 @@ const main = ([p, s]: [parameter,storage]): ret =>
      Buy: (p : [nat,nat,address]) => buy(p[0],p[1],p[2],s),
      Sell: (p : [nat,nat,nat]) => sell(p[0],p[1],p[2],s),
      Transfer: (p: MULTIASSET.transfer) => {
-      const ret2 : [list<operation>, MULTIASSET.storage] = MULTIASSET.transfer(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
+      const ret2 : [list<operation>, MULTIASSET.storage] = MULTIASSET.transfer(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,owner_token_ids:s.owner_token_ids,token_ids:s.token_ids});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,owner_token_ids:ret2[1].owner_token_ids,token_ids:ret2[1].token_ids}];
      },
      Balance_of: (p: MULTIASSET.balance_of) => {
-      const ret2 : [list<operation>, MULTIASSET.storage] = MULTIASSET.balance_of(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
+      const ret2 : [list<operation>, MULTIASSET.storage] = MULTIASSET.balance_of(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,owner_token_ids:s.owner_token_ids,token_ids:s.token_ids});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,owner_token_ids:ret2[1].owner_token_ids,token_ids:ret2[1].token_ids}];
       },
      Update_operators: (p: MULTIASSET.update_operator) => {
-      const ret2 : [list<operation>, MULTIASSET.storage] = MULTIASSET.update_ops(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators}];
+      const ret2 : [list<operation>, MULTIASSET.storage] = MULTIASSET.update_ops(p)({ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,owner_token_ids:s.owner_token_ids,token_ids:s.token_ids});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,owner_token_ids:ret2[1].owner_token_ids,token_ids:ret2[1].token_ids}];
       }
      });

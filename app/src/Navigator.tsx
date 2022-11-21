@@ -58,13 +58,13 @@ export default function Navigator(props: DrawerProps) {
     setUserAddress,
     setUserBalance,
     wallet,
-    nftContratTokenMetadata,
+    nftContratTokenMetadataMap,
   } = React.useContext(UserContext) as UserContextType;
 
   //  nftContratTokenMetadata ?
 
   useEffect(() => {
-    if (nftContratTokenMetadata)
+    if (nftContratTokenMetadataMap && nftContratTokenMetadataMap.size > 0)
       categories = [
         {
           id: "Trading",
@@ -92,7 +92,7 @@ export default function Navigator(props: DrawerProps) {
           ],
         },
       ];
-  }, [nftContratTokenMetadata]);
+  }, [nftContratTokenMetadataMap, userAddress]);
 
   return (
     <Drawer variant="permanent" {...other}>

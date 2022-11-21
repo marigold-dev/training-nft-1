@@ -6,6 +6,8 @@
     ledger: Big_map.empty as MULTIASSET.Ledger.t,
     metadata: Big_map.empty as MULTIASSET.Metadata.t,
     token_metadata: Big_map.empty as MULTIASSET.TokenMetadata.t,
-    operators: Big_map.empty as MULTIASSET.Operators.t
+    operators: Big_map.empty as MULTIASSET.Operators.t,
+    owner_token_ids : Set.empty as set<[MULTIASSET.Storage.owner,MULTIASSET.Storage.token_id]>,
+    token_ids : Set.empty as set<MULTIASSET.Storage.token_id>
   }
 //;

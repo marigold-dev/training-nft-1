@@ -20,6 +20,11 @@ export type Storage = {
         0: address;
         1: address;
     }, Array<nat>>;
+    owner_token_ids: Array<{
+        0: address;
+        1: nat;
+    }>;
+    token_ids: Array<nat>;
     token_metadata: BigMap<nat, {
         token_id: nat;
         token_info: MMap<string, bytes>;

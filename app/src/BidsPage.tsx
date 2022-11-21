@@ -9,7 +9,6 @@ import {
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { BigNumber } from "bignumber.js";
 import React, { Fragment, useEffect } from "react";
 import { UserContext, UserContextType } from "./App";
 import { Storage } from "./nft.types";
@@ -48,18 +47,19 @@ function TabPanel(props: TabPanelProps) {
 
 export default function BidsPage() {
   const [value, setValue] = React.useState(0);
-  const [quantity, setQuantity] = React.useState(new BigNumber(0));
-  const [bid, setBid] = React.useState<Bid | null>(null);
+  const [bidByOwnerTokenIDMap, setBidByOwnerTokenIDMap] = React.useState<
+    Map<[address, nat], Bid>
+  >(new Map());
 
-  const { nftContrat, nftContratTokenMetadata, userAddress } = React.useContext(
-    UserContext
-  ) as UserContextType;
+  const { nftContrat, nftContratTokenMetadataMap, userAddress } =
+    React.useContext(UserContext) as UserContextType;
 
   useEffect(() => {
     (async () => {
       const storage = (await nftContrat?.storage()) as Storage;
-      setQuantity(await storage.ledger.get([userAddress as address, 1 as nat]));
-      setBid(await storage.bids.get(userAddress as address));
+      storage.bids.forEach((bid, key) => {
+        bidByOwnerTokenIDMap.set([key[0], key[1]], bid);
+      });
     })();
   }, []);
 
@@ -86,31 +86,31 @@ export default function BidsPage() {
             height: 224,
           }}
         >
-          {nftContratTokenMetadata ? (
-            <Fragment>
-              <Tabs
-                orientation="vertical"
-                variant="scrollable"
-                value={value}
-                onChange={(event: React.SyntheticEvent, newValue: number) =>
-                  setValue(newValue)
-                }
-                aria-label="Vertical tabs example"
-                sx={{ borderRight: 1, borderColor: "divider" }}
-              >
-                <Tab label={quantity + " " + nftContratTokenMetadata!.name!} />
-              </Tabs>
-              <TabPanel value={value} index={0}>
-                <Card>
-                  <CardHeader></CardHeader>
-                  <CardContent></CardContent>
-                  <CardActions></CardActions>
-                </Card>
-              </TabPanel>
-            </Fragment>
-          ) : (
-            "You have to mint a collection first"
-          )}
+          {nftContratTokenMetadataMap.size > 0
+            ? Array.from(bidByOwnerTokenIDMap.values()).map((bid: Bid) => (
+                <Fragment>
+                  <Tabs
+                    orientation="vertical"
+                    variant="scrollable"
+                    value={value}
+                    onChange={(event: React.SyntheticEvent, newValue: number) =>
+                      setValue(newValue)
+                    }
+                    aria-label="Vertical tabs example"
+                    sx={{ borderRight: 1, borderColor: "divider" }}
+                  >
+                    <Tab label={bid.quantity + " at price of " + bid.price} />
+                  </Tabs>
+                  <TabPanel value={value} index={0}>
+                    <Card>
+                      <CardHeader></CardHeader>
+                      <CardContent></CardContent>
+                      <CardActions></CardActions>
+                    </Card>
+                  </TabPanel>
+                </Fragment>
+              ))
+            : "You have to mint a collection first"}
         </Box>
       </Paper>
     </Box>
