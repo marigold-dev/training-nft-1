@@ -7,7 +7,7 @@
       ["2", "You cannot sell more than your current balance"],
       ["3", "Cannot find the bid you entered for buying"],
       ["4", "You entered a quantity to buy than is more than the bid offer quantity"],
-      ["5", "Not enough funds, you need to pay at least quantity * bif price to get the tokens"],
+      ["5", "Not enough funds, you need to pay at least quantity * bid price to get the tokens"],
       ["6", "Cannot find the contract relative to implicit address"],
     ]));
 */
@@ -59,8 +59,8 @@ const buy = (token_id : nat, quantity: nat, seller: address, s: storage) : ret =
 
       //update new bid
       const newBid = {...bid,quantity : abs(bid.quantity - quantity)};
-
-      return [list([op]) as list<operation>, {...s, bids : Map.update([seller,token_id],Some(newBid),s.bids), ledger : ledger}];
+      
+      return [list([op]) as list<operation>, {...s, bids : Map.update([seller,token_id],Some(newBid),s.bids), ledger : ledger, owner_token_ids : Set.add([Tezos.get_source(),token_id],s.owner_token_ids) }];
     }
   }); 
 };

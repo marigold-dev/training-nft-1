@@ -53,7 +53,7 @@
             "sandboxes": [],
             "aliases": {
                 "nft": {
-                    "address": "KT1JMS9RZEfBtLEKzF3imncB5EcHwwcUm5Sq"
+                    "address": "KT1NRmoKH4Z1gdJNAKCp2tQ14pTvz6WwUSBt"
                 }
             }
         }
@@ -85,5 +85,5 @@
     ],
     "projectDir": "/home/zamrokk/training-nft-1",
     "configFile": "/home/zamrokk/training-nft-1/.taq/config.json",
-    "hash": "7d724c2040082c2a1c305cc13c8350430f38ef64fd08d62a758caa4e639a9860"
+    "hash": "730265f0ce8d9f113af8dcab218dad0ce280968e12b3e7182efc6955aa68bb4a"
 }

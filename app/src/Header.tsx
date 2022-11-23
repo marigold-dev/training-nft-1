@@ -17,8 +17,14 @@ interface HeaderProps {
 export default function Header(props: HeaderProps) {
   const { onDrawerToggle } = props;
 
-  const { userAddress, Tezos, setUserAddress, setUserBalance, wallet } =
-    React.useContext(UserContext) as UserContextType;
+  const {
+    userAddress,
+    Tezos,
+    setUserAddress,
+    setUserBalance,
+    wallet,
+    nftContratTokenMetadataMap,
+  } = React.useContext(UserContext) as UserContextType;
 
   return (
     <React.Fragment>
@@ -43,6 +49,7 @@ export default function Header(props: HeaderProps) {
                   setUserAddress={setUserAddress}
                   setUserBalance={setUserBalance}
                   wallet={wallet}
+                  nftContratTokenMetadataMap={nftContratTokenMetadataMap}
                 />
               ) : (
                 <DisconnectButton

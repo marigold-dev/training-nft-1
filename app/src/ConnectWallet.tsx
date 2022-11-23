@@ -3,6 +3,7 @@ import { BeaconWallet } from "@taquito/beacon-wallet";
 import { TezosToolkit } from "@taquito/taquito";
 import { Dispatch, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
+import { ExtendedTokenMetadata } from "./App";
 import { PagesPaths } from "./Navigator";
 
 type ButtonProps = {
@@ -10,6 +11,7 @@ type ButtonProps = {
   setUserAddress: Dispatch<SetStateAction<string>>;
   setUserBalance: Dispatch<SetStateAction<number>>;
   wallet: BeaconWallet;
+  nftContratTokenMetadataMap: Map<number, ExtendedTokenMetadata>;
 };
 
 const ConnectButton = ({
@@ -17,6 +19,7 @@ const ConnectButton = ({
   setUserAddress,
   setUserBalance,
   wallet,
+  nftContratTokenMetadataMap,
 }: ButtonProps): JSX.Element => {
   const navigate = useNavigate();
 
@@ -33,7 +36,9 @@ const ConnectButton = ({
       const balance = await Tezos.tz.getBalance(userAddress);
       setUserBalance(balance.toNumber());
       setUserAddress(userAddress);
-      navigate(PagesPaths.CATALOG);
+      if (nftContratTokenMetadataMap && nftContratTokenMetadataMap.size > 0)
+        navigate(PagesPaths.CATALOG);
+      else navigate(PagesPaths.MINT);
     } catch (error) {
       console.log(error);
     }

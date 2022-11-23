@@ -1,13 +1,18 @@
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 import React from "react";
 import { UserContext, UserContextType } from "./App";
 import ConnectButton from "./ConnectWallet";
 
 export default function Welcome() {
-  const { userAddress, Tezos, setUserAddress, setUserBalance, wallet } =
-    React.useContext(UserContext) as UserContextType;
+  const {
+    userAddress,
+    Tezos,
+    setUserAddress,
+    setUserBalance,
+    wallet,
+    nftContratTokenMetadataMap,
+  } = React.useContext(UserContext) as UserContextType;
   return (
     <Box
       component="main"
@@ -23,15 +28,16 @@ export default function Welcome() {
       }}
     >
       <Paper sx={{ maxWidth: 936, margin: "auto", overflow: "hidden" }}>
-        <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
+        <span>
           Connect your wallet first
           <ConnectButton
             Tezos={Tezos}
             setUserAddress={setUserAddress}
             setUserBalance={setUserBalance}
             wallet={wallet}
+            nftContratTokenMetadataMap={nftContratTokenMetadataMap}
           />
-        </Typography>
+        </span>
       </Paper>
     </Box>
   );
