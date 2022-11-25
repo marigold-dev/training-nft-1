@@ -18,9 +18,10 @@ import { ExtendedTokenMetadata, UserContext, UserContextType } from "./App";
 import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
 
 import { AddCircleOutlined } from "@mui/icons-material";
+import { char2Bytes } from "@taquito/utils";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { nat } from "./type-aliases";
+import { bytes, nat } from "./type-aliases";
 
 const validationSchema = yup.object({
   name: yup.string().required("Name is required"),
@@ -53,7 +54,6 @@ export default function MintPage() {
   const formik = useFormik({
     initialValues: {
       name: "",
-      decimals: 0,
       description: "",
       token_id: 0,
       symbol: "WINE",
@@ -97,15 +97,17 @@ export default function MintPage() {
         const responseJson = await resFile.json();
         console.log("responseJson", responseJson);
 
-        const url = `https://gateway.pinata.cloud/ipfs/${responseJson.IpfsHash}`;
-        setUrlArr(url);
-        console.log("url", url);
+        const thumbnailUri = `ipfs://${responseJson.IpfsHash}`;
+        setUrlArr(`https://gateway.pinata.cloud/ipfs/${responseJson.IpfsHash}`);
 
         const op = await nftContrat!.methods
           .mint(
             new BigNumber(newTokenDefinition.token_id) as nat,
             new BigNumber(newTokenDefinition.quantity) as nat,
-            url
+            char2Bytes(newTokenDefinition.name!) as bytes,
+            char2Bytes(newTokenDefinition.description) as bytes,
+            char2Bytes(newTokenDefinition.symbol!) as bytes,
+            char2Bytes(thumbnailUri) as bytes
           )
           .send();
 
@@ -176,7 +178,10 @@ export default function MintPage() {
                 <CardMedia
                   component="img"
                   height="194"
-                  image="https://gateway.pinata.cloud/ipfs/QmV1KsgFmeb18fzXec7AAHgnkfCub2McDSrVxvMLppRAgG" //FIXME {item.thumbnailUri}
+                  image={item.thumbnailUri.replace(
+                    "ipfs://",
+                    "https://gateway.pinata.cloud/ipfs/"
+                  )}
                 />
                 <CardContent>
                   <Typography variant="body2" color="text.secondary">

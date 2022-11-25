@@ -6,10 +6,6 @@
         "nft.jsligo": {
             "sourceFile": "nft.jsligo",
             "hash": "5737454d4dd7c3947452a5d2003c30353b62f19a6d73f98ad830a187574b3751"
-        },
-        "nft.storages.jsligo": {
-            "sourceFile": "nft.storages.jsligo",
-            "hash": "5737454d4dd7c3947452a5d2003c30353b62f19a6d73f98ad830a187574b3751"
         }
     },
     "network": {
@@ -53,7 +49,7 @@
             "sandboxes": [],
             "aliases": {
                 "nft": {
-                    "address": "KT1NRmoKH4Z1gdJNAKCp2tQ14pTvz6WwUSBt"
+                    "address": "KT1K2Bt2uRnkymEepKkvQ5WezTP5CQSkM87T"
                 }
             }
         }
@@ -85,5 +81,5 @@
     ],
     "projectDir": "/home/zamrokk/training-nft-1",
     "configFile": "/home/zamrokk/training-nft-1/.taq/config.json",
-    "hash": "730265f0ce8d9f113af8dcab218dad0ce280968e12b3e7182efc6955aa68bb4a"
+    "hash": "a220a60fb5e7b381c2914a9d6fa62d04b54f941f3a56ffb32151d1583d482d9f"
 }

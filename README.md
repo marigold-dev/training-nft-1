@@ -71,11 +71,12 @@ STORAGE
 
 ```bash
 taq create contract nft.storages.jsligo
-#on taq mode with imports etc ...
-#ligo compile contract ./contracts/nft.storages.jsligo --o ./artifacts/nft.default_storage.tz
-ligo compile storage ./contracts/nft.jsligo "$(<./contracts/nft.storages.jsligo)" -o ./artifacts/nft.default_storage.tz
-#taq compile nft.jsligo
+TAQ_LIGO_IMAGE=ligolang/ligo:0.56.0 taq compile nft.jsligo
 ```
+
+Note : old bypass trick (hange also storage syntax to make it work)
+#ligo compile contract ./contracts/nft.storages.jsligo --o ./artifacts/nft.default_storage.tz
+#ligo compile storage ./contracts/nft.jsligo "$(<./contracts/nft.storages.jsligo)" -o ./artifacts/nft.default_storage.tz
 
 DEPLOY
 
