@@ -3,7 +3,7 @@ import { BeaconWallet } from "@taquito/beacon-wallet";
 import { TezosToolkit } from "@taquito/taquito";
 import { Dispatch, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
-import { ExtendedTokenMetadata } from "./App";
+import { TZIP21TokenMetadata } from "./App";
 import { PagesPaths } from "./Navigator";
 
 type ButtonProps = {
@@ -11,7 +11,7 @@ type ButtonProps = {
   setUserAddress: Dispatch<SetStateAction<string>>;
   setUserBalance: Dispatch<SetStateAction<number>>;
   wallet: BeaconWallet;
-  nftContratTokenMetadataMap: Map<number, ExtendedTokenMetadata>;
+  nftContratTokenMetadataMap: Map<number, TZIP21TokenMetadata>;
 };
 
 const ConnectButton = ({

@@ -14,7 +14,7 @@ import Typography from "@mui/material/Typography";
 import { BigNumber } from "bignumber.js";
 import { useSnackbar } from "notistack";
 import React, { Fragment, useEffect, useState } from "react";
-import { ExtendedTokenMetadata, UserContext, UserContextType } from "./App";
+import { TZIP21TokenMetadata, UserContext, UserContextType } from "./App";
 import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
 
 import { AddCircleOutlined } from "@mui/icons-material";
@@ -58,7 +58,7 @@ export default function MintPage() {
       token_id: 0,
       symbol: "WINE",
       quantity: 1,
-    } as ExtendedTokenMetadata & { quantity: number },
+    } as TZIP21TokenMetadata & { quantity: number },
     validationSchema: validationSchema,
     onSubmit: (values) => {
       mint(values);
@@ -66,7 +66,7 @@ export default function MintPage() {
   });
 
   const mint = async (
-    newTokenDefinition: ExtendedTokenMetadata & { quantity: number }
+    newTokenDefinition: TZIP21TokenMetadata & { quantity: number }
   ) => {
     try {
       //IPFS
@@ -105,7 +105,7 @@ export default function MintPage() {
             new BigNumber(newTokenDefinition.token_id) as nat,
             new BigNumber(newTokenDefinition.quantity) as nat,
             char2Bytes(newTokenDefinition.name!) as bytes,
-            char2Bytes(newTokenDefinition.description) as bytes,
+            char2Bytes(newTokenDefinition.description!) as bytes,
             char2Bytes(newTokenDefinition.symbol!) as bytes,
             char2Bytes(thumbnailUri) as bytes
           )
@@ -178,7 +178,7 @@ export default function MintPage() {
                 <CardMedia
                   component="img"
                   height="194"
-                  image={item.thumbnailUri.replace(
+                  image={item.thumbnailUri?.replace(
                     "ipfs://",
                     "https://gateway.pinata.cloud/ipfs/"
                   )}

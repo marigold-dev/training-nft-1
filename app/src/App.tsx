@@ -8,9 +8,14 @@ import { NftWalletType, Storage } from "./nft.types";
 import Paperbase from "./Paperbase";
 import { nat } from "./type-aliases";
 
-export type ExtendedTokenMetadata = TokenMetadata & {
-  thumbnailUri: string;
-  description: string;
+export type TZIP21TokenMetadata = TokenMetadata & {
+  artifactUri?: string; //A URI (as defined in the JSON Schema Specification) to the asset.
+  displayUri?: string; //A URI (as defined in the JSON Schema Specification) to an image of the asset.
+  thumbnailUri?: string; //A URI (as defined in the JSON Schema Specification) to an image of the asset for wallets and client applications to have a scaled down image to present to end-users.
+  description?: string; //General notes, abstracts, or summaries about the contents of an asset.
+  minter?: string; //The tz address responsible for minting the asset.
+  creators?: string[]; //The primary person, people, or organization(s) responsible for creating the intellectual content of the asset.
+  isBooleanAmount?: boolean; //Describes whether an account can have an amount of exactly 0 or 1. (The purpose of this field is for wallets to determine whether or not to display balance information and an amount field when transferring.)
 };
 
 export type UserContextType = {
@@ -23,9 +28,9 @@ export type UserContextType = {
   nftContractAddress: string;
   nftContrat: NftWalletType | null;
   setNftContrat: Dispatch<SetStateAction<NftWalletType | null>>;
-  nftContratTokenMetadataMap: Map<number, ExtendedTokenMetadata>;
+  nftContratTokenMetadataMap: Map<number, TZIP21TokenMetadata>;
   setNftContratTokenMetadataMap: Dispatch<
-    SetStateAction<Map<number, ExtendedTokenMetadata>>
+    SetStateAction<Map<number, TZIP21TokenMetadata>>
   >;
   refreshUserContextOnPageReload: () => Promise<void>;
 };
@@ -39,7 +44,7 @@ function App() {
   const [userBalance, setUserBalance] = useState<number>(0);
   const [nftContrat, setNftContrat] = useState<NftWalletType | null>(null);
   const [nftContratTokenMetadataMap, setNftContratTokenMetadataMap] = useState<
-    Map<number, ExtendedTokenMetadata>
+    Map<number, TZIP21TokenMetadata>
   >(new Map());
 
   const [Tezos, setTezos] = useState<TezosToolkit>(
@@ -65,9 +70,9 @@ function App() {
       const storage = (await nftContrat.storage()) as Storage;
       await Promise.all(
         storage.token_ids.map(async (token_id: nat) => {
-          let tokenMetadata: ExtendedTokenMetadata = (await c
+          let tokenMetadata: TZIP21TokenMetadata = (await c
             .tzip12()
-            .getTokenMetadata(token_id.toNumber())) as ExtendedTokenMetadata;
+            .getTokenMetadata(token_id.toNumber())) as TZIP21TokenMetadata;
           nftContratTokenMetadataMap.set(token_id.toNumber(), tokenMetadata);
         })
       );
