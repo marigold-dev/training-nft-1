@@ -76,7 +76,7 @@ function App() {
           nftContratTokenMetadataMap.set(token_id.toNumber(), tokenMetadata);
         })
       );
-      setNftContratTokenMetadataMap(nftContratTokenMetadataMap);
+      setNftContratTokenMetadataMap(new Map(nftContratTokenMetadataMap)); //new Map to force refresh
       setNftContrat(nftContrat);
       setStorage(storage);
     } catch (error) {

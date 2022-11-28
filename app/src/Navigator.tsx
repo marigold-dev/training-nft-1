@@ -10,7 +10,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { UserContext, UserContextType } from "./App";
 
@@ -30,19 +30,6 @@ const item = {
   },
 };
 
-let categories = [
-  {
-    id: "Administration",
-    children: [
-      {
-        id: "Mint wine collection",
-        icon: <SettingsIcon />,
-        path: "/" + PagesPaths.MINT,
-      },
-    ],
-  },
-];
-
 const itemCategory = {
   boxShadow: "0 -1px 0 rgb(255,255,255,0.1) inset",
   py: 1.5,
@@ -61,11 +48,29 @@ export default function Navigator(props: DrawerProps) {
     nftContratTokenMetadataMap,
   } = React.useContext(UserContext) as UserContextType;
 
-  //  nftContratTokenMetadata ?
+  const [categories, setCategories] = useState<
+    {
+      id: string;
+      children: { id: string; icon: JSX.Element; path: string }[];
+    }[]
+  >([
+    {
+      id: "Administration",
+      children: [
+        {
+          id: "Mint wine collection",
+          icon: <SettingsIcon />,
+          path: "/" + PagesPaths.MINT,
+        },
+      ],
+    },
+  ]);
 
   useEffect(() => {
+    console.log("Hello", nftContratTokenMetadataMap);
+
     if (nftContratTokenMetadataMap && nftContratTokenMetadataMap.size > 0)
-      categories = [
+      setCategories([
         {
           id: "Trading",
           children: [
@@ -91,7 +96,7 @@ export default function Navigator(props: DrawerProps) {
             },
           ],
         },
-      ];
+      ]);
   }, [nftContratTokenMetadataMap, userAddress]);
 
   return (

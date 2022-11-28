@@ -2,6 +2,8 @@
 
 Training n°1 for NFT marketplace
 
+http://jingculturecommerce.com/wp-content/uploads/2021/03/nft-assets-1024x614.jpg
+
 <PHOTO hacker wine here>
 
 # :wine: Wine marketplace
@@ -64,19 +66,9 @@ CODE
 
 ```bash
 ligo install @ligo/fa
-ligo compile contract ./contracts/nft.jsligo --o ./artifacts/nft.tz
-```
 
-STORAGE
-
-```bash
-taq create contract nft.storages.jsligo
 TAQ_LIGO_IMAGE=ligolang/ligo:0.56.0 taq compile nft.jsligo
 ```
-
-Note : old bypass trick (hange also storage syntax to make it work)
-#ligo compile contract ./contracts/nft.storages.jsligo --o ./artifacts/nft.default_storage.tz
-#ligo compile storage ./contracts/nft.jsligo "$(<./contracts/nft.storages.jsligo)" -o ./artifacts/nft.default_storage.tz
 
 DEPLOY
 
