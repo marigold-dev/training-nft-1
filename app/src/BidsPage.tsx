@@ -1,18 +1,30 @@
+import SellIcon from "@mui/icons-material/Sell";
 import {
+  Avatar,
+  Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
-  Tab,
-  Tabs,
+  TextField,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
+import BigNumber from "bignumber.js";
+import { useFormik } from "formik";
+import { useSnackbar } from "notistack";
 import React, { Fragment, useEffect } from "react";
+import * as yup from "yup";
 import { UserContext, UserContextType } from "./App";
-import { Storage } from "./nft.types";
+import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
 import { address, nat } from "./type-aliases";
+
+const validationSchema = yup.object({
+  price: yup
+    .number()
+    .required("Price is required")
+    .positive("ERROR: The number must be greater than 0!"),
+});
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -21,47 +33,121 @@ interface TabPanelProps {
 }
 
 type Bid = {
-  price: nat;
   owner: address;
+  price: nat;
 };
 
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`vertical-tabpanel-${index}`}
-      aria-labelledby={`vertical-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
 export default function BidsPage() {
-  const [value, setValue] = React.useState(0);
-  const [bidByTokenIDMap, setBidByTokenIDMap] = React.useState<Map<nat, Bid>>(
+  const [selectedTokenId, setSelectedTokenId] = React.useState<number>(0);
+
+  let [bidsTokenIDMap, setBidsTokenIDMap] = React.useState<Map<nat, Bid>>(
     new Map()
   );
+  let [ownerTokenIds, setOwnerTokenIds] = React.useState<Set<nat>>(new Set());
 
-  const { nftContrat, nftContratTokenMetadataMap, userAddress } =
-    React.useContext(UserContext) as UserContextType;
+  const {
+    nftContrat,
+    nftContratTokenMetadataMap,
+    userAddress,
+    storage,
+    refreshUserContextOnPageReload,
+  } = React.useContext(UserContext) as UserContextType;
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  const formik = useFormik({
+    initialValues: {
+      price: 0,
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      console.log("onSubmit: (values)", values, selectedTokenId);
+      sell(selectedTokenId, values.price);
+    },
+  });
+
+  const initPage = async () => {
+    if (storage) {
+      console.log("context is not empty, init page now");
+      ownerTokenIds = new Set();
+      bidsTokenIDMap = new Map();
+
+      await Promise.all(
+        storage.token_ids.map(async (token_id) => {
+          let owner = await storage.ledger.get(token_id);
+          if (owner === userAddress) {
+            ownerTokenIds.add(token_id);
+
+            const ownerBids = await storage.bids.get(token_id);
+            if (ownerBids) bidsTokenIDMap.set(token_id, ownerBids);
+
+            console.log(
+              "found for " +
+                owner +
+                " on token_id " +
+                token_id +
+                " with balance " +
+                1
+            );
+          } else {
+            console.log("skip to next token id");
+          }
+        })
+      );
+      setOwnerTokenIds(new Set(ownerTokenIds)); //force refresh
+      setBidsTokenIDMap(new Map(bidsTokenIDMap)); //force refresh
+    } else {
+      console.log("context is empty, wait for parent and retry ...");
+    }
+  };
 
   useEffect(() => {
     (async () => {
-      const storage = (await nftContrat?.storage()) as Storage;
-      storage.token_ids.forEach((token_id) => {
-        bidByTokenIDMap.set(token_id, storage.bids.get(token_id));
-      });
+      console.log("after a storage changed");
+      await initPage();
+    })();
+  }, [storage]);
+
+  useEffect(() => {
+    (async () => {
+      console.log("on Page init");
+      await initPage();
     })();
   }, []);
+
+  const sell = async (token_id: number, price: number) => {
+    try {
+      const op = await nftContrat?.methods
+        .sell(
+          BigNumber(token_id) as nat,
+          BigNumber(price * 1000000) as nat //to mutez
+        )
+        .send();
+
+      await op?.confirmation(2);
+
+      enqueueSnackbar(
+        "Wine collection (token_id=" +
+          token_id +
+          ") bid for " +
+          1 +
+          " units at price of " +
+          price +
+          " XTZ",
+        { variant: "success" }
+      );
+
+      refreshUserContextOnPageReload(); //force all app to refresh the context
+    } catch (error) {
+      console.table(`Error: ${JSON.stringify(error, null, 2)}`);
+      let tibe: TransactionInvalidBeaconError =
+        new TransactionInvalidBeaconError(error);
+      enqueueSnackbar(tibe.data_message, {
+        variant: "error",
+        autoHideDuration: 10000,
+      });
+    }
+  };
 
   return (
     <Box
@@ -78,40 +164,61 @@ export default function BidsPage() {
       }}
     >
       <Paper sx={{ maxWidth: 936, margin: "auto", overflow: "hidden" }}>
-        <Box
-          sx={{
-            flexGrow: 1,
-            bgcolor: "background.paper",
-            display: "flex",
-            height: 224,
-          }}
-        >
-          {nftContratTokenMetadataMap.size > 0
-            ? Array.from(bidByTokenIDMap.values()).map((bid: Bid) => (
-                <Fragment>
-                  <Tabs
-                    orientation="vertical"
-                    variant="scrollable"
-                    value={value}
-                    onChange={(event: React.SyntheticEvent, newValue: number) =>
-                      setValue(newValue)
-                    }
-                    aria-label="Vertical tabs example"
-                    sx={{ borderRight: 1, borderColor: "divider" }}
-                  >
-                    <Tab label={bid.price + " from " + bid.owner} />
-                  </Tabs>
-                  <TabPanel value={value} index={0}>
-                    <Card>
-                      <CardHeader></CardHeader>
-                      <CardContent></CardContent>
-                      <CardActions></CardActions>
-                    </Card>
-                  </TabPanel>
-                </Fragment>
-              ))
-            : "You have to mint a collection first"}
-        </Box>
+        {ownerTokenIds && ownerTokenIds.size != 0 ? (
+          Array.from(ownerTokenIds).map((token_id) => (
+            <Card key={userAddress + "-" + token_id.toString()}>
+              <CardHeader
+                avatar={
+                  <Avatar sx={{ bgcolor: "purple" }} aria-label="recipe">
+                    {token_id.toString()}
+                  </Avatar>
+                }
+                title={
+                  nftContratTokenMetadataMap.get(token_id.toNumber())?.name
+                }
+              />
+
+              <CardContent>
+                {bidsTokenIDMap.get(token_id) ? (
+                  <div>
+                    {"Bid : " +
+                      1 +
+                      " at price " +
+                      bidsTokenIDMap.get(token_id)?.price.dividedBy(1000000)}
+                  </div>
+                ) : (
+                  ""
+                )}
+              </CardContent>
+
+              <CardActions disableSpacing>
+                <form
+                  onSubmit={(values) => {
+                    setSelectedTokenId(token_id.toNumber());
+                    formik.handleSubmit(values);
+                  }}
+                >
+                  <TextField
+                    name="price"
+                    label="price/bottle (XTZ)"
+                    placeholder="Enter a price"
+                    variant="standard"
+                    type="number"
+                    value={formik.values.price}
+                    onChange={formik.handleChange}
+                    error={formik.touched.price && Boolean(formik.errors.price)}
+                    helperText={formik.touched.price && formik.errors.price}
+                  />
+                  <Button type="submit" aria-label="add to favorites">
+                    <SellIcon /> SELL
+                  </Button>
+                </form>
+              </CardActions>
+            </Card>
+          ))
+        ) : (
+          <Fragment />
+        )}
       </Paper>
     </Box>
   );

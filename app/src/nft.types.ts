@@ -35,7 +35,10 @@ type Methods = {
     ) => Promise<void>;
     mint: (
         _0: nat,
-        _1: string,
+        _1: bytes,
+        _2: bytes,
+        _3: bytes,
+        _4: bytes,
     ) => Promise<void>;
     sell: (
         _0: nat,
@@ -74,7 +77,10 @@ type MethodsObject = {
     }) => Promise<void>;
     mint: (params: {
         0: nat,
-        1: string,
+        1: bytes,
+        2: bytes,
+        3: bytes,
+        4: bytes,
     }) => Promise<void>;
     sell: (params: {
         0: nat,

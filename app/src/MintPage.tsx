@@ -11,20 +11,17 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { tzip12 } from "@taquito/tzip12";
 import { BigNumber } from "bignumber.js";
 import { useSnackbar } from "notistack";
 import React, { Fragment, useEffect, useState } from "react";
-import { ExtendedTokenMetadata, UserContext, UserContextType } from "./App";
+import { TZIP21TokenMetadata, UserContext, UserContextType } from "./App";
 import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
 
 import { AddCircleOutlined } from "@mui/icons-material";
+import { char2Bytes } from "@taquito/utils";
 import { useFormik } from "formik";
-
-import { create } from "ipfs-http-client";
 import * as yup from "yup";
-import { NftWalletType, Storage } from "./nft.types";
-import { nat } from "./type-aliases";
+import { bytes, nat } from "./type-aliases";
 
 const validationSchema = yup.object({
   name: yup.string().required("Name is required"),
@@ -33,72 +30,85 @@ const validationSchema = yup.object({
 });
 
 export default function MintPage() {
-  let {
+  const {
     nftContrat,
     nftContratTokenMetadataMap,
     setNftContratTokenMetadataMap,
-    setNftContrat,
     Tezos,
     nftContractAddress,
+    setNftContrat,
+    storage,
+    refreshUserContextOnPageReload,
   } = React.useContext(UserContext) as UserContextType;
-
-  /*
-  const client = create({
-    http: `http://${process.env["REACT_APP_IPFS_USER"]}:${process.env["REACT_APP_IPFS_PASSWORD"]}@${process.env["REACT_APP_IPFS_SERVER"]}`,
-  });
-  */
-  const client = create({
-    url: `http://${process.env["REACT_APP_IPFS_SERVER"]}`,
-    headers: {
-      Authorization: `Basic ${btoa(
-        process.env["REACT_APP_IPFS_USER"] +
-          ":" +
-          process.env["REACT_APP_IPFS_PASSWORD"]
-      )}`,
-    },
-  });
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const [file, setFile] = useState<ArrayBuffer | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [urlArr, setUrlArr] = useState<string>("");
   const [online, setOnline] = useState<boolean>(false);
 
   const formik = useFormik({
     initialValues: {
       name: "",
-      decimals: 0,
       description: "",
       token_id: 0,
       symbol: "WINE",
-    } as ExtendedTokenMetadata,
+    } as TZIP21TokenMetadata,
     validationSchema: validationSchema,
     onSubmit: (values) => {
       mint(values);
     },
   });
 
-  const mint = async (newTokenDefinition: ExtendedTokenMetadata) => {
+  const mint = async (newTokenDefinition: TZIP21TokenMetadata) => {
     try {
       //IPFS
-      /*
-      const created = await client.add(file as ArrayBuffer);
-      const url = `http://${process.env["REACT_APP_IPFS_SERVER"]}/ipfs/${created.path}`;
-      setUrlArr(url);
-      console.log("url", url);
-*/
-      const op = await nftContrat!.methods
-        .mint(
-          new BigNumber(newTokenDefinition.token_id) as nat,
-          "ipfs://QmcqsYQn8pTxQr3P1dYpgYxQa6GQPmoBTSWQ8bpuFEuaqe" //newTokenDefinition.thumbnailUri
-        )
-        .send();
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
 
-      await op.confirmation(2);
+        const requestHeaders: HeadersInit = new Headers();
+        requestHeaders.set(
+          "pinata_api_key",
+          `${process.env.REACT_APP_PINATA_API_KEY}`
+        );
+        requestHeaders.set(
+          "pinata_secret_api_key",
+          `${process.env.REACT_APP_PINATA_API_SECRET}`
+        );
+        // requestHeaders.set("Content-Type", "multipart/form-data");
 
-      refresh();
+        const resFile = await fetch(
+          "https://api.pinata.cloud/pinning/pinFileToIPFS",
+          {
+            method: "post",
+            body: formData,
+            headers: requestHeaders,
+          }
+        );
 
-      enqueueSnackbar("Wine collection minted", { variant: "success" });
+        const responseJson = await resFile.json();
+        console.log("responseJson", responseJson);
+
+        const thumbnailUri = `ipfs://${responseJson.IpfsHash}`;
+        setUrlArr(`https://gateway.pinata.cloud/ipfs/${responseJson.IpfsHash}`);
+
+        const op = await nftContrat!.methods
+          .mint(
+            new BigNumber(newTokenDefinition.token_id) as nat,
+            char2Bytes(newTokenDefinition.name!) as bytes,
+            char2Bytes(newTokenDefinition.description!) as bytes,
+            char2Bytes(newTokenDefinition.symbol!) as bytes,
+            char2Bytes(thumbnailUri) as bytes
+          )
+          .send();
+
+        await op.confirmation(2);
+
+        enqueueSnackbar("Wine collection minted", { variant: "success" });
+
+        refreshUserContextOnPageReload(); //force all app to refresh the context
+      }
     } catch (error) {
       console.table(`Error: ${JSON.stringify(error, null, 2)}`);
       let tibe: TransactionInvalidBeaconError =
@@ -113,51 +123,21 @@ export default function MintPage() {
   const retrieveFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const data = e.target.files ? e.target.files[0] : null;
     if (data) {
-      const reader = new window.FileReader();
-      reader.readAsArrayBuffer(data);
-      reader.onloadend = () => {
-        setFile(reader.result as ArrayBuffer);
-      };
+      setFile(data);
     }
     e.preventDefault();
   };
 
-  const refresh = async () => {
-    try {
-      let c = await Tezos.contract.at(nftContractAddress, tzip12);
-      console.log("nftContractAddress", nftContractAddress);
-
-      let nftContrat: NftWalletType = await Tezos.wallet.at<NftWalletType>(
-        nftContractAddress
-      );
-      const storage = (await nftContrat.storage()) as Storage;
-      await Promise.all(
-        storage.token_ids.map(async (token_id: nat) => {
-          let tokenMetadata: ExtendedTokenMetadata = await c
-            .tzip12()
-            .getTokenMetadata(token_id.toNumber());
-          nftContratTokenMetadataMap.set(token_id.toNumber(), tokenMetadata);
-        })
-      );
-      setNftContratTokenMetadataMap(nftContratTokenMetadataMap);
-      setNftContrat(nftContrat);
-
-      //let online = await client.isOnline();
-      //setOnline(online);
-      if (storage.token_ids.length > 0) {
-        formik.setFieldValue("token_id", storage.token_ids.length);
-      }
-    } catch (error) {
-      console.log("ipfs status online error : ", error);
-      enqueueSnackbar("ipfs status online error :" + JSON.stringify(error), {
-        variant: "error",
-      });
-    }
-  };
-
   useEffect(() => {
-    refresh();
-  }, []);
+    (async () => {
+      if (storage && storage.token_ids.length > 0) {
+        formik.setFieldValue(
+          "token_id",
+          storage?.token_ids.length //FIXME later better to rely on MAX value than size ...
+        );
+      }
+    })();
+  }, [storage?.token_ids]);
 
   return (
     <Box
@@ -190,7 +170,10 @@ export default function MintPage() {
                 <CardMedia
                   component="img"
                   height="194"
-                  image={item.thumbnailUri}
+                  image={item.thumbnailUri?.replace(
+                    "ipfs://",
+                    "https://gateway.pinata.cloud/ipfs/"
+                  )}
                 />
                 <CardContent>
                   <Typography variant="body2" color="text.secondary">

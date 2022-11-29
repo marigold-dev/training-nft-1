@@ -17,12 +17,6 @@
     "url": "https://github.com/marigold-dev/training-nft-1/issues"
   },
   "homepage": "https://github.com/marigold-dev/training-nft-1#readme",
-  "devDependencies": {
-    "@taqueria/plugin-contract-types": "^0.24.1",
-    "@taqueria/plugin-core": "^0.24.1",
-    "@taqueria/plugin-ligo": "^0.24.1",
-    "@taqueria/plugin-taquito": "^0.24.1"
-  },
   "dependencies": {
     "ansi-regex": "^5.0.1",
     "ansi-styles": "^4.3.0",
@@ -180,5 +174,11 @@
     "yargs": "^17.6.2",
     "yargs-parser": "^21.1.1",
     "zod": "^3.19.1"
+  },
+  "devDependencies": {
+    "@taqueria/plugin-contract-types": "^0.24.2",
+    "@taqueria/plugin-core": "^0.24.2",
+    "@taqueria/plugin-ligo": "^0.24.2",
+    "@taqueria/plugin-taquito": "^0.24.2"
   }
 }
