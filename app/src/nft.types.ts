@@ -11,6 +11,7 @@ export type Storage = {
     ledger: BigMap<address, nat>;
     metadata: BigMap<string, bytes>;
     operators: BigMap<address, Array<address>>;
+    owners: Array<address>;
     token_metadata: BigMap<nat, {
         token_id: nat;
         token_info: MMap<string, bytes>;
@@ -32,7 +33,10 @@ type Methods = {
     ) => Promise<void>;
     mint: (
         _0: nat,
-        _1: string,
+        _1: bytes,
+        _2: bytes,
+        _3: bytes,
+        _4: bytes,
     ) => Promise<void>;
     sell: (
         _0: nat,
@@ -42,6 +46,7 @@ type Methods = {
             from_: address;
             txs: Array<{
                 to_: address;
+                token_id: nat;
                 amount: nat;
             }>;
         }>) => Promise<void>;
@@ -71,7 +76,10 @@ type MethodsObject = {
     }) => Promise<void>;
     mint: (params: {
         0: nat,
-        1: string,
+        1: bytes,
+        2: bytes,
+        3: bytes,
+        4: bytes,
     }) => Promise<void>;
     sell: (params: {
         0: nat,
@@ -81,6 +89,7 @@ type MethodsObject = {
             from_: address;
             txs: Array<{
                 to_: address;
+                token_id: nat;
                 amount: nat;
             }>;
         }>) => Promise<void>;

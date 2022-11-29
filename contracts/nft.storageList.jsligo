@@ -1,5 +1,5 @@
-//#include "nft.jsligo"
-//const default_storage = 
+#include "nft.jsligo"
+const default_storage = 
 {
     administrator: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address,
     totalSupply: 0 as nat,
@@ -7,6 +7,7 @@
     ledger: Big_map.empty as SINGLEASSET.Ledger.t,
     metadata: Big_map.empty as SINGLEASSET.Metadata.t,
     token_metadata: Big_map.empty as SINGLEASSET.TokenMetadata.t,
-    operators: Big_map.empty as SINGLEASSET.Operators.t
+    operators: Big_map.empty as SINGLEASSET.Operators.t,
+    owners: Set.empty as set<SINGLEASSET.Storage.owner>,
   }
-//;
+;
