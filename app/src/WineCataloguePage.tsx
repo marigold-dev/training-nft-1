@@ -64,9 +64,7 @@ export default function WineCataloguePage() {
           selectedBidEntry[0][0]
         )
         .send({
-          amount:
-            selectedBidEntry[1].quantity.toNumber() *
-            selectedBidEntry[1].price.toNumber(),
+          amount: quantity * selectedBidEntry[1].price.toNumber(),
           mutez: true,
         });
 
