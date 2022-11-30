@@ -47,12 +47,12 @@ On a second time, we will import this contract into a second one that will be th
 
 # :memo: Prerequisites
 
-Please install this software first on your machine or use online alternative :
+Please install this software first on your machine :
 
 - [ ] [VS Code](https://code.visualstudio.com/download) : as text editor
 - [ ] [npm](https://nodejs.org/en/download/) : we will use a typescript React client app
 - [ ] [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable) : because yet another package manager (https://www.geeksforgeeks.org/difference-between-npm-and-yarn/)
-- [ ] [taqueria](https://github.com/ecadlabs/taqueria) : Tezos Dapp project tooling
+- [ ] [taqueria](https://github.com/ecadlabs/taqueria) : Tezos Dapp project tooling (version >= 0.24.2)
 - [ ] [taqueria VS Code extension](https://marketplace.visualstudio.com/items?itemName=ecadlabs.taqueria-vscode) : visualize your project and execute tasks
 - [ ] [ligo VS Code extension](https://marketplace.visualstudio.com/items?itemName=ligolang-publish.ligo-vscode) : for smart contract highlighting, completion, etc ..
 - [ ] [Temple wallet](https://templewallet.com/) : an easy to use Tezos wallet in your browser
@@ -62,7 +62,7 @@ Please install this software first on your machine or use online alternative :
 ## Taq'ify your project
 
 ```bash
-taq init
+taq init training
 taq install @taqueria/plugin-ligo
 taq create contract nft.jsligo
 ```
