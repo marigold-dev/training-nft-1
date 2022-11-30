@@ -6,7 +6,7 @@ http://jingculturecommerce.com/wp-content/uploads/2021/03/nft-assets-1024x614.jp
 
 <PHOTO hacker wine here>
 
-# :wine: Wine marketplace
+# :wine_glass: Wine marketplace
 
 Plan of the training course :
 
