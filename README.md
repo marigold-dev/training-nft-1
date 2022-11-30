@@ -2,7 +2,8 @@
 
 Training n°1 for NFT marketplace
 
-> Introduction : Business objects managed by a blockchain are called `assets`. Here below differetn categorization of assets.
+> Introduction : Business objects managed by a blockchain are called `assets`. On Tezos you will find the term `Financial Asset`.
+> Here below different categorization of assets.
 
 ![](http://jingculturecommerce.com/wp-content/uploads/2021/03/nft-assets-1024x614.jpg)
 
@@ -10,30 +11,39 @@ Training n°1 for NFT marketplace
 
 # :wine_glass: Wine marketplace
 
+We are going to build a Wine marketplace.
+You can play with the final demo here : [https://demo.winefactory.marigold.dev/](https://demo.winefactory.marigold.dev/)
+
 Plan of the training course :
 
-- NFT 1 : use raw FA2 single asset template to understand the basics
-- NFT 2 : improve FA2 single asset with extra features to build a marketplace
-- NFT 3 : use FA2 multi assets to enlarge wine collection
-- NFT 4 : give unique NFT item reward as for a full complete collection
+- NFT 1 : use FA2 nft template to understand the basics
+- NFT 2 : finish FA2 nft complete marketplace
+- NFT 3 : use FA2 single asset template to build another kind of marketplace
+- NFT 4 : use FA2 multi asset template to build last complex kind of marketplace
 
-<PHOTO final ui>
+//TODO PHOTO final ui
 
-## What are NFTs?
+## :performing_arts: What are NFTs?
 
 A non-fungible token is a unique and non-interchangeable unit of data stored on a digital ledger. NFTs can be used to represent easily-reproducible items such as photos, videos, audio, and other types of digital files as unique items, and use blockchain technology to establish a verified and public proof of ownership.
 
-## What is IPFS?
+## :open_file_folder: What is IPFS?
 
-The InterPlanetary File System is a protocol and peer-to-peer network for storing and sharing data in a distributed file system. IPFS uses content-addressing to uniquely identify each file in a global namespace connecting all computing devices. In this tutorial, we will be using nft.storage to store the metadata for NFTs.
+The InterPlanetary File System is a protocol and peer-to-peer network for storing and sharing data in a distributed file system. IPFS uses content-addressing to uniquely identify each file in a global namespace connecting all computing devices. In this tutorial, we will be using [pinata](https://www.pinata.cloud/) to store the metadata for NFTs.
 
-## Smart Contracts
+## :scroll: Smart Contracts
 
-We will be building two contracts for the marketplace. First will be the token contract. On Tezos FA2 is the standard for Non-fungible Token contracts. We will be using the template provided by Ligo to build out the Token Contract. The template contains the basic entry points for building a Fungible or Non-fungible token including
+We will use two contracts for the marketplace. First will be the token contract. On Tezos FA2 is the standard for Non-fungible Token contracts. We will be using the template provided by Ligo to build out the Token Contract. The template contains the basic entry points for building a Fungible or Non-fungible token including
 
-- Minting tokens
 - Transfer
-- Adding operators
+- Balance_of
+- Update_operators
+
+On a second time, we will import this contract into a second one that will be the marketplace unique contract. This contract will bring missing feature as :
+
+- Mint
+- Buy
+- Sell
 
 # :memo: Prerequisites
 
