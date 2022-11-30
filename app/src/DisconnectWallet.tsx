@@ -1,5 +1,4 @@
 import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
 import { BeaconWallet } from "@taquito/beacon-wallet";
 import { Dispatch, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
@@ -30,12 +29,13 @@ const DisconnectButton = ({
   };
 
   return (
-    <IconButton color="inherit" sx={{ p: 0.5 }}>
-      <Avatar src={randomPicture} alt="My Avatar" /> {userAddress}
+    <div>
+      <Avatar component="span" src={randomPicture} alt="My Avatar" />
+      {userAddress}
       <button className="button" onClick={disconnectWallet}>
         <i className="fas fa-times"></i>&nbsp; Disconnect wallet
       </button>
-    </IconButton>
+    </div>
   );
 };
 

@@ -24,7 +24,6 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "formik": "^2.2.9",
-    "ipfs-http-client": "^59.0.0",
     "notistack": "^1.0.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
