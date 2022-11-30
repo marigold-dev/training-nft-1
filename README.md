@@ -2,6 +2,8 @@
 
 Training n°1 for NFT marketplace
 
+> Introduction : Business objects managed by a blockchain are called `assets`. Here below differetn categorization of assets.
+
 ![](http://jingculturecommerce.com/wp-content/uploads/2021/03/nft-assets-1024x614.jpg)
 
 <PHOTO hacker wine here>
