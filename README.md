@@ -279,23 +279,19 @@ const default_storage =
 ;
 ```
 
-Deploy to ghostnet
+Compile again and deploy to ghostnet
 
 ```bash
+TAQ_LIGO_IMAGE=ligolang/ligo:0.56.0 taq compile nft.jsligo
 taq install @taqueria/plugin-taquito
 taq deploy nft.tz -e "testing"
 ```
 
 > Note : if it is the first time you use taqueria, I recommend to look at this training first [https://github.com/marigold-dev/training-dapp-1#ghostnet-testnet-wallet](https://github.com/marigold-dev/training-dapp-1#ghostnet-testnet-wallet)
-> For advanced users, just go to .taq/config.json and change the default account to alice settings (publicKey,publicKeyHash,privateKey)
+> For advanced users, just go to .taq/config.json and change the default account to alice settings (publicKey,publicKeyHash,privateKey) and then redeploy
 >
 > ```json
 > "accounts": {
->                "taqRootAccount": {
->                    "publicKey": "edpkvGfYw3LyB1UcCahKQk4rF2tvbMUk8GFiTuMjL75uGXrpvKXhjn",
->                    "publicKeyHash": "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
->                    "privateKey": "edsk3QoqBuvdamxouPhin7swCvkQNgq4jP5KZPbwWNnwdZpSpJiEbq"
->                },
 >                "taqOperatorAccount": {
 >                    "publicKey": "edpkvGfYw3LyB1UcCahKQk4rF2tvbMUk8GFiTuMjL75uGXrpvKXhjn",
 >                    "publicKeyHash": "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
@@ -304,18 +300,32 @@ taq deploy nft.tz -e "testing"
 >            }
 > ```
 
-# :construction_worker: Marketplace front
+```logs
+┌──────────┬──────────────────────────────────────┬───────┬──────────────────┬────────────────────────────────┐
+│ Contract │ Address                              │ Alias │ Balance In Mutez │ Destination                    │
+├──────────┼──────────────────────────────────────┼───────┼──────────────────┼────────────────────────────────┤
+│ nft.tz   │ KT1SeDDNAP5xqwjB8LjKJtL31cKVmg6F4C57 │ nft   │ 0                │ https://ghostnet.ecadinfra.com │
+└──────────┴──────────────────────────────────────┴───────┴──────────────────┴────────────────────────────────┘
+```
+
+:tada: Hooray ! We have finished the backend :tada:
+
+# :performing_arts: NFT Marketplace front
+
+To win time, we have a boilerplate ready for the UI here : [https://github.com/marigold-dev/training-nft-1/tree/main/reactboilerplate/app](https://github.com/marigold-dev/training-nft-1/tree/main/reactboilerplate/app)
+
+Copy this code into your folder
 
 ```bash
-yarn create react-app app --template typescript
+cp -r ../reactboilerplate/app .
+```
+
+> Note : if you want to understand how it has been made from scratch look at this training => [https://github.com/marigold-dev/training-dapp-1#construction_worker-dapp](https://github.com/marigold-dev/training-dapp-1#construction_worker-dapp)
+
+```bash
 taq install @taqueria/plugin-contract-types
 taq generate types ./app/src
 cd app
-yarn add @taquito/taquito @taquito/beacon-wallet @airgap/beacon-sdk
-yarn add -D @airgap/beacon-types
-yarn add @dipdup/tzkt-api
-yarn add --dev react-app-rewired process crypto-browserify stream-browserify assert stream-http https-browserify os-browserify url path-browserify
-
 yarn run start
 ```
 

@@ -15,9 +15,9 @@
             "protocol": "PtKathmankSpLLDALzWw7CGD2j2MtyveTwboEYokqUCP4a1LxMg",
             "accounts": {
                 "taqOperatorAccount": {
-                    "publicKey": "p2pk679rLvEN3EYNVkRFspQZEu6h2NmFtTBy732ShEh7hQjWCcKBZBB",
-                    "publicKeyHash": "tz3d3pjGgbtFQD1hsQfpdAJC1Q9kmn3nmzof",
-                    "privateKey": "p2sk3kzwQf8rdiz5k6buLt4gbR3zvpfcCxWq1fqQ1zwDRYsxfxwWMs"
+                    "publicKey": "edpkvGfYw3LyB1UcCahKQk4rF2tvbMUk8GFiTuMjL75uGXrpvKXhjn",
+                    "publicKeyHash": "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
+                    "privateKey": "edsk3QoqBuvdamxouPhin7swCvkQNgq4jP5KZPbwWNnwdZpSpJiEbq"
                 }
             }
         }
@@ -41,7 +41,12 @@
             "networks": [
                 "ghostnet"
             ],
-            "sandboxes": []
+            "sandboxes": [],
+            "aliases": {
+                "nft": {
+                    "address": "KT1SeDDNAP5xqwjB8LjKJtL31cKVmg6F4C57"
+                }
+            }
         }
     },
     "accounts": {
@@ -67,5 +72,5 @@
     ],
     "projectDir": "/home/zamrokk/training-nft-1/training",
     "configFile": "/home/zamrokk/training-nft-1/training/.taq/config.json",
-    "hash": "e6f52a14d67347686b41abcecc1a20e6ff455caf69c69153378a1aa96af1c7d9"
+    "hash": "3bb72beb8526ff0d0029eb623eb24ff453fd483e88539a60399e6d3f53e68ec2"
 }
