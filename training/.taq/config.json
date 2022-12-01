@@ -1,5 +1,23 @@
 {
     "language": "en",
+    "plugins": [
+        {
+            "name": "@taqueria/plugin-core",
+            "type": "npm"
+        },
+        {
+            "name": "@taqueria/plugin-ligo",
+            "type": "npm"
+        },
+        {
+            "name": "@taqueria/plugin-taquito",
+            "type": "npm"
+        },
+        {
+            "name": "@taqueria/plugin-contract-types",
+            "type": "npm"
+        }
+    ],
     "contractsDir": "contracts",
     "artifactsDir": "artifacts",
     "contracts": {
@@ -55,22 +73,5 @@
         "john": "3_000_000_000",
         "jane": "3_000_000_000",
         "joe": "3_000_000_000"
-    },
-    "plugins": [
-        {
-            "name": "@taqueria/plugin-core",
-            "type": "npm"
-        },
-        {
-            "name": "@taqueria/plugin-ligo",
-            "type": "npm"
-        },
-        {
-            "name": "@taqueria/plugin-taquito",
-            "type": "npm"
-        }
-    ],
-    "projectDir": "/home/zamrokk/training-nft-1/training",
-    "configFile": "/home/zamrokk/training-nft-1/training/.taq/config.json",
-    "hash": "3bb72beb8526ff0d0029eb623eb24ff453fd483e88539a60399e6d3f53e68ec2"
+    }
 }

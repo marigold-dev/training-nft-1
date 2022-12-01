@@ -312,21 +312,398 @@ taq deploy nft.tz -e "testing"
 
 # :performing_arts: NFT Marketplace front
 
+## Get the react boilerplate
+
 To win time, we have a boilerplate ready for the UI here : [https://github.com/marigold-dev/training-nft-1/tree/main/reactboilerplate/app](https://github.com/marigold-dev/training-nft-1/tree/main/reactboilerplate/app)
 
-Copy this code into your folder
+Copy this code into your folder (:warning: assuming you have cloned this repo, and your current path is $REPO/training)
 
 ```bash
-cp -r ../reactboilerplate/app .
+cp -r ../reactboilerplateapp/ ./app
 ```
 
 > Note : if you want to understand how it has been made from scratch look at this training => [https://github.com/marigold-dev/training-dapp-1#construction_worker-dapp](https://github.com/marigold-dev/training-dapp-1#construction_worker-dapp)
+
+Generate the typescript classes from Michelson code to your frontend app and run the server
 
 ```bash
 taq install @taqueria/plugin-contract-types
 taq generate types ./app/src
 cd app
+yarn install
 yarn run start
 ```
 
+You have website ready ! You have :
+
+- automatic pull from taqueria last deployed contract address at each start
+- login/logout
+- the general layout / navigation
+
+If you try to connect , then you are redirected to inexistent `/mint` path
+
+## Create the Mint Page
+
+Create the Mint Page
+
+```bash
+touch ./src/MintPage.tsx
+```
+
+Add this code inside the created file :
+
+```typescript
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import { useSnackbar } from "notistack";
+import React from "react";
+import { UserContext, UserContextType } from "./App";
+
+export default function MintPage() {
+  const {} = React.useContext(UserContext) as UserContextType;
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  return (
+    <Box
+      component="main"
+      sx={{
+        flex: 1,
+        py: 6,
+        px: 4,
+        bgcolor: "#eaeff1",
+        backgroundImage:
+          "url(https://en.vinex.market/skin/default/images/banners/home/new/banner-1180.jpg)",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }}
+    >
+      <Paper sx={{ maxWidth: 936, margin: "auto", overflow: "hidden" }}>
+        //TODO
+      </Paper>
+    </Box>
+  );
+}
+```
+
+Update the navigation routes on the `./src/Paperbase.tsx` file.
+Import the Mintpage at the beginning of the file.
+
+```typescript
+import MintPage from "./MintPage";
+```
+
+and at the end of the file, just add this line after `<Route index element={<Welcome />} />`
+
+```typescript
+<Route path={PagesPaths.MINT} element={<MintPage />} />
+```
+
+## Add a form to create the NFT
+
+Replace `//TODO` by
+
+```html
+<form onSubmit={formik.handleSubmit}>
+  <Stack spacing={2} margin={2} alignContent={"center"}>
+    <h1>Mint your wine collection</h1>
+    <TextField
+      id="standard-basic"
+      name="name"
+      label="name"
+      value={formik.values.name}
+      onChange={formik.handleChange}
+      error={formik.touched.name && Boolean(formik.errors.name)}
+      helperText={formik.touched.name && formik.errors.name}
+      variant="standard"
+    />
+    <TextField
+      id="standard-basic"
+      name="symbol"
+      label="symbol"
+      value={formik.values.symbol}
+      onChange={formik.handleChange}
+      error={formik.touched.symbol && Boolean(formik.errors.symbol)}
+      helperText={formik.touched.symbol && formik.errors.symbol}
+      variant="standard"
+    />
+    <TextField
+      id="standard-basic"
+      name="description"
+      label="description"
+      value={formik.values.description}
+      onChange={formik.handleChange}
+      error={formik.touched.description && Boolean(formik.errors.description)}
+      helperText={formik.touched.description && formik.errors.description}
+      variant="standard"
+    />
+
+    <img src={pictureUrl} />
+    <Button variant="contained" component="label" color="primary">
+              <AddCircleOutlined />
+              Upload an image
+              <input
+                type="file"
+                hidden
+                name="data"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const data = e.target.files ? e.target.files[0] : null;
+                  if (data) {
+                    setFile(data);
+                  }
+                  e.preventDefault();
+                }}
+              />
+    </Button>
+    <TextField
+      id="standard-basic"
+      name="token_id"
+      label="token_id"
+      value={formik.values.token_id}
+      disabled
+      variant="standard"
+      type={"number"}
+    />
+    <Button variant="contained" type="submit">
+      Mint
+    </Button>
+  </Stack>
+</form>
+```
+
+Add formik form to your Component
+
+```typescript
+const validationSchema = yup.object({
+  name: yup.string().required("Name is required"),
+  description: yup.string().required("Description is required"),
+  symbol: yup.string().required("Symbol is required"),
+});
+
+const formik = useFormik({
+  initialValues: {
+    name: "",
+    description: "",
+    token_id: 0,
+    symbol: "WINE",
+  } as TZIP21TokenMetadata,
+  validationSchema: validationSchema,
+  onSubmit: (values) => {
+    //TODO mint(values);
+  },
+});
+```
+
+Add `pictureUrl` and `setFile` declaration to display the token image after pinning it to IPFS, and to get the upload file on the form
+
+```typescript
+const [pictureUrl, setPictureUrl] = useState<string>("");
+const [file, setFile] = useState<File | null>(null);
+```
+
+fix missing imports
+
+```typescript
+import { Button, Stack, TextField } from "@mui/material";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import { useSnackbar } from "notistack";
+import React, { useState } from "react";
+import { TZIP21TokenMetadata, UserContext, UserContextType } from "./App";
+
+import { AddCircleOutlined } from "@mui/icons-material";
+import { useFormik } from "formik";
+import * as yup from "yup";
+```
+
+## Code the mint function
+
+Add the mint function and uncomment the `//TODO` on the formik `onSubmit` function as below, also add missing imports :
+
+```typescript
+import { BigNumber } from "bignumber.js";
+import { char2Bytes } from "@taquito/utils";
+import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
+import { bytes, nat } from "./type-aliases";
+import React, { useEffect, useState } from "react";
+
+
+...
+  const formik = useFormik({
+...
+ onSubmit: (values) => {
+      mint(values);
+    },
+...
+
+const mint = async (newTokenDefinition: TZIP21TokenMetadata) => {
+  try {
+    //IPFS
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const requestHeaders: HeadersInit = new Headers();
+      requestHeaders.set(
+        "pinata_api_key",
+        `${process.env.REACT_APP_PINATA_API_KEY}`
+      );
+      requestHeaders.set(
+        "pinata_secret_api_key",
+        `${process.env.REACT_APP_PINATA_API_SECRET}`
+      );
+      // requestHeaders.set("Content-Type", "multipart/form-data");
+
+      const resFile = await fetch(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        {
+          method: "post",
+          body: formData,
+          headers: requestHeaders,
+        }
+      );
+
+      const responseJson = await resFile.json();
+      console.log("responseJson", responseJson);
+
+      const thumbnailUri = `ipfs://${responseJson.IpfsHash}`;
+      setPictureUrl(`https://gateway.pinata.cloud/ipfs/${responseJson.IpfsHash}`);
+
+      const op = await nftContrat!.methods
+        .mint(
+          new BigNumber(newTokenDefinition.token_id) as nat,
+          char2Bytes(newTokenDefinition.name!) as bytes,
+          char2Bytes(newTokenDefinition.description!) as bytes,
+          char2Bytes(newTokenDefinition.symbol!) as bytes,
+          char2Bytes(thumbnailUri) as bytes
+        )
+        .send();
+
+      await op.confirmation(2);
+
+      enqueueSnackbar("Wine collection minted", { variant: "success" });
+
+      refreshUserContextOnPageReload(); //force all app to refresh the context
+    }
+  } catch (error) {
+    console.table(`Error: ${JSON.stringify(error, null, 2)}`);
+    let tibe: TransactionInvalidBeaconError = new TransactionInvalidBeaconError(
+      error
+    );
+    enqueueSnackbar(tibe.data_message, {
+      variant: "error",
+      autoHideDuration: 10000,
+    });
+  }
+};
+```
+
+//TODO Explanations :
+
+-
+-
+-
+
+> Note : use React to fetch a fresh context in case of page reload, replace useContext line by this one
+>
+> ```typescript
+> const {
+>   nftContrat,
+>   refreshUserContextOnPageReload,
+>   storage,
+>   nftContratTokenMetadataMap,
+> } = React.useContext(UserContext) as UserContextType;
+> ```
+
+Finally, if you remember on the backend , we said that token_id increment management was done in the ui, so you can write this code. It is not a good security practice as it supposes that the counter is managed on frontend side, but it is ok for demo purpose.
+
+Add this code, everytime you have a new token minted, you increment the counter for the next one
+
+```typescript
+useEffect(() => {
+  (async () => {
+    if (storage && storage.token_ids.length > 0) {
+      formik.setFieldValue("token_id", storage?.token_ids.length);
+    }
+  })();
+}, [storage?.token_ids]);
+```
+
+## Let's play
+
+1. Connect with your wallet an choose `alice` account (or the administrator you set on the smart contract earlier). You are redirected to the Administration /mint page as there is no nft minted yet
+2. Enter these values on the form for example :
+
+- name : Saint Emilion - Franc la Rose
+- symbol : SEMIL
+- description : Grand cru 2007
+
+3. Click on `Upload an image` an select a bottle picture on your computer
+4. Click on Mint button
+
+Your picture will be psuhed to IPFS and will display, then you are asked to sign the mint operation
+
+- Confirm operation
+- Wait less than 1 minutes until you get the confirmation notification, the page will refresh automatically
+
+To display the list of minted nfts, you can add this html section on React template, before or after the form :
+
+```html
+{nftContratTokenMetadataMap.size != 0 ? (
+          Array.from(nftContratTokenMetadataMap!.entries()).map(
+            ([token_id, item]) => (
+              <Card key={token_id.toString()}>
+                <CardHeader
+                  avatar={
+                    <Avatar sx={{ bgcolor: "purple" }} aria-label="recipe">
+                      {token_id}
+                    </Avatar>
+                  }
+                  title={item.name}
+                  subheader={item.symbol}
+                />
+                <CardMedia
+                  component="img"
+                  height="194"
+                  image={item.thumbnailUri?.replace(
+                    "ipfs://",
+                    "https://gateway.pinata.cloud/ipfs/"
+                  )}
+                />
+                <CardContent>
+                  <Typography variant="body2" color="text.secondary">
+                    {item.description}
+                  </Typography>
+                </CardContent>
+              </Card>
+            )
+          )
+        ) : (
+          <Fragment />
+        )}
+```
+
+Add also missing imports
+
+```typescript
+import {
+  Avatar,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import React, { Fragment, useEffect, useState } from "react";
+```
+
+Now you can see all NFTs
+
 # Next
+
+You are able to create an NFT collection from the ligo library. On next, training, you will add the Buy/Sell function to your smart contract and update the frontend to play with it
+
+//TODO pictures to include everywhere
