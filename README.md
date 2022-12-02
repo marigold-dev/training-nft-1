@@ -2,8 +2,6 @@
 
 Training n°1 for NFT marketplace
 
-![](https://i.imgflip.com/4dpglt.png)
-
 Introduction : Business objects managed by a blockchain are called `assets`. On Tezos you will find the term `Financial Asset`.
 Here below different categorization of assets.
 
@@ -23,7 +21,7 @@ Plan of the training course :
 - NFT 3 : use FA2 single asset template to build another kind of marketplace
 - NFT 4 : use FA2 multi asset template to build last complex kind of marketplace
 
-//TODO PHOTO final ui
+![](https://i.imgflip.com/4dpglt.png)
 
 ## :performing_arts: What are NFTs?
 
