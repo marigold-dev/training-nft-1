@@ -21,6 +21,12 @@ Plan of the training course :
 - NFT 3 : use FA2 single asset template to build another kind of marketplace
 - NFT 4 : use FA2 multi asset template to build last complex kind of marketplace
 
+| Token template | # of token_type | # of item per token_type |
+| -------------- | --------------- | ------------------------ |
+| nft            | 0..n            | 1                        |
+| single asset   | 0..1            | 1..n                     |
+| multi asset    | 0..n            | 1..n                     |
+
 ![](https://i.imgflip.com/4dpglt.png)
 
 ## :performing_arts: What are NFTs?
