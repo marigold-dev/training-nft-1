@@ -75,7 +75,6 @@ export default function MintPage() {
           "pinata_secret_api_key",
           `${process.env.REACT_APP_PINATA_API_SECRET}`
         );
-        // requestHeaders.set("Content-Type", "multipart/form-data");
 
         const resFile = await fetch(
           "https://api.pinata.cloud/pinning/pinFileToIPFS",

@@ -17,7 +17,7 @@ You can play with the final demo here : [https://demo.winefactory.marigold.dev/]
 Plan of the training course :
 
 - NFT 1 : use FA2 nft template to understand the basics
-- NFT 2 : finish FA2 nft complete marketplace
+- NFT 2 : finish FA2 nft marketplace
 - NFT 3 : use FA2 single asset template to build another kind of marketplace
 - NFT 4 : use FA2 multi asset template to build last complex kind of marketplace
 
@@ -552,7 +552,6 @@ const mint = async (newTokenDefinition: TZIP21TokenMetadata) => {
         "pinata_secret_api_key",
         `${process.env.REACT_APP_PINATA_API_SECRET}`
       );
-      // requestHeaders.set("Content-Type", "multipart/form-data");
 
       const resFile = await fetch(
         "https://api.pinata.cloud/pinning/pinFileToIPFS",
@@ -600,9 +599,11 @@ const mint = async (newTokenDefinition: TZIP21TokenMetadata) => {
 
 //TODO Explanations :
 
--
--
--
+- on Mint button click, we upload a file and then we call the `pinata API` to push the file to `IPFS`. It returns the hash
+- hash is used in two different ways
+  - https pinata gateway link (or any other ipfs http viewer)
+  - ipfs link for the backend thumbnail url
+- TZIP standard requires to store data in `bytes`. As there is no Michelson function to convert string to bytes (using Micheline data PACK will not work as it alters the final bytes), we do the conversion using `char2Bytes` on the frontend side
 
 > Note : use React to fetch a fresh context in case of page reload, replace useContext line by this one
 >
@@ -702,8 +703,12 @@ import React, { Fragment, useEffect, useState } from "react";
 
 Now you can see all NFTs
 
-# Next
+# :palm_tree: Conclusion :sun_with_face:
 
-You are able to create an NFT collection from the ligo library. On next, training, you will add the Buy/Sell function to your smart contract and update the frontend to play with it
+You are able to create an NFT collection marketplace from the ligo library.
+
+On next, training, you will add the Buy/Sell function to your smart contract and update the frontend to play with it
+
+[:arrow_right: NEXT](https://github.com/marigold-dev/training-nft-1)
 
 //TODO pictures to include everywhere
