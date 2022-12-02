@@ -117,15 +117,9 @@ Remove the default code and paste this code instead
     ]));
 */
 
-type bid = {
-  owner : address,
-  price : nat
-};
-
 type storage =
   {
     administrator: address,
-    bids: map<nat,bid>,  //user sell a bid
     ledger: NFT.Ledger.t,
     metadata: NFT.Metadata.t,
     token_metadata: NFT.TokenMetadata.t,
@@ -137,8 +131,6 @@ type ret = [list<operation>, storage];
 
 type parameter =
   | ["Mint", nat,bytes,bytes,bytes,bytes] //token_id, name , description  ,symbol , ipfsUrl
-  | ["Buy", nat, address]  //buy token_id at a seller offer price
-  | ["Sell", nat, nat]  //sell token_id at a price
   | ["Transfer", NFT.transfer]
   | ["Balance_of", NFT.balance_of]
   | ["Update_operators", NFT.update_operators];
@@ -147,8 +139,6 @@ type parameter =
 const main = ([p, s]: [parameter,storage]): ret =>
     match(p, {
      Mint: (p: [nat,bytes,bytes,bytes,bytes]) => [list([]),s],
-     Buy: (p : [nat,address]) => [list([]),s],
-     Sell: (p : [nat,nat]) => [list([]),s],
      Transfer: (p: NFT.transfer) => [list([]),s],
      Balance_of: (p: NFT.balance_of) => [list([]),s],
      Update_operators: (p: NFT.update_operator) => [list([]),s],
@@ -159,10 +149,9 @@ Explanations :
 
 - the first line `#import "@ligo/fa/lib/fa2/nft/NFT.jsligo" "NFT"` imports the ligo FA library
 - `storage` definition is an extension of the imported library storage `(NFT.Ledger.t,NFT.Metadata.t,NFT.TokenMetadata.t,NFT.Operators.t,set<NFT.Storage.token_id>)`
-- `storage` has more fields to support an `administrator` and `bids`, a map of bids for each nft sold by an owner
-- a `bid` is a nft sale at a price owned by someone
+- `storage` has more fields to support an `administrator`
 - `parameter` definition is an extension of the imported library entrypoints `(NFT.transfer,NFT.balance_of,NFT.update_operators)`
-- `parameter` has more entrypoints to allow to create nfts `Mint` and two other for selling/buying `(Sell,Buy)`
+- `parameter` has more entrypoints to allow to create nfts `Mint`
 
 Compile the contract
 
@@ -242,8 +231,6 @@ const mint = (token_id : nat, name :bytes, description:bytes ,symbol :bytes, ipf
 const main = ([p, s]: [parameter,storage]): ret =>
     match(p, {
      Mint: (p: [nat,bytes,bytes,bytes,bytes]) => mint(p[0],p[1],p[2],p[3],p[4],s),
-     Buy: (p : [nat,address]) => [list([]),s],
-     Sell: (p : [nat,nat]) => [list([]),s],
      Transfer: (p: NFT.transfer) => [list([]),s],
      Balance_of: (p: NFT.balance_of) => [list([]),s],
      Update_operators: (p: NFT.update_operator) => [list([]),s],
@@ -258,8 +245,6 @@ Explanations :
 - by default, the `quantity` for an nft is `1`, that is why every bottle is unique and we don't need to set a total supply on each nft.
 - if you want to know the `size of the nft collection`, look at `token_ids` size. This is used as a `cache` key index of the `token_metadata` big_map. By definition a big map in Tezos can be access through a key, but you need to know the key, there is no function to return the keyset. This is why we keep trace of all token_id in this set, so we can loop and read/update information on nfts
 
-> Note : on next training you will implement Sell/Buy entrypoints
-
 We have finished the smart contract implementation for this first training, let's prepare the deployment to ghostnet.
 
 Edit the storage file `nft.storageList.jsligo` as it. (:warning: you can change the `administrator` address to your own address or keep `alice`)
@@ -269,7 +254,6 @@ Edit the storage file `nft.storageList.jsligo` as it. (:warning: you can change 
 const default_storage =
 {
     administrator: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address,
-    bids: Map.empty as map<nat,bid>,
     ledger: Big_map.empty as NFT.Ledger.t,
     metadata: Big_map.empty as NFT.Metadata.t,
     token_metadata: Big_map.empty as NFT.TokenMetadata.t,
