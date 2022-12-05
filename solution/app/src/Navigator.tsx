@@ -15,7 +15,7 @@ import { UserContext, UserContextType } from "./App";
 export enum PagesPaths {
   WELCOME = "",
   CATALOG = "catalogue",
-  BIDS = "bids",
+  OFFERS = "offers",
   MINT = "mint",
 }
 
