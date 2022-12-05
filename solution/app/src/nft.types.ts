@@ -3,7 +3,7 @@ import { ContractAbstractionFromContractType, WalletContractAbstractionFromContr
 import { address, BigMap, bytes, contract, MMap, nat } from './type-aliases';
 
 export type Storage = {
-    administrator: address;
+    administrators: Array<address>;
     bids: MMap<nat, {
         owner: address;
         price: nat;
@@ -22,6 +22,7 @@ export type Storage = {
 };
 
 type Methods = {
+    addAdministrator: (param: address) => Promise<void>;
     balance_of: (
         requests: Array<{
             owner: address;
@@ -49,6 +50,7 @@ type Methods = {
             txs: Array<{
                 to_: address;
                 token_id: nat;
+                amount: nat;
             }>;
         }>) => Promise<void>;
     add_operator: (
@@ -64,6 +66,7 @@ type Methods = {
 };
 
 type MethodsObject = {
+    addAdministrator: (param: address) => Promise<void>;
     balance_of: (params: {
         requests: Array<{
             owner: address;
@@ -91,6 +94,7 @@ type MethodsObject = {
             txs: Array<{
                 to_: address;
                 token_id: nat;
+                amount: nat;
             }>;
         }>) => Promise<void>;
     add_operator: (params: {

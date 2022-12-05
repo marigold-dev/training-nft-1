@@ -20,7 +20,7 @@ type bid = {
 
 type storage =
   {
-    administrator: address,
+    administrators: set<address>,
     bids: map<nat,bid>,  //user sell a bid 
     ledger: NFT.Ledger.t,
     metadata: NFT.Metadata.t,
@@ -32,7 +32,8 @@ type storage =
 type ret = [list<operation>, storage];
 
 type parameter =
-  | ["Mint", nat,bytes,bytes,bytes,bytes] //token_id, name , description  ,symbol , ipfsUrl 
+  | ["Mint", nat,bytes,bytes,bytes,bytes] //token_id, name , description  ,symbol , ipfsUrl
+  | ["AddAdministrator" , address]  
   | ["Buy", nat, address]  //buy token_id at a seller offer price
   | ["Sell", nat, nat]  //sell token_id at a price
   | ["Transfer", NFT.transfer]
@@ -42,7 +43,7 @@ type parameter =
 
 const mint = (token_id : nat, name :bytes, description:bytes ,symbol :bytes, ipfsUrl:bytes, s: storage) : ret => {
       
-   if(Tezos.get_sender() != s.administrator) return failwith("1");
+   if(! Set.mem(Tezos.get_sender(), s.administrators)) return failwith("1");
    
    const token_info: map<string, bytes> = 
      Map.literal(list([
@@ -73,7 +74,7 @@ const mint = (token_id : nat, name :bytes, description:bytes ,symbol :bytes, ipf
 
     return [list([]) as list<operation>,
           {...s,
-     ledger: Big_map.add(token_id,s.administrator ,s.ledger) as NFT.Ledger.t,
+     ledger: Big_map.add(token_id,Tezos.get_sender(),s.ledger) as NFT.Ledger.t,
      metadata : Big_map.literal(list([["",  bytes `tezos-storage:data`],["data", metadata]])),
      token_metadata: Big_map.add(token_id, {token_id: token_id,token_info:token_info},s.token_metadata),
      operators: Big_map.empty as NFT.Operators.t,
@@ -83,6 +84,7 @@ const mint = (token_id : nat, name :bytes, description:bytes ,symbol :bytes, ipf
 const main = ([p, s]: [parameter,storage]): ret => 
     match(p, {
      Mint: (p: [nat,bytes,bytes,bytes,bytes]) => mint(p[0],p[1],p[2],p[3],p[4],s),
+     AddAdministrator : (p : address) => {if(Set.mem(Tezos.get_sender(), s.administrators)){ return [list([]),{...s,administrators:Set.add(p, s.administrators)}]} else {return failwith("1");}} ,
      Buy: (p : [nat,address]) => [list([]),s],
      Sell: (p : [nat,nat]) => [list([]),s],
      Transfer: (p: NFT.transfer) => {

@@ -1,7 +1,7 @@
 #include "nft.jsligo"
 const default_storage = 
 {
-    administrator: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address,
+    administrators: Set.literal(list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address])) as set<address>,
     bids: Map.empty as map<nat,bid>, 
     ledger: Big_map.empty as NFT.Ledger.t,
     metadata: Big_map.empty as NFT.Metadata.t,

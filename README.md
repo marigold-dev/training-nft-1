@@ -125,7 +125,7 @@ Remove the default code and paste this code instead
 
 type storage =
   {
-    administrator: address,
+    administrators: set<address>,
     ledger: NFT.Ledger.t,
     metadata: NFT.Metadata.t,
     token_metadata: NFT.TokenMetadata.t,
@@ -137,6 +137,7 @@ type ret = [list<operation>, storage];
 
 type parameter =
   | ["Mint", nat,bytes,bytes,bytes,bytes] //token_id, name , description  ,symbol , ipfsUrl
+  | ["AddAdministrator" , address]
   | ["Transfer", NFT.transfer]
   | ["Balance_of", NFT.balance_of]
   | ["Update_operators", NFT.update_operators];
@@ -145,6 +146,7 @@ type parameter =
 const main = ([p, s]: [parameter,storage]): ret =>
     match(p, {
      Mint: (p: [nat,bytes,bytes,bytes,bytes]) => [list([]),s],
+     AddAdministrator : (p : address) => {if(Set.mem(Tezos.get_sender(), s.administrators)){ return [list([]),{...s,administrators:Set.add(p, s.administrators)}]} else {return failwith("1");}} ,
      Transfer: (p: NFT.transfer) => [list([]),s],
      Balance_of: (p: NFT.balance_of) => [list([]),s],
      Update_operators: (p: NFT.update_operator) => [list([]),s],
@@ -155,9 +157,10 @@ Explanations :
 
 - the first line `#import "@ligo/fa/lib/fa2/nft/NFT.jsligo" "NFT"` imports the ligo FA library
 - `storage` definition is an extension of the imported library storage `(NFT.Ledger.t,NFT.Metadata.t,NFT.TokenMetadata.t,NFT.Operators.t,set<NFT.Storage.token_id>)`
-- `storage` has more fields to support an `administrator`
+- `storage` has more fields to support a set of `administrators`
 - `parameter` definition is an extension of the imported library entrypoints `(NFT.transfer,NFT.balance_of,NFT.update_operators)`
 - `parameter` has more entrypoints to allow to create nfts `Mint`
+- `parameter` has an entrypoint `AddAdministrator`to add new administrators
 
 Compile the contract
 
@@ -196,7 +199,7 @@ Let's add the `Mint` function now. Add the new function, and update the main fun
 ```jsligo
 const mint = (token_id : nat, name :bytes, description:bytes ,symbol :bytes, ipfsUrl:bytes, s: storage) : ret => {
 
-   if(Tezos.get_sender() != s.administrator) return failwith("1");
+   if(! Set.mem(Tezos.get_sender(), s.administrators)) return failwith("1");
 
    const token_info: map<string, bytes> =
      Map.literal(list([
@@ -227,7 +230,7 @@ const mint = (token_id : nat, name :bytes, description:bytes ,symbol :bytes, ipf
 
     return [list([]) as list<operation>,
           {...s,
-     ledger: Big_map.add(token_id,s.administrator ,s.ledger) as NFT.Ledger.t,
+     ledger: Big_map.add(token_id,Tezos.get_sender(),s.ledger) as NFT.Ledger.t,
      metadata : Big_map.literal(list([["",  bytes `tezos-storage:data`],["data", metadata]])),
      token_metadata: Big_map.add(token_id, {token_id: token_id,token_info:token_info},s.token_metadata),
      operators: Big_map.empty as NFT.Operators.t,
@@ -237,6 +240,7 @@ const mint = (token_id : nat, name :bytes, description:bytes ,symbol :bytes, ipf
 const main = ([p, s]: [parameter,storage]): ret =>
     match(p, {
      Mint: (p: [nat,bytes,bytes,bytes,bytes]) => mint(p[0],p[1],p[2],p[3],p[4],s),
+     AddAdministrator : (p : address) => {if(Set.mem(Tezos.get_sender(), s.administrators)){ return [list([]),{...s,administrators:Set.add(p, s.administrators)}]} else {return failwith("1");}} ,
      Transfer: (p: NFT.transfer) => [list([]),s],
      Balance_of: (p: NFT.balance_of) => [list([]),s],
      Update_operators: (p: NFT.update_operator) => [list([]),s],
