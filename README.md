@@ -63,6 +63,7 @@ Please install this software first on your machine :
 - [ ] (Recommended) [ligo VS Code extension](https://marketplace.visualstudio.com/items?itemName=ligolang-publish.ligo-vscode) : for smart contract highlighting, completion, etc ..
 - [ ] (Recommended) [Temple wallet](https://templewallet.com/) : an easy to use Tezos wallet in your browser (Or any other one with ghostnet support)
 - [ ] [Docker](https://docs.docker.com/engine/install/) Taqueria works with Docker running
+- [ ] [jq](https://stedolan.github.io/jq/download/) To be able to extract taqueria json data
 
 # :scroll: Smart contract
 
@@ -602,7 +603,7 @@ Explanations :
   - ipfs link for the backend thumbnail url
 - TZIP standard requires to store data in `bytes`. As there is no Michelson function to convert string to bytes (using Micheline data PACK will not work as it alters the final bytes), we do the conversion using `char2Bytes` on the frontend side
 
-> Note : use React to fetch a fresh context in case of page reload, replace useContext line by this one
+> Note : use React to fetch a fresh context in case of page reload, replace `React.useContext` line by this one
 >
 > ```typescript
 > const {
