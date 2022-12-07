@@ -514,7 +514,7 @@ import * as yup from "yup";
 
 ## Code the mint function
 
-Add the mint function and remove the `//TODO` comment to activate mint call on the formik `onSubmit` function as below, also add missing imports :
+Add the mint function and also remove the `//TODO` comment to activate mint call on the formik `onSubmit` function as below, also add missing imports :
 
 ```typescript
 import { BigNumber } from "bignumber.js";
@@ -594,7 +594,7 @@ const mint = async (newTokenDefinition: TZIP21TokenMetadata) => {
 };
 ```
 
-//TODO Explanations :
+Explanations :
 
 - on Mint button click, we upload a file and then we call the `pinata API` to push the file to `IPFS`. It returns the hash
 - hash is used in two different ways
