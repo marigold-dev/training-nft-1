@@ -35,7 +35,6 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "startHACK": "react-app-rewired start",
     "start": "if test -f .env; then sed -i \"s/\\(REACT_APP_CONTRACT_ADDRESS *= *\\).*/\\1$(jq -r 'last(.tasks[]).output[0].address' ../.taq/testing-state.json)/\" .env ; else jq -r '\"REACT_APP_CONTRACT_ADDRESS=\" + last(.tasks[]).output[0].address' ../.taq/testing-state.json > .env ; fi && react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",

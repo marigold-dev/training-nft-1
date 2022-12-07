@@ -331,6 +331,9 @@ yarn install
 yarn run start
 ```
 
+> Note : On Mac, sed does not work as Unix, change the start script on package.json to
+> `   "start": "if test -f .env; then sed -i '' \"s/\\(REACT_APP_CONTRACT_ADDRESS *= *\\).*/\\1$(jq -r 'last(.tasks[]).output[0].address' ../.taq/testing-state.json)/\" .env ; else jq -r '\"REACT_APP_CONTRACT_ADDRESS=\" + last(.tasks[]).output[0].address' ../.taq/testing-state.json > .env ; fi && react-app-rewired start",`
+
 You have website ready ! You have :
 
 - automatic pull from taqueria last deployed contract address at each start
