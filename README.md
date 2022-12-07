@@ -397,7 +397,7 @@ and at the end of the file, just add this line after `<Route index element={<Wel
 
 ## Add a form to create the NFT
 
-Replace `//TODO` by
+In `MintPage.tsx`, replace `//TODO` by
 
 ```html
 <form onSubmit={formik.handleSubmit}>
@@ -467,7 +467,7 @@ Replace `//TODO` by
 </form>
 ```
 
-Add formik form to your Component
+Add `formik` form to your Component function MintPage
 
 ```typescript
 const validationSchema = yup.object({
@@ -490,14 +490,14 @@ const formik = useFormik({
 });
 ```
 
-Add `pictureUrl` and `setFile` declaration to display the token image after pinning it to IPFS, and to get the upload file on the form
+Again, on the Component function MintPage, add `pictureUrl` and `setFile` declaration to display the token image after pinning it to IPFS, and to get the upload file on the form
 
 ```typescript
 const [pictureUrl, setPictureUrl] = useState<string>("");
 const [file, setFile] = useState<File | null>(null);
 ```
 
-fix missing imports
+Fix missing imports
 
 ```typescript
 import { Button, Stack, TextField } from "@mui/material";
@@ -514,7 +514,7 @@ import * as yup from "yup";
 
 ## Code the mint function
 
-Add the mint function and uncomment the `//TODO` on the formik `onSubmit` function as below, also add missing imports :
+Add the mint function and remove the `//TODO` comment to activate mint call on the formik `onSubmit` function as below, also add missing imports :
 
 ```typescript
 import { BigNumber } from "bignumber.js";
@@ -522,16 +522,15 @@ import { char2Bytes } from "@taquito/utils";
 import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
 import { bytes, nat } from "./type-aliases";
 import React, { useEffect, useState } from "react";
+```
 
-
-...
-  const formik = useFormik({
-...
+```typescript
  onSubmit: (values) => {
       mint(values);
     },
-...
+```
 
+```typescript
 const mint = async (newTokenDefinition: TZIP21TokenMetadata) => {
   try {
     //IPFS
@@ -562,7 +561,9 @@ const mint = async (newTokenDefinition: TZIP21TokenMetadata) => {
       console.log("responseJson", responseJson);
 
       const thumbnailUri = `ipfs://${responseJson.IpfsHash}`;
-      setPictureUrl(`https://gateway.pinata.cloud/ipfs/${responseJson.IpfsHash}`);
+      setPictureUrl(
+        `https://gateway.pinata.cloud/ipfs/${responseJson.IpfsHash}`
+      );
 
       const op = await nftContrat!.methods
         .mint(
