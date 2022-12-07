@@ -2,7 +2,7 @@
 
 Training n°1 for NFT marketplace
 
-Introduction : Business objects managed by a blockchain are called `assets`. On Tezos you will find the term `Financial Asset`.
+Introduction : Business objects managed by a blockchain are called `assets`. On Tezos you will find the term `Financial Asset or FA` with different version 1, 2 or 2.1.
 Here below different categorization of assets.
 
 ![](http://jingculturecommerce.com/wp-content/uploads/2021/03/nft-assets-1024x614.jpg)
