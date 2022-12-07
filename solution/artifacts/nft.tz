@@ -12,10 +12,9 @@
                (or (pair %add_operator (address %owner) (address %operator) (nat %token_id))
                    (pair %remove_operator (address %owner) (address %operator) (nat %token_id)))))) ;
   storage
-    (pair (pair (pair (set %administrators address)
-                      (map %offers nat (pair (address %owner) (nat %price))))
-                (big_map %ledger nat address)
-                (big_map %metadata string bytes))
+    (pair (pair (pair (set %administrators address) (big_map %ledger nat address))
+                (big_map %metadata string bytes)
+                (map %offers nat (pair (address %owner) (nat %price))))
           (pair (big_map %operators (pair address address) (set nat)) (set %token_ids nat))
           (big_map %token_metadata nat (pair (nat %token_id) (map %token_info string bytes)))) ;
   code { LAMBDA
@@ -104,11 +103,11 @@
                      DUP 4 ;
                      CAR ;
                      CDR ;
-                     CDR ;
+                     CAR ;
                      DUP 5 ;
                      CAR ;
-                     CDR ;
                      CAR ;
+                     CDR ;
                      PAIR ;
                      PAIR ;
                      PAIR ;
@@ -155,29 +154,29 @@
                      DUP 3 ;
                      CAR ;
                      CDR ;
-                     CDR ;
                      DUP 3 ;
                      CDR ;
                      CAR ;
                      CAR ;
                      CAR ;
+                     DIG 4 ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
                      PAIR ;
-                     DIG 3 ;
-                     CAR ;
-                     CAR ;
                      PAIR ;
                      PAIR ;
                      DUP ;
                      CDR ;
-                     DUP 3 ;
+                     DUP 2 ;
+                     CAR ;
+                     CDR ;
+                     CDR ;
+                     DUP 4 ;
                      CDR ;
                      CAR ;
                      CAR ;
                      CDR ;
-                     DUP 3 ;
-                     CAR ;
-                     CDR ;
-                     CAR ;
                      PAIR ;
                      DIG 2 ;
                      CAR ;
@@ -253,24 +252,28 @@
                           DUP 4 ;
                           CAR ;
                           CDR ;
-                          CDR ;
                           DUP 5 ;
                           CAR ;
-                          CDR ;
                           CAR ;
+                          CDR ;
                           SENDER ;
                           DUP 5 ;
                           SWAP ;
                           SOME ;
                           SWAP ;
                           UPDATE ;
+                          DUP 6 ;
+                          CAR ;
+                          CAR ;
+                          CAR ;
                           PAIR ;
-                          DUP 5 ;
-                          CAR ;
-                          CAR ;
                           PAIR ;
                           PAIR ;
                           DUP ;
+                          CDR ;
+                          DUP 2 ;
+                          CAR ;
+                          CDR ;
                           CDR ;
                           EMPTY_BIG_MAP string bytes ;
                           PUSH bytes
@@ -282,10 +285,6 @@
                           SOME ;
                           PUSH string "" ;
                           UPDATE ;
-                          DUP 3 ;
-                          CAR ;
-                          CDR ;
-                          CAR ;
                           PAIR ;
                           DIG 2 ;
                           CAR ;
@@ -399,11 +398,11 @@
                      DUP 4 ;
                      CAR ;
                      CDR ;
-                     CDR ;
+                     CAR ;
                      DUP 5 ;
                      CAR ;
-                     CDR ;
                      CAR ;
+                     CDR ;
                      PAIR ;
                      PAIR ;
                      PAIR ;
@@ -486,29 +485,29 @@
                      DUP 3 ;
                      CAR ;
                      CDR ;
-                     CDR ;
                      DUP 3 ;
                      CDR ;
                      CAR ;
                      CAR ;
                      CAR ;
+                     DIG 4 ;
+                     CAR ;
+                     CAR ;
+                     CAR ;
                      PAIR ;
-                     DIG 3 ;
-                     CAR ;
-                     CAR ;
                      PAIR ;
                      PAIR ;
                      DUP ;
                      CDR ;
-                     DUP 3 ;
+                     DUP 2 ;
+                     CAR ;
+                     CDR ;
+                     CDR ;
+                     DUP 4 ;
                      CDR ;
                      CAR ;
                      CAR ;
                      CDR ;
-                     DUP 3 ;
-                     CAR ;
-                     CDR ;
-                     CAR ;
                      PAIR ;
                      DIG 2 ;
                      CAR ;
@@ -579,11 +578,11 @@
                  DUP 4 ;
                  CAR ;
                  CDR ;
-                 CDR ;
+                 CAR ;
                  DUP 5 ;
                  CAR ;
-                 CDR ;
                  CAR ;
+                 CDR ;
                  PAIR ;
                  PAIR ;
                  PAIR ;
@@ -702,29 +701,29 @@
                  DUP 3 ;
                  CAR ;
                  CDR ;
-                 CDR ;
                  DUP 3 ;
                  CDR ;
                  CAR ;
                  CAR ;
                  CAR ;
+                 DIG 4 ;
+                 CAR ;
+                 CAR ;
+                 CAR ;
                  PAIR ;
-                 DIG 3 ;
-                 CAR ;
-                 CAR ;
                  PAIR ;
                  PAIR ;
                  DUP ;
                  CDR ;
-                 DUP 3 ;
+                 DUP 2 ;
+                 CAR ;
+                 CDR ;
+                 CDR ;
+                 DUP 4 ;
                  CDR ;
                  CAR ;
                  CAR ;
                  CDR ;
-                 DUP 3 ;
-                 CAR ;
-                 CDR ;
-                 CAR ;
                  PAIR ;
                  DIG 2 ;
                  CAR ;

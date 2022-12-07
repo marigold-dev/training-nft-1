@@ -262,15 +262,16 @@ Edit the storage file `nft.storageList.jsligo` as it. (:warning: you can change 
 ```jsligo
 #include "nft.jsligo"
 const default_storage =
-{
-    administrator: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address,
-    ledger: Big_map.empty as NFT.Ledger.t,
-    metadata: Big_map.empty as NFT.Metadata.t,
-    token_metadata: Big_map.empty as NFT.TokenMetadata.t,
-    operators: Big_map.empty as NFT.Operators.t,
-    token_ids : Set.empty as set<NFT.Storage.token_id>
-  }
-;
+  {administrators: Set.literal(list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb"
+      as address]))
+    as set<address>,
+   offers: Map.empty as map<nat, offer>,
+   ledger: Big_map.empty as NFT.Ledger.t,
+   metadata: Big_map.empty as NFT.Metadata.t,
+   token_metadata: Big_map.empty as NFT.TokenMetadata.t,
+   operators: Big_map.empty as NFT.Operators.t,
+   token_ids: Set.empty as set<NFT.Storage.token_id>
+   };
 ```
 
 Compile again and deploy to ghostnet
