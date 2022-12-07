@@ -1,6 +1,6 @@
 #include "nft.jsligo"
-const default_storage = 
-  {administrators: Set.literal(list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb"
+const default_storage = {
+   administrators: Set.literal(list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb"
       as address]))
     as set<address>,
    offers: Map.empty as map<nat, offer>,

@@ -62,6 +62,7 @@ Please install this software first on your machine :
 - [ ] (Optional) [taqueria VS Code extension](https://marketplace.visualstudio.com/items?itemName=ecadlabs.taqueria-vscode) : visualize your project and execute tasks
 - [ ] (Recommended) [ligo VS Code extension](https://marketplace.visualstudio.com/items?itemName=ligolang-publish.ligo-vscode) : for smart contract highlighting, completion, etc ..
 - [ ] (Recommended) [Temple wallet](https://templewallet.com/) : an easy to use Tezos wallet in your browser (Or any other one with ghostnet support)
+- [ ] [Docker](https://docs.docker.com/engine/install/) Taqueria works with Docker running
 
 # :scroll: Smart contract
 
