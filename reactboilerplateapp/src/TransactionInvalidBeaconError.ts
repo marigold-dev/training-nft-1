@@ -6,7 +6,7 @@ const errorMap: Map<string, string> = new Map([
   ["4", "You entered a quantity to buy than is more than the offer quantity"],
   [
     "5",
-    "Not enough funds, you need to pay at least quantity * offer price to get the tokens",
+    "Not enough funds, you need to pay at least quantity * bif price to get the tokens",
   ],
   ["6", "Cannot find the contract relative to implicit address"],
 ]);

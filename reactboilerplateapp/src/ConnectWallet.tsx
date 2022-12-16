@@ -1,4 +1,6 @@
 import { NetworkType } from "@airgap/beacon-sdk";
+import { Wallet } from "@mui/icons-material";
+import { Button } from "@mui/material";
 import { BeaconWallet } from "@taquito/beacon-wallet";
 import { TezosToolkit } from "@taquito/taquito";
 import { Dispatch, SetStateAction } from "react";
@@ -28,7 +30,7 @@ const ConnectButton = ({
       await wallet.requestPermissions({
         network: {
           type: NetworkType.GHOSTNET,
-          rpcUrl: "https://ghostnet.tezos.marigold.dev",
+          rpcUrl: process.env["REACT_APP_TEZOS_NODE"]!,
         },
       });
       // gets user's address
@@ -45,13 +47,10 @@ const ConnectButton = ({
   };
 
   return (
-    <div className="buttons">
-      <button className="button" onClick={connectWallet}>
-        <span>
-          <i className="fas fa-wallet"></i>&nbsp; Connect with wallet
-        </span>
-      </button>
-    </div>
+    <Button sx={{ p: 1 }} onClick={connectWallet}>
+      <Wallet />
+      &nbsp; Connect wallet
+    </Button>
   );
 };
 

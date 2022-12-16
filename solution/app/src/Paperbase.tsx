@@ -1,8 +1,7 @@
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
-import Link from "@mui/material/Link";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Typography from "@mui/material/Typography";
+import Toolbar from "@mui/material/Toolbar";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as React from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
@@ -10,49 +9,34 @@ import { UserContext, UserContextType } from "./App";
 import Header from "./Header";
 import MintPage from "./MintPage";
 import Navigator, { PagesPaths } from "./Navigator";
-import Welcome from "./Welcome";
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://www.marigold.dev/">
-        Marigold
-      </Link>{" "}
-      {new Date().getFullYear()}.
-    </Typography>
-  );
-}
+import OffersPage from "./OffersPage";
+import WineCataloguePage from "./WineCataloguePage";
 
 let theme = createTheme({
   palette: {
     primary: {
-      light: "#63ccff",
-      main: "#009be5",
-      dark: "#006db3",
+      main: "#ffffff",
+    },
+    secondary: {
+      main: "#D8464E",
+    },
+    background: {
+      default: "#1C1D22",
+      paper: "#1C1D22",
+    },
+    text: {
+      primary: "#ffffff",
+      secondary: "#A0A0A0",
     },
   },
   typography: {
-    h5: {
-      fontWeight: 500,
-      fontSize: 26,
-      letterSpacing: 0.5,
-    },
-  },
-  shape: {
-    borderRadius: 8,
-  },
-  components: {
-    MuiTab: {
-      defaultProps: {
-        disableRipple: true,
-      },
-    },
-  },
-  mixins: {
-    toolbar: {
-      minHeight: 48,
-    },
+    fontFamily: [
+      "Roboto Mono",
+      "monospace",
+      "Helvetica Neue",
+      "Arial",
+      "sans-serif",
+    ].join(","),
   },
 });
 
@@ -62,7 +46,68 @@ theme = {
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          backgroundColor: "#081627",
+          backgroundColor: "#2B2A2E",
+          borderRight: "none",
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        body1: {
+          color: theme.palette.primary.main,
+        },
+        body2: {
+          color: theme.palette.text.secondary,
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+          backgroundColor: theme.palette.secondary.main,
+          color: theme.palette.primary.main,
+        },
+      },
+    },
+    MuiButtonBase: {
+      styleOverrides: {
+        root: {
+          borderRadius: "0",
+          padding: 0,
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        input: {
+          padding: 0,
+          color: theme.palette.text.secondary,
+          "&.Mui-disabled": {
+            color: theme.palette.secondary.main,
+            WebkitTextFillColor: theme.palette.secondary.main,
+          },
+        },
+      },
+    },
+    MuiFilledInput: {
+      styleOverrides: {
+        input: {
+          color: theme.palette.text.secondary,
+          "&.Mui-disabled": {
+            color: theme.palette.secondary.main,
+            WebkitTextFillColor: theme.palette.secondary.main,
+          },
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          "&.Mui-disabled": {
+            color: theme.palette.secondary.main,
+            WebkitTextFillColor: theme.palette.secondary.main,
+          },
         },
       },
     },
@@ -70,97 +115,92 @@ theme = {
       styleOverrides: {
         root: {
           textTransform: "none",
-        },
-        contained: {
+          backgroundColor: theme.palette.secondary.main,
+          color: theme.palette.primary.main,
+          padding: 0,
           boxShadow: "none",
+          borderRadius: "0",
           "&:active": {
+            boxShadow: "none",
+          },
+          "&:hover": {
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.secondary.main,
             boxShadow: "none",
           },
         },
       },
     },
-    MuiTabs: {
+
+    MuiFormLabel: {
       styleOverrides: {
         root: {
-          marginLeft: theme.spacing(1),
-        },
-        indicator: {
-          height: 3,
-          borderTopLeftRadius: 3,
-          borderTopRightRadius: 3,
-          backgroundColor: theme.palette.common.white,
+          color: theme.palette.text.primary,
         },
       },
     },
-    MuiTab: {
+    MuiAppBar: {
       styleOverrides: {
         root: {
-          textTransform: "none",
-          margin: "0 16px",
-          minWidth: 0,
-          padding: 0,
-          [theme.breakpoints.up("md")]: {
-            padding: 0,
-            minWidth: 0,
-          },
+          backgroundColor: theme.palette.background.default,
+          color: theme.palette.primary.main,
         },
       },
     },
-    MuiIconButton: {
+    MuiPaper: {
       styleOverrides: {
         root: {
-          padding: theme.spacing(1),
+          borderRight: "none",
         },
       },
     },
-    MuiTooltip: {
-      styleOverrides: {
-        tooltip: {
-          borderRadius: 4,
-        },
-      },
-    },
-    MuiDivider: {
+    MuiPaginationItem: {
       styleOverrides: {
         root: {
-          backgroundColor: "rgb(255,255,255,0.15)",
+          "&.Mui-selected": { backgroundColor: theme.palette.secondary.main },
         },
       },
     },
-    MuiListItemButton: {
+    MuiCard: {
       styleOverrides: {
         root: {
-          "&.Mui-selected": {
-            color: "#4fc3f7",
-          },
-        },
-      },
-    },
-    MuiListItemText: {
-      styleOverrides: {
-        primary: {
-          fontSize: 14,
-          fontWeight: theme.typography.fontWeightMedium,
+          borderColor: theme.palette.text.secondary,
+          borderWidth: 1,
+          borderStyle: "solid",
+          borderRadius: "0",
         },
       },
     },
     MuiListItemIcon: {
       styleOverrides: {
         root: {
-          color: "inherit",
-          minWidth: "auto",
-          marginRight: theme.spacing(2),
-          "& svg": {
-            fontSize: 20,
-          },
+          color: theme.palette.primary.main,
         },
       },
     },
-    MuiAvatar: {
+    MuiCardHeader: {
       styleOverrides: {
         root: {
-          width: 32,
-          height: 32,
+          height: "4em",
+        },
+      },
+    },
+
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: {
+          height: "auto",
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          borderColor: theme.palette.text.secondary,
+          color: theme.palette.text.secondary,
+          borderWidth: 2,
+          borderStyle: "solid",
+          borderRadius: "0",
         },
       },
     },
@@ -186,39 +226,56 @@ export default function Paperbase() {
           <Route
             path="/"
             element={
-              <Box sx={{ display: "flex", minHeight: "100vh" }}>
+              <Box sx={{ display: "flex" }}>
                 <CssBaseline />
-                <Box
-                  component="nav"
-                  sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-                >
-                  {isSmUp ? null : (
-                    <Navigator
-                      PaperProps={{ style: { width: drawerWidth } }}
-                      variant="temporary"
-                      open={mobileOpen}
-                      onClose={handleDrawerToggle}
-                    />
-                  )}
+                <Header onDrawerToggle={handleDrawerToggle} />
+
+                {isSmUp ? null : (
                   <Navigator
                     PaperProps={{ style: { width: drawerWidth } }}
-                    sx={{ display: { sm: "block", xs: "none" } }}
+                    variant="temporary"
+                    open={mobileOpen}
+                    onClose={handleDrawerToggle}
                   />
-                </Box>
+                )}
 
-                <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                  <Header onDrawerToggle={handleDrawerToggle} />
+                <Navigator
+                  sx={{
+                    width: drawerWidth,
+                    flexShrink: 0,
+                    [`& .MuiDrawer-paper`]: {
+                      width: drawerWidth,
+                      boxSizing: "border-box",
+                    },
+                    display: {
+                      sm: "block",
+                      xs: "none",
+                    },
+                  }}
+                />
 
-                  <Outlet />
-
-                  <Box component="footer" sx={{ p: 2, bgcolor: "#eaeff1" }}>
-                    <Copyright />
+                <Box component="main">
+                  <Toolbar />
+                  <Box
+                    sx={{
+                      minWidth: "calc(100vw - " + drawerWidth + "px)",
+                      borderColor: "text.secondary",
+                      borderStyle: "solid",
+                      borderWidth: "1px",
+                      p: 6,
+                      minHeight: "calc(100vh - 64px)",
+                      justifyContent: "center",
+                      display: "flex",
+                    }}
+                  >
+                    <Outlet />
                   </Box>
                 </Box>
               </Box>
             }
           >
-            <Route index element={<Welcome />} />
+            <Route index element={<WineCataloguePage />} />
+            <Route path={PagesPaths.OFFERS} element={<OffersPage />} />
             <Route path={PagesPaths.MINT} element={<MintPage />} />
           </Route>
         </Routes>

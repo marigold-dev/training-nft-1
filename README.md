@@ -340,7 +340,8 @@ You have website ready ! You have :
 - login/logout
 - the general layout / navigation
 
-If you try to connect , then you are redirected to inexistent `/mint` path
+If you try to connect, then you are redirected `/` path that is also the wine catalogue.
+There is no bottle collections yet, so we need to create the mint page
 
 ## Create the Mint Page
 
