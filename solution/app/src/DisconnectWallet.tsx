@@ -1,19 +1,20 @@
-import Avatar from "@mui/material/Avatar";
+import { Logout } from "@mui/icons-material";
+import { Button, ButtonGroup, Tooltip } from "@mui/material";
 import { BeaconWallet } from "@taquito/beacon-wallet";
 import { Dispatch, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
 import { PagesPaths } from "./Navigator";
 interface ButtonProps {
   userAddress: string;
+  userBalance: number;
   wallet: BeaconWallet;
   setUserAddress: Dispatch<SetStateAction<string>>;
   setUserBalance: Dispatch<SetStateAction<number>>;
 }
 
-const randomPicture = `https://avatars.dicebear.com/api/avataaars/${Math.random()}.svg`;
-
 const DisconnectButton = ({
   userAddress,
+  userBalance,
   wallet,
   setUserAddress,
   setUserBalance,
@@ -25,17 +26,18 @@ const DisconnectButton = ({
     setUserBalance(0);
     console.log("disconnecting wallet");
     await wallet.clearActiveAccount();
-    navigate(PagesPaths.WELCOME);
+    navigate(PagesPaths.CATALOG);
   };
 
   return (
-    <div>
-      <Avatar component="span" src={randomPicture} alt="My Avatar" />
-      {userAddress}
-      <button className="button" onClick={disconnectWallet}>
-        <i className="fas fa-times"></i>&nbsp; Disconnect wallet
-      </button>
-    </div>
+    <ButtonGroup>
+      <Tooltip title={userBalance / 1000000 + " Tz"}>
+        <Button disableRipple>{userAddress}</Button>
+      </Tooltip>
+      <Button sx={{ p: 1 }}>
+        <Logout onClick={disconnectWallet} />
+      </Button>
+    </ButtonGroup>
   );
 };
 

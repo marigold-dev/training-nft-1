@@ -1,36 +1,50 @@
-import { AddCircleOutlined } from "@mui/icons-material";
 import {
-  Avatar,
+  AddCircleOutlined,
+  Close,
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+} from "@mui/icons-material";
+import OpenWithIcon from "@mui/icons-material/OpenWith";
+import {
+  Box,
   Button,
   Card,
   CardContent,
   CardHeader,
   CardMedia,
+  MobileStepper,
   Stack,
+  SwipeableDrawer,
   TextField,
-  Typography,
+  Toolbar,
+  useMediaQuery,
 } from "@mui/material";
-import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import { char2Bytes } from "@taquito/utils";
 import { BigNumber } from "bignumber.js";
 import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import SwipeableViews from "react-swipeable-views";
 import * as yup from "yup";
 import { TZIP21TokenMetadata, UserContext, UserContextType } from "./App";
 import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
-import { bytes, nat } from "./type-aliases";
+import { address, bytes, nat } from "./type-aliases";
+
 export default function MintPage() {
   const {
+    userAddress,
     nftContrat,
     refreshUserContextOnPageReload,
-    storage,
     nftContratTokenMetadataMap,
+    storage,
   } = React.useContext(UserContext) as UserContextType;
-  const { enqueueSnackbar } = useSnackbar();
+
   const [pictureUrl, setPictureUrl] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
+
+  const isTablet = useMediaQuery("(min-width:600px)");
 
   const validationSchema = yup.object({
     name: yup.string().required("Name is required"),
@@ -50,6 +64,8 @@ export default function MintPage() {
       mint(values);
     },
   });
+
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     (async () => {
@@ -103,6 +119,12 @@ export default function MintPage() {
           )
           .send();
 
+        //close directly the form
+        setFormOpen(false);
+        enqueueSnackbar(
+          "Wine collection is minting ... it will be ready on next block, wait for the confirmation message before minting another collection",
+          { variant: "info" }
+        );
         await op.confirmation(2);
 
         enqueueSnackbar("Wine collection minted", { variant: "success" });
@@ -120,124 +142,272 @@ export default function MintPage() {
     }
   };
 
+  //open mint drawer if admin
+  const [formOpen, setFormOpen] = useState<boolean>(false);
+
+  const toggleDrawer =
+    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === "keydown" &&
+        ((event as React.KeyboardEvent).key === "Tab" ||
+          (event as React.KeyboardEvent).key === "Shift")
+      ) {
+        return;
+      }
+      setFormOpen(open);
+    };
+
+  useEffect(() => {
+    if (storage && storage.administrators.indexOf(userAddress! as address) < 0)
+      setFormOpen(false);
+    else setFormOpen(true);
+  }, [userAddress]);
+
+  const [activeStep, setActiveStep] = React.useState(0);
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleStepChange = (step: number) => {
+    setActiveStep(step);
+  };
   return (
-    <Box
-      component="main"
-      sx={{
-        flex: 1,
-        py: 6,
-        px: 4,
-        bgcolor: "#eaeff1",
-        backgroundImage:
-          "url(https://en.vinex.market/skin/default/images/banners/home/new/banner-1180.jpg)",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-      }}
-    >
-      <Paper sx={{ maxWidth: 936, margin: "auto", overflow: "hidden" }}>
-        <form onSubmit={formik.handleSubmit}>
-          <Stack spacing={2} margin={2} alignContent={"center"}>
-            <h1>Mint your wine collection</h1>
-            <TextField
-              id="standard-basic"
-              name="name"
-              label="name"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              error={formik.touched.name && Boolean(formik.errors.name)}
-              helperText={formik.touched.name && formik.errors.name}
-              variant="standard"
-            />
-            <TextField
-              id="standard-basic"
-              name="symbol"
-              label="symbol"
-              value={formik.values.symbol}
-              onChange={formik.handleChange}
-              error={formik.touched.symbol && Boolean(formik.errors.symbol)}
-              helperText={formik.touched.symbol && formik.errors.symbol}
-              variant="standard"
-            />
-            <TextField
-              id="standard-basic"
-              name="description"
-              label="description"
-              value={formik.values.description}
-              onChange={formik.handleChange}
-              error={
-                formik.touched.description && Boolean(formik.errors.description)
-              }
-              helperText={
-                formik.touched.description && formik.errors.description
-              }
-              variant="standard"
-            />
+    <Paper>
+      {storage ? (
+        <Button
+          disabled={storage.administrators.indexOf(userAddress! as address) < 0}
+          sx={{
+            p: 1,
+            position: "absolute",
+            right: "0",
+            display: formOpen ? "none" : "block",
+            zIndex: 1,
+          }}
+          onClick={toggleDrawer(!formOpen)}
+        >
+          {" Mint Form " +
+            (storage!.administrators.indexOf(userAddress! as address) < 0
+              ? " (You are not admin)"
+              : "")}
+          <OpenWithIcon />
+        </Button>
+      ) : (
+        ""
+      )}
+      <SwipeableDrawer
+        onClose={toggleDrawer(false)}
+        onOpen={toggleDrawer(true)}
+        anchor="right"
+        open={formOpen}
+        variant="temporary"
+      >
+        <Toolbar
+          sx={
+            isTablet
+              ? { marginTop: "0", marginRight: "0" }
+              : { marginTop: "35px", marginRight: "125px" }
+          }
+        />
+        <Box
+          sx={{
+            width: isTablet ? "40vw" : "60vw",
+            borderColor: "text.secondary",
+            borderStyle: "solid",
+            borderWidth: "1px",
 
-            <img src={pictureUrl} />
-            <Button variant="contained" component="label" color="primary">
-              <AddCircleOutlined />
-              Upload an image
-              <input
-                type="file"
-                hidden
-                name="data"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const data = e.target.files ? e.target.files[0] : null;
-                  if (data) {
-                    setFile(data);
-                  }
-                  e.preventDefault();
-                }}
+            height: "calc(100vh - 64px)",
+          }}
+        >
+          <Button
+            sx={{
+              position: "absolute",
+              right: "0",
+              display: !formOpen ? "none" : "block",
+            }}
+            onClick={toggleDrawer(!formOpen)}
+          >
+            <Close />
+          </Button>
+          <form onSubmit={formik.handleSubmit}>
+            <Stack spacing={2} margin={2} alignContent={"center"}>
+              <Typography variant="h5">Mint a new collection</Typography>
+
+              <TextField
+                id="standard-basic"
+                name="token_id"
+                label="token_id"
+                value={formik.values.token_id}
+                disabled
+                variant="filled"
               />
-            </Button>
-            <TextField
-              id="standard-basic"
-              name="token_id"
-              label="token_id"
-              value={formik.values.token_id}
-              disabled
-              variant="standard"
-              type={"number"}
-            />
-            <Button variant="contained" type="submit">
-              Mint
-            </Button>
-          </Stack>
-        </form>
+              <TextField
+                id="standard-basic"
+                name="name"
+                label="name"
+                required
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                error={formik.touched.name && Boolean(formik.errors.name)}
+                helperText={formik.touched.name && formik.errors.name}
+                variant="filled"
+              />
+              <TextField
+                id="standard-basic"
+                name="symbol"
+                label="symbol"
+                required
+                value={formik.values.symbol}
+                onChange={formik.handleChange}
+                error={formik.touched.symbol && Boolean(formik.errors.symbol)}
+                helperText={formik.touched.symbol && formik.errors.symbol}
+                variant="filled"
+              />
+              <TextField
+                id="standard-basic"
+                name="description"
+                label="description"
+                required
+                multiline
+                minRows={2}
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.description &&
+                  Boolean(formik.errors.description)
+                }
+                helperText={
+                  formik.touched.description && formik.errors.description
+                }
+                variant="filled"
+              />
 
-        {nftContratTokenMetadataMap.size != 0 ? (
-          Array.from(nftContratTokenMetadataMap!.entries()).map(
-            ([token_id, item]) => (
-              <Card key={token_id.toString()}>
-                <CardHeader
-                  avatar={
-                    <Avatar sx={{ bgcolor: "purple" }} aria-label="recipe">
-                      {token_id}
-                    </Avatar>
-                  }
-                  title={item.name}
-                  subheader={item.symbol}
+              {pictureUrl ? (
+                <img height={100} width={100} src={pictureUrl} />
+              ) : (
+                ""
+              )}
+              <Button variant="contained" component="label" color="primary">
+                <AddCircleOutlined />
+                Upload an image
+                <input
+                  type="file"
+                  hidden
+                  name="data"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const data = e.target.files ? e.target.files[0] : null;
+                    if (data) {
+                      setFile(data);
+                    }
+                    e.preventDefault();
+                  }}
                 />
-                <CardMedia
-                  component="img"
-                  height="194"
-                  image={item.thumbnailUri?.replace(
-                    "ipfs://",
-                    "https://gateway.pinata.cloud/ipfs/"
-                  )}
-                />
-                <CardContent>
-                  <Typography variant="body2" color="text.secondary">
-                    {item.description}
-                  </Typography>
-                </CardContent>
-              </Card>
-            )
-          )
-        ) : (
-          <Fragment />
-        )}
-      </Paper>
-    </Box>
+              </Button>
+
+              <Button variant="contained" type="submit">
+                Mint
+              </Button>
+            </Stack>
+          </form>
+        </Box>
+      </SwipeableDrawer>
+
+      <Typography variant="h5">Mint your wine collection</Typography>
+
+      {nftContratTokenMetadataMap.size != 0 ? (
+        <Box sx={{ width: "70vw" }}>
+          <SwipeableViews
+            axis="x"
+            index={activeStep}
+            onChangeIndex={handleStepChange}
+            enableMouseEvents
+          >
+            {Array.from(nftContratTokenMetadataMap!.entries()).map(
+              ([token_id, token]) => (
+                <Card
+                  sx={{
+                    display: "block",
+                    maxWidth: "80vw",
+                    overflow: "hidden",
+                  }}
+                  key={token_id.toString()}
+                >
+                  <CardHeader
+                    titleTypographyProps={
+                      isTablet ? { fontSize: "1.5em" } : { fontSize: "1em" }
+                    }
+                    title={token.name}
+                  />
+
+                  <CardMedia
+                    sx={
+                      isTablet
+                        ? {
+                            width: "auto",
+                            marginLeft: "33%",
+                            maxHeight: "50vh",
+                          }
+                        : { width: "100%", maxHeight: "40vh" }
+                    }
+                    component="img"
+                    image={token.thumbnailUri?.replace(
+                      "ipfs://",
+                      "https://gateway.pinata.cloud/ipfs/"
+                    )}
+                  />
+
+                  <CardContent>
+                    <Box>
+                      <Typography>{"ID : " + token_id}</Typography>
+                      <Typography>{"Symbol : " + token.symbol}</Typography>
+                      <Typography>
+                        {"Description : " + token.description}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              )
+            )}
+          </SwipeableViews>
+          <MobileStepper
+            variant="text"
+            steps={Array.from(nftContratTokenMetadataMap!.entries()).length}
+            position="static"
+            activeStep={activeStep}
+            nextButton={
+              <Button
+                size="small"
+                onClick={handleNext}
+                disabled={
+                  activeStep ===
+                  Array.from(nftContratTokenMetadataMap!.entries()).length - 1
+                }
+              >
+                Next
+                <KeyboardArrowRight />
+              </Button>
+            }
+            backButton={
+              <Button
+                size="small"
+                onClick={handleBack}
+                disabled={activeStep === 0}
+              >
+                <KeyboardArrowLeft />
+                Back
+              </Button>
+            }
+          />
+        </Box>
+      ) : (
+        <Typography sx={{ py: "2em" }} variant="h4">
+          Sorry, there is not NFT yet, you need to mint bottles first
+        </Typography>
+      )}
+    </Paper>
   );
 }

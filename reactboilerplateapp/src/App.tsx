@@ -21,6 +21,7 @@ export type TZIP21TokenMetadata = TokenMetadata & {
 export type UserContextType = {
   storage: Storage | null;
   userAddress: string;
+  userBalance: number;
   setUserAddress: Dispatch<SetStateAction<string>>;
   Tezos: TezosToolkit;
   setUserBalance: Dispatch<SetStateAction<number>>;
@@ -48,7 +49,7 @@ function App() {
   >(new Map());
 
   const [Tezos, setTezos] = useState<TezosToolkit>(
-    new TezosToolkit("https://ghostnet.tezos.marigold.dev")
+    new TezosToolkit(process.env["REACT_APP_TEZOS_NODE"]!)
   );
   const [wallet, setWallet] = useState<BeaconWallet>(
     new BeaconWallet({
@@ -80,7 +81,7 @@ function App() {
       setNftContrat(nftContrat);
       setStorage(storage);
     } catch (error) {
-      console.log("error refrshing nft contract: ", error);
+      console.log("error refreshing nft contract: ", error);
     }
 
     //USER
@@ -107,6 +108,7 @@ function App() {
     <UserContext.Provider
       value={{
         userAddress,
+        userBalance,
         setUserAddress,
         Tezos,
         setUserBalance,
