@@ -16,10 +16,10 @@ You can play with the final demo here : [https://demo.winefactory.marigold.dev/]
 
 Plan of the training course :
 
-- NFT 1 : use FA2 nft template to understand the basics
-- NFT 2 : finish FA2 nft marketplace
-- NFT 3 : use FA2 single asset template to build another kind of marketplace
-- NFT 4 : use FA2 multi asset template to build last complex kind of marketplace
+- [NFT 1](https://github.com/marigold-dev/training-nft-1) : use FA2 nft template to understand the basics
+- [NFT 2](https://github.com/marigold-dev/training-nft-2) : finish FA2 nft marketplace
+- [NFT 3](https://github.com/marigold-dev/training-nft-3) : use FA2 single asset template to build another kind of marketplace
+- [NFT 4](https://github.com/marigold-dev/training-nft-4) : use FA2 multi asset template to build last complex kind of marketplace
 
 | Token template | # of token_type | # of item per token_type |
 | -------------- | --------------- | ------------------------ |
