@@ -7,12 +7,12 @@ Here below different categorization of assets.
 
 ![](http://jingculturecommerce.com/wp-content/uploads/2021/03/nft-assets-1024x614.jpg)
 
-<PHOTO hacker wine here>
-
 # :wine_glass: Wine marketplace
 
 We are going to build a Wine marketplace.
 You can play with the final demo here : [https://demo.winefactory.marigold.dev/](https://demo.winefactory.marigold.dev/)
+
+![nftfactory.png](./doc/nftfactory.png)
 
 Plan of the training course :
 
