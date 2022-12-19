@@ -172,7 +172,7 @@ TAQ_LIGO_IMAGE=ligolang/ligo:0.57.0 taq compile nft.jsligo
 
 > Note : to be sure that taqueria will use ligo v0.57 that contains the ligo package installer w/ Docker fix, we set the env var `TAQ_LIGO_IMAGE`
 
-The contract compiles, now let's write `Transfer,Balance_of,Update_operators` entrypoints. We will do a passthrough call to the underlying library. On main function, replace the default case code by this one
+The contract compiles, now let's write `Transfer,Balance_of,Update_operators` entrypoints. We will do a passthrough call to the underlying library. On `main` function, **replace the default cases code by this one**
 
 ```jsligo
      Transfer: (p: NFT.transfer) => {
@@ -300,7 +300,7 @@ taq deploy nft.tz -e "testing"
 ┌──────────┬──────────────────────────────────────┬───────┬──────────────────┬────────────────────────────────┐
 │ Contract │ Address                              │ Alias │ Balance In Mutez │ Destination                    │
 ├──────────┼──────────────────────────────────────┼───────┼──────────────────┼────────────────────────────────┤
-│ nft.tz   │ KT19nyjob4FVK4ghGJrRhqgPF9WQQeaNJjGD │ nft   │ 0                │ https://ghostnet.ecadinfra.com │
+│ nft.tz   │ KT1QTwcQWpf4MRM5sjoGC6ASn4Y5fJNsTqWd │ nft   │ 0                │ https://ghostnet.ecadinfra.com │
 └──────────┴──────────────────────────────────────┴───────┴──────────────────┴────────────────────────────────┘
 ```
 

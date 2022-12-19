@@ -1,23 +1,5 @@
 {
     "language": "en",
-    "plugins": [
-        {
-            "name": "@taqueria/plugin-core",
-            "type": "npm"
-        },
-        {
-            "name": "@taqueria/plugin-ligo",
-            "type": "npm"
-        },
-        {
-            "name": "@taqueria/plugin-taquito",
-            "type": "npm"
-        },
-        {
-            "name": "@taqueria/plugin-contract-types",
-            "type": "npm"
-        }
-    ],
     "contractsDir": "contracts",
     "artifactsDir": "artifacts",
     "contracts": {
@@ -62,7 +44,7 @@
             "sandboxes": [],
             "aliases": {
                 "nft": {
-                    "address": "KT19nyjob4FVK4ghGJrRhqgPF9WQQeaNJjGD"
+                    "address": "KT1QTwcQWpf4MRM5sjoGC6ASn4Y5fJNsTqWd"
                 }
             }
         }
@@ -73,5 +55,26 @@
         "john": "3_000_000_000",
         "jane": "3_000_000_000",
         "joe": "3_000_000_000"
-    }
+    },
+    "plugins": [
+        {
+            "name": "@taqueria/plugin-core",
+            "type": "npm"
+        },
+        {
+            "name": "@taqueria/plugin-ligo",
+            "type": "npm"
+        },
+        {
+            "name": "@taqueria/plugin-taquito",
+            "type": "npm"
+        },
+        {
+            "name": "@taqueria/plugin-contract-types",
+            "type": "npm"
+        }
+    ],
+    "projectDir": "/home/zamrokk/training-nft-1/solution",
+    "configFile": "/home/zamrokk/training-nft-1/solution/.taq/config.json",
+    "hash": "5d4b61c2bd96382c7b128e39739c29f6917f3b94694be07c6e81aa7d92df129f"
 }
