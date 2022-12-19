@@ -97,7 +97,7 @@ We will rely on Ligo FA library. To understand in detail how works asset on Tezo
 Install the ligo fa library locally
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.56.0 taq ligo --command "install @ligo/fa"
+TAQ_LIGO_IMAGE=ligolang/ligo:0.57.0 taq ligo --command "install @ligo/fa"
 ```
 
 ## NFT marketplace contract
@@ -167,10 +167,10 @@ Explanations :
 Compile the contract
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.56.0 taq compile nft.jsligo
+TAQ_LIGO_IMAGE=ligolang/ligo:0.57.0 taq compile nft.jsligo
 ```
 
-> Note : to be sure that taqueria will use ligo v0.56 that contains the ligo package installer w/ Docker fix, we set the env var `TAQ_LIGO_IMAGE`
+> Note : to be sure that taqueria will use ligo v0.57 that contains the ligo package installer w/ Docker fix, we set the env var `TAQ_LIGO_IMAGE`
 
 The contract compiles, now let's write `Transfer,Balance_of,Update_operators` entrypoints. We will do a passthrough call to the underlying library. On main function, replace the default case code by this one
 
@@ -267,7 +267,6 @@ const default_storage =
   {administrators: Set.literal(list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb"
       as address]))
     as set<address>,
-   offers: Map.empty as map<nat, offer>,
    ledger: Big_map.empty as NFT.Ledger.t,
    metadata: Big_map.empty as NFT.Metadata.t,
    token_metadata: Big_map.empty as NFT.TokenMetadata.t,
@@ -279,13 +278,13 @@ const default_storage =
 Compile again and deploy to ghostnet
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.56.0 taq compile nft.jsligo
+TAQ_LIGO_IMAGE=ligolang/ligo:0.57.0 taq compile nft.jsligo
 taq install @taqueria/plugin-taquito
 taq deploy nft.tz -e "testing"
 ```
 
 > Note : if it is the first time you use taqueria, I recommend to look at this training first [https://github.com/marigold-dev/training-dapp-1#ghostnet-testnet-wallet](https://github.com/marigold-dev/training-dapp-1#ghostnet-testnet-wallet)
-> For advanced users, just go to .taq/config.json and change the default account to alice settings (publicKey,publicKeyHash,privateKey) and then redeploy
+> For advanced users, just go to `.taq/config.json` and change the default account on path `/network/ghostnet/accounts` to alice settings (publicKey,publicKeyHash,privateKey) and then redeploy
 >
 > ```json
 > "accounts": {
@@ -301,7 +300,7 @@ taq deploy nft.tz -e "testing"
 ┌──────────┬──────────────────────────────────────┬───────┬──────────────────┬────────────────────────────────┐
 │ Contract │ Address                              │ Alias │ Balance In Mutez │ Destination                    │
 ├──────────┼──────────────────────────────────────┼───────┼──────────────────┼────────────────────────────────┤
-│ nft.tz   │ KT1SeDDNAP5xqwjB8LjKJtL31cKVmg6F4C57 │ nft   │ 0                │ https://ghostnet.ecadinfra.com │
+│ nft.tz   │ KT19nyjob4FVK4ghGJrRhqgPF9WQQeaNJjGD │ nft   │ 0                │ https://ghostnet.ecadinfra.com │
 └──────────┴──────────────────────────────────────┴───────┴──────────────────┴────────────────────────────────┘
 ```
 
@@ -331,7 +330,7 @@ yarn install
 yarn run start
 ```
 
-> Note : On Mac, sed does not work as Unix, change the start script on package.json to
+> Note : On `Mac` :green_apple:, `sed` does not work as Unix, change the start script on package.json to
 > `   "start": "if test -f .env; then sed -i '' \"s/\\(REACT_APP_CONTRACT_ADDRESS *= *\\).*/\\1$(jq -r 'last(.tasks[]).output[0].address' ../.taq/testing-state.json)/\" .env ; else jq -r '\"REACT_APP_CONTRACT_ADDRESS=\" + last(.tasks[]).output[0].address' ../.taq/testing-state.json > .env ; fi && react-app-rewired start",`
 
 You have website ready ! You have :
@@ -559,12 +558,6 @@ const toggleDrawer =
     }
     setFormOpen(open);
   };
-
-useEffect(() => {
-  if (storage!.administrators.indexOf(userAddress! as address) < 0)
-    setFormOpen(false);
-  else setFormOpen(true);
-}, [userAddress]);
 ```
 
 Fix missing imports at this step
@@ -794,6 +787,7 @@ add missing imports and parameters
 
 ```typescript
 import SwipeableViews from "react-swipeable-views";
+import OpenWithIcon from "@mui/icons-material/OpenWith";
 import {
   Box,
   Button,

@@ -91,23 +91,23 @@ function blacklistCheck(locator) {
 
 let packageInformationStores = new Map([
 ["@ligo/fa",
-new Map([["1.0.10",
+new Map([["1.0.0",
          {
-           packageLocation: "./.ligo/source/i/ligo__s__fa__1.0.10__fc851aa9/",
-           packageDependencies: new Map([["@ligo/fa", "1.0.10"]])}]])],
+           packageLocation: "./.ligo/source/i/ligo__s__fa__1.0.0__cd3e92cb/",
+           packageDependencies: new Map([["@ligo/fa", "1.0.0"]])}]])],
   [null,
   new Map([[null,
            {
              packageLocation: "/project/",
-             packageDependencies: new Map([["@ligo/fa", "1.0.10"]])}]])]]);
+             packageDependencies: new Map([["@ligo/fa", "1.0.0"]])}]])]]);
 
 let topLevelLocatorPath = "../../";
 let locatorsByLocations = new Map([
 ["../../", topLevelLocator],
-  ["./.ligo/source/i/ligo__s__fa__1.0.10__fc851aa9/",
+  ["./.ligo/source/i/ligo__s__fa__1.0.0__cd3e92cb/",
   {
     name: "@ligo/fa",
-    reference: "1.0.10"}]]);
+    reference: "1.0.0"}]]);
 
 
   exports.findPackageLocator = function findPackageLocator(location) {
@@ -122,8 +122,8 @@ let locatorsByLocations = new Map([
     let match;
 
   
-      if (relativeLocation.length >= 47 && relativeLocation[46] === '/')
-        if (match = locatorsByLocations.get(relativeLocation.substr(0, 47)))
+      if (relativeLocation.length >= 46 && relativeLocation[45] === '/')
+        if (match = locatorsByLocations.get(relativeLocation.substr(0, 46)))
           return blacklistCheck(match);
       
 

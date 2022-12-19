@@ -1,15 +1,26 @@
+import OpenWithIcon from "@mui/icons-material/OpenWith";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import { useFormik } from "formik";
+import React, { useEffect, useState } from "react";
+import * as yup from "yup";
+import { TZIP21TokenMetadata, UserContext, UserContextType } from "./App";
+
+import { char2Bytes } from "@taquito/utils";
+import { BigNumber } from "bignumber.js";
+import { useSnackbar } from "notistack";
+import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
+import { address, bytes, nat } from "./type-aliases";
+
 import {
   AddCircleOutlined,
   Close,
   KeyboardArrowLeft,
   KeyboardArrowRight,
 } from "@mui/icons-material";
-import OpenWithIcon from "@mui/icons-material/OpenWith";
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   CardHeader,
   CardMedia,
   MobileStepper,
@@ -19,18 +30,9 @@ import {
   Toolbar,
   useMediaQuery,
 } from "@mui/material";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import { char2Bytes } from "@taquito/utils";
-import { BigNumber } from "bignumber.js";
-import { useFormik } from "formik";
-import { useSnackbar } from "notistack";
-import React, { useEffect, useState } from "react";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 import SwipeableViews from "react-swipeable-views";
-import * as yup from "yup";
-import { TZIP21TokenMetadata, UserContext, UserContextType } from "./App";
-import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
-import { address, bytes, nat } from "./type-aliases";
 
 export default function MintPage() {
   const {
@@ -40,9 +42,6 @@ export default function MintPage() {
     nftContratTokenMetadataMap,
     storage,
   } = React.useContext(UserContext) as UserContextType;
-
-  const [pictureUrl, setPictureUrl] = useState<string>("");
-  const [file, setFile] = useState<File | null>(null);
 
   const isTablet = useMediaQuery("(min-width:600px)");
 
@@ -67,13 +66,19 @@ export default function MintPage() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  useEffect(() => {
-    (async () => {
-      if (storage && storage.token_ids.length > 0) {
-        formik.setFieldValue("token_id", storage?.token_ids.length);
-      }
-    })();
-  }, [storage?.token_ids]);
+  const [activeStep, setActiveStep] = React.useState(0);
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleStepChange = (step: number) => {
+    setActiveStep(step);
+  };
 
   const mint = async (newTokenDefinition: TZIP21TokenMetadata) => {
     try {
@@ -125,6 +130,7 @@ export default function MintPage() {
           "Wine collection is minting ... it will be ready on next block, wait for the confirmation message before minting another collection",
           { variant: "info" }
         );
+
         await op.confirmation(2);
 
         enqueueSnackbar("Wine collection minted", { variant: "success" });
@@ -142,8 +148,25 @@ export default function MintPage() {
     }
   };
 
+  useEffect(() => {
+    (async () => {
+      if (storage && storage.token_ids.length > 0) {
+        formik.setFieldValue("token_id", storage?.token_ids.length);
+      }
+    })();
+  }, [storage?.token_ids]);
+
+  const [pictureUrl, setPictureUrl] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
+
   //open mint drawer if admin
   const [formOpen, setFormOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (storage && storage.administrators.indexOf(userAddress! as address) < 0)
+      setFormOpen(false);
+    else setFormOpen(true);
+  }, [userAddress]);
 
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -157,25 +180,6 @@ export default function MintPage() {
       setFormOpen(open);
     };
 
-  useEffect(() => {
-    if (storage && storage.administrators.indexOf(userAddress! as address) < 0)
-      setFormOpen(false);
-    else setFormOpen(true);
-  }, [userAddress]);
-
-  const [activeStep, setActiveStep] = React.useState(0);
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleStepChange = (step: number) => {
-    setActiveStep(step);
-  };
   return (
     <Paper>
       {storage ? (
@@ -199,6 +203,7 @@ export default function MintPage() {
       ) : (
         ""
       )}
+
       <SwipeableDrawer
         onClose={toggleDrawer(false)}
         onOpen={toggleDrawer(true)}
