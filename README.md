@@ -110,7 +110,7 @@ taq create contract nft.jsligo
 
 Remove the default code and paste this code instead
 
-```jsligo
+```ligolang
 #import "@ligo/fa/lib/fa2/nft/NFT.jsligo" "NFT"
 
 /* ERROR MAP FOR UI DISPLAY or TESTS
@@ -174,7 +174,7 @@ TAQ_LIGO_IMAGE=ligolang/ligo:0.57.0 taq compile nft.jsligo
 
 The contract compiles, now let's write `Transfer,Balance_of,Update_operators` entrypoints. We will do a passthrough call to the underlying library. On `main` function, **replace the default cases code by this one**
 
-```jsligo
+```ligolang
      Transfer: (p: NFT.transfer) => {
       const ret2 : [list<operation>, NFT.storage] = NFT.transfer(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
       return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
@@ -198,7 +198,7 @@ Explanations :
 
 Let's add the `Mint` function now. Add the new function, and update the main function
 
-```jsligo
+```ligolang
 const mint = (token_id : nat, name :bytes, description:bytes ,symbol :bytes, ipfsUrl:bytes, s: storage) : ret => {
 
    if(! Set.mem(Tezos.get_sender(), s.administrators)) return failwith("1");
@@ -261,7 +261,7 @@ We have finished the smart contract implementation for this first training, let'
 
 Edit the storage file `nft.storageList.jsligo` as it. (:warning: you can change the `administrator` address to your own address or keep `alice`)
 
-```jsligo
+```ligolang
 #include "nft.jsligo"
 const default_storage =
   {administrators: Set.literal(list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb"
