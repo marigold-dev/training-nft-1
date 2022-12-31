@@ -69,6 +69,12 @@ Please install this software first on your machine :
 
 We will use taqueria to shape the project structure, then create the nft marketplace contract importing the `ligo/fa` libray
 
+> Note : you will require to copy some code from this git repository later, so you can clone it if you want doing :
+>
+> ```bash
+> git clone https://github.com/marigold-dev/training-nft-1.git
+> ```
+
 ## Taq'ify your project
 
 ```bash
@@ -310,7 +316,7 @@ taq deploy nft.tz -e "testing"
 
 ## Get the react boilerplate
 
-To win time, we have a boilerplate ready for the UI here : [https://github.com/marigold-dev/training-nft-1/tree/main/reactboilerplate/app](https://github.com/marigold-dev/training-nft-1/tree/main/reactboilerplate/app)
+To win time, we have a boilerplate ready for the UI here : [https://github.com/marigold-dev/training-nft-1/tree/main/reactboilerplateapp](https://github.com/marigold-dev/training-nft-1/tree/main/reactboilerplateapp)
 
 Copy this code into your folder (:warning: assuming you have cloned this repo, and your current path is $REPO/training)
 
