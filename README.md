@@ -4,7 +4,9 @@
 
 Training n°1 for NFT marketplace
 
-Introduction : Business objects managed by a blockchain are called `assets`. On Tezos you will find the term `Financial Asset or FA` with different version 1, 2 or 2.1.
+# Introduction
+
+Business objects managed by a blockchain are called `assets`. On Tezos you will find the term `Financial Asset or FA` with different version 1, 2 or 2.1.
 Here below different categorization of assets.
 
 ![](http://jingculturecommerce.com/wp-content/uploads/2021/03/nft-assets-1024x614.jpg)
@@ -12,24 +14,27 @@ Here below different categorization of assets.
 # :wine_glass: Wine marketplace
 
 We are going to build a Wine marketplace.
-You can play with the final demo here : [https://demo.winefactory.marigold.dev/](https://demo.winefactory.marigold.dev/)
+
+You can play with the [final demo](https://demo.winefactory.marigold.dev/).
 
 ![nftfactory.png](./doc/nftfactory.png)
 
 Plan of the training course :
 
-- [NFT 1](https://github.com/marigold-dev/training-nft-1) : use FA2 nft template to understand the basics
-- [NFT 2](https://github.com/marigold-dev/training-nft-2) : finish FA2 nft marketplace
-- [NFT 3](https://github.com/marigold-dev/training-nft-3) : use FA2 single asset template to build another kind of marketplace
-- [NFT 4](https://github.com/marigold-dev/training-nft-4) : use FA2 multi asset template to build last complex kind of marketplace
+- [NFT 1](https://github.com/marigold-dev/training-nft-1): use FA2 NFT template to understand the basics
+- [NFT 2](https://github.com/marigold-dev/training-nft-2): finish FA2 nft marketplace
+- [NFT 3](https://github.com/marigold-dev/training-nft-3): use FA2 single asset template to build another kind of marketplace
+- [NFT 4](https://github.com/marigold-dev/training-nft-4): use FA2 multi asset template to build last complex kind of marketplace
 
 | Token template | # of token_type | # of item per token_type |
 | -------------- | --------------- | ------------------------ |
-| nft            | 0..n            | 1                        |
+| NFT            | 0..n            | 1                        |
 | single asset   | 0..1            | 1..n                     |
 | multi asset    | 0..n            | 1..n                     |
 
 <img src="https://i.imgflip.com/4dpglt.png" style="width: 200px;margin:2em"/>
+
+# Glossary
 
 ## :performing_arts: What are NFTs?
 
@@ -41,13 +46,19 @@ The InterPlanetary File System is a protocol and peer-to-peer network for storin
 
 ## :scroll: Smart Contracts
 
-We will use two contracts for the marketplace. First will be the token contract. On Tezos FA2 is the standard for Non-fungible Token contracts. We will be using the [template provided by Ligo](https://packages.ligolang.org/package/@ligo/fa) to build out the Token Contract. The template contains the basic entry points for building a Fungible or Non-fungible token including
+We will use two contracts for the marketplace.
+
+### The token contract.
+
+On Tezos FA2 is the standard for Non-fungible Token contracts. We will be using the [template provided by Ligo](https://packages.ligolang.org/package/@ligo/fa) to build out the Token Contract. The template contains the basic entrypoints for building a Fungible or Non-fungible token including:
 
 - Transfer
 - Balance_of
 - Update_operators
 
-On a second time, we will import this contract into a second one that will be the marketplace unique contract. This contract will bring missing feature as :
+### Marketplace unique contract
+
+On a second time, we will import the token contract into the marketplace unique contract. The latter will bring missing features as:
 
 - Mint
 - Buy
@@ -55,21 +66,19 @@ On a second time, we will import this contract into a second one that will be th
 
 # :memo: Prerequisites
 
-Please install this software first on your machine :
-
-- [ ] (Recommended) [VS Code](https://code.visualstudio.com/download) : as text editor
-- [ ] [npm](https://nodejs.org/en/download/) : we will use a typescript React client app
-- [ ] (Recommended) [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable) : because yet another package manager (https://www.geeksforgeeks.org/difference-between-npm-and-yarn/)
-- [ ] [taqueria](https://github.com/ecadlabs/taqueria) : Tezos Dapp project tooling (version >= 0.24.2)
+- [ ] (Recommended) [`VS Code`](https://code.visualstudio.com/download): as code editor
+- [ ] (Required) [`npm`](https://nodejs.org/en/download/): front-end is a typescript React client app
+- [ ] (Recommended) [`yarn`](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable): to build and run the front-end (see this article for more details about [differences bwteen `npm` and `yarn`](https://www.geeksforgeeks.org/difference-between-npm-and-yarn/))
+- [ ] (Required) [`taqueria`](https://github.com/ecadlabs/taqueria) : Tezos Dapp project tooling (version >= 0.24.2)
 - [ ] (Optional) [taqueria VS Code extension](https://marketplace.visualstudio.com/items?itemName=ecadlabs.taqueria-vscode) : visualize your project and execute tasks
-- [ ] (Recommended) [ligo VS Code extension](https://marketplace.visualstudio.com/items?itemName=ligolang-publish.ligo-vscode) : for smart contract highlighting, completion, etc ..
-- [ ] (Recommended) [Temple wallet](https://templewallet.com/) : an easy to use Tezos wallet in your browser (Or any other one with ghostnet support)
-- [ ] [Docker](https://docs.docker.com/engine/install/) Taqueria works with Docker running
-- [ ] [jq](https://stedolan.github.io/jq/download/) To be able to extract taqueria json data
+- [ ] (Recommended) [ligo VS Code extension](https://marketplace.visualstudio.com/items?itemName=ligolang-publish.ligo-vscode): for smart contract highlighting, completion, etc ..
+- [ ] (Recommended) [Temple wallet](https://templewallet.com/): an easy to use Tezos wallet in your browser (Or any other one with ghostnet support)
+- [ ] (Required) [Docker](https://docs.docker.com/engine/install/): needed for `taqueria`
+- [ ] (Required) [jq](https://stedolan.github.io/jq/download/): extract `taqueria` JSON data
 
 # :scroll: Smart contract
 
-We will use taqueria to shape the project structure, then create the nft marketplace contract importing the `ligo/fa` libray
+We will use `taqueria` to shape the project structure, then create the NFT marketplace smart contract thanks to the `ligo/fa` library.
 
 > Note : you will require to copy some code from this git repository later, so you can clone it if you want doing :
 >
@@ -91,18 +100,19 @@ taq install @taqueria/plugin-ligo
 echo "{}" > esy.json
 ```
 
-Your project is ready
+**Your project is ready!**
 
 ## FA2 contract
 
-We will rely on Ligo FA library. To understand in detail how works asset on Tezos, please read below notes
+We will rely on Ligo FA library. To understand in details how assets work on Tezos, please read below notes:
 
-> Note : FA2 standard can be found here => [https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-12/tzip-12.md](https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-12/tzip-12.md)
-> Additional contract metadata can be added to easier display token picture,etc ... this is describe on TZIP-21 standard here [https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-21/tzip-21.md](https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-21/tzip-21.md)
+- [FA2 standard](https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-12/tzip-12.md)
 
-> Note : Generic Contract metadata reference => [https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-16/tzip-16.md](https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-16/tzip-16.md)
+- Additional contract metadata can be added to ease displaying token picture, etc. this is described on [TZIP-21 standard](https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-21/tzip-21.md)
 
-Install the ligo fa library locally
+- [Generic Contract metadata reference](https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-16/tzip-16.md)
+
+Install the `ligo/fa` library locally:
 
 ```bash
 TAQ_LIGO_IMAGE=ligolang/ligo:0.57.0 taq ligo --command "install @ligo/fa"
@@ -110,7 +120,7 @@ TAQ_LIGO_IMAGE=ligolang/ligo:0.57.0 taq ligo --command "install @ligo/fa"
 
 ## NFT marketplace contract
 
-Create the nft marketplace contract with taqueria
+Create the nft marketplace contract with `taqueria`
 
 ```bash
 taq create contract nft.jsligo
@@ -163,7 +173,7 @@ const main = ([p, s]: [parameter,storage]): ret =>
      });
 ```
 
-Explanations :
+Explanations:
 
 - the first line `#import "@ligo/fa/lib/fa2/nft/NFT.jsligo" "NFT"` imports the ligo FA library
 - `storage` definition is an extension of the imported library storage `(NFT.Ledger.t,NFT.Metadata.t,NFT.TokenMetadata.t,NFT.Operators.t,set<NFT.Storage.token_id>)`
@@ -197,7 +207,7 @@ The contract compiles, now let's write `Transfer,Balance_of,Update_operators` en
       }
 ```
 
-Explanations :
+Explanations:
 
 - the called function is taking the storage type of the library, so we send a partial object from our storage definition to match the type definition
 - the return type contains also the storage type of the library, so we need to reconstruct the storage by copied the modified fields
@@ -257,7 +267,7 @@ const main = ([p, s]: [parameter,storage]): ret =>
      });
 ```
 
-Explanations :
+Explanations:
 
 - `mint` function will allow you to create a unique NFT. You have to declare the name, description, symbol and ipfsUrl for the picture to display
 - to simplify, we don't manage the increment of the token_id here it will be done by the front end later. We encourage you to manage this counter onchain to avoid overriding and existing nft. There is no rule to allocate a specific number to the token_id but people increment it from 0. Also, there is no rule if you have a burn function to reallocate the token_id to a removed index and just continue the sequence from the greatest index.
@@ -291,8 +301,9 @@ taq install @taqueria/plugin-taquito
 taq deploy nft.tz -e "testing"
 ```
 
-> Note : if it is the first time you use taqueria, I recommend to look at this training first [https://github.com/marigold-dev/training-dapp-1#ghostnet-testnet-wallet](https://github.com/marigold-dev/training-dapp-1#ghostnet-testnet-wallet)
-> For advanced users, just go to `.taq/config.json` and change the default account on path `/network/ghostnet/accounts` to alice settings (publicKey,publicKeyHash,privateKey) and then redeploy
+> Note : if it is the first time you use `taqueria`, I recommend to look at [this training first](https://github.com/marigold-dev/training-dapp-1#ghostnet-testnet-wallet)
+
+> For advanced users, just go to `.taq/config.json` and change the default account on path `/network/ghostnet/accounts` to alice settings (publicKey,publicKeyHash,privateKey) and then redeploy:
 >
 > ```json
 > "accounts": {
@@ -312,23 +323,23 @@ taq deploy nft.tz -e "testing"
 └──────────┴──────────────────────────────────────┴───────┴──────────────────┴────────────────────────────────┘
 ```
 
-:tada: Hooray ! We have finished the backend :tada:
+**:tada: Hooray! We have finished the backend :tada:**
 
 # :performing_arts: NFT Marketplace front
 
 ## Get the react boilerplate
 
-To win time, we have a boilerplate ready for the UI here : [https://github.com/marigold-dev/training-nft-1/tree/main/reactboilerplateapp](https://github.com/marigold-dev/training-nft-1/tree/main/reactboilerplateapp)
+To win time, we have a [boilerplate ready for the UI](https://github.com/marigold-dev/training-nft-1/tree/main/reactboilerplateapp)
 
-Copy this code into your folder (:warning: assuming you have cloned this repo, and your current path is $REPO/training)
+Copy this code into your folder (:warning: assuming you have cloned this repo, and your current path is `$REPO/training`)
 
 ```bash
 cp -r ../reactboilerplateapp/ ./app
 ```
 
-> Note : if you want to understand how it has been made from scratch look at this training => [https://github.com/marigold-dev/training-dapp-1#construction_worker-dapp](https://github.com/marigold-dev/training-dapp-1#construction_worker-dapp)
+> Note : if you want to understand how it has been made from scratch look at [this training](https://github.com/marigold-dev/training-dapp-1#construction_worker-dapp)
 
-Generate the typescript classes from Michelson code to your frontend app and run the server
+Generate the Typescript classes from Michelson code to your frontend app and run the server
 
 ```bash
 taq install @taqueria/plugin-contract-types
@@ -341,14 +352,15 @@ yarn run start
 > Note : On `Mac` :green_apple:, `sed` does not work as Unix, change the start script on package.json to
 > `   "start": "if test -f .env; then sed -i '' \"s/\\(REACT_APP_CONTRACT_ADDRESS *= *\\).*/\\1$(jq -r 'last(.tasks[]).output[0].address' ../.taq/testing-state.json)/\" .env ; else jq -r '\"REACT_APP_CONTRACT_ADDRESS=\" + last(.tasks[]).output[0].address' ../.taq/testing-state.json > .env ; fi && react-app-rewired start",`
 
-You have website ready ! You have :
+Website is ready! You have:
 
-- automatic pull from taqueria last deployed contract address at each start
+- automatic pull from `taqueria` last deployed contract address at each start
 - login/logout
 - the general layout / navigation
 
-If you try to connect, then you are redirected `/` path that is also the wine catalogue.
-There is no bottle collections yet, so we need to create the mint page
+If you try to connect you are redirected to `/` path that is also the wine catalog.
+
+There is no bottle collections yet, so we need to create the mint page.
 
 ## Mint Page
 
@@ -356,7 +368,7 @@ Edit default Mint Page on `./src/MintPage.tsx`
 
 ### Add a form to create the NFT
 
-In `MintPage.tsx`, replace the `html` template by this one :
+In `MintPage.tsx`, replace the `HTML` template by this one :
 
 ```html
     <Paper>
@@ -513,7 +525,7 @@ In `MintPage.tsx`, replace the `html` template by this one :
     </Paper>
 ```
 
-Add `formik` form to your Component function MintPage
+Add `formik` form to your Component function inside the same `MintPage.tsx` file:
 
 ```typescript
 const validationSchema = yup.object({
@@ -536,14 +548,14 @@ const formik = useFormik({
 });
 ```
 
-Again, on the Component function MintPage, add `pictureUrl` and `setFile` declaration to display the token image after pinning it to IPFS, and to get the upload file on the form
+Now, add `pictureUrl` and `setFile` declaration to display the token image after pinning it to IPFS, and to get the upload file on the form:
 
 ```typescript
 const [pictureUrl, setPictureUrl] = useState<string>("");
 const [file, setFile] = useState<File | null>(null);
 ```
 
-Add drawer variables to manager the side-popup of the form
+Add drawer variables to manager the side-popup of the form:
 
 ```typescript
 //open mint drawer if admin
@@ -568,7 +580,7 @@ const toggleDrawer =
   };
 ```
 
-Fix missing imports at this step
+Finally, fix the missing imports:
 
 ```typescript
 import { AddCircleOutlined, Close } from "@mui/icons-material";
@@ -593,7 +605,7 @@ import { address } from "./type-aliases";
 
 ### Add mint missing function
 
-Add the mint function, also add missing imports :
+Add the `mint` function and related imports :
 
 ```typescript
 import { useSnackbar } from "notistack";
@@ -678,7 +690,7 @@ const mint = async (newTokenDefinition: TZIP21TokenMetadata) => {
 
 ![mintForm.png](./doc/mintForm.png)
 
-Explanations :
+Explanations:
 
 - on Mint button click, we upload a file and then we call the `pinata API` to push the file to `IPFS`. It returns the hash
 - hash is used in two different ways
@@ -791,7 +803,7 @@ Replace the `"//TODO"` keyword by this template
         </Box>
 ```
 
-add missing imports and parameters
+Add missing imports and parameters
 
 ```typescript
 import SwipeableViews from "react-swipeable-views";
@@ -836,22 +848,23 @@ const handleStepChange = (step: number) => {
 
 ## Let's play
 
-1. Connect with your wallet an choose `alice` account (or the administrator you set on the smart contract earlier). You are redirected to the Administration /mint page as there is no nft minted yet
-2. Enter these values on the form for example :
+1. Connect with your wallet an choose `alice` account _(or the administrator you set on the smart contract earlier)_. You are redirected to the Administration /mint page as there is no NFT minted yet.
 
-- name : Saint Emilion - Franc la Rose
-- symbol : SEMIL
-- description : Grand cru 2007
+2. Create your first wine bottle, for example:
 
-3. Click on `Upload an image` an select a bottle picture on your computer
+- `name`: Saint Emilion - Franc la Rose
+- `symbol`: SEMIL
+- `description`: Grand cru 2007
+
+3. Click on `Upload an image` and select a bottle picture on your computer
+
 4. Click on Mint button
 
 ![minting.png](./doc/minting.png)
 
-Your picture will be pushed to IPFS and will display, then you are asked to sign the mint operation
+Your picture will be pushed to IPFS and displayed.
 
-- Confirm operation
-- Wait less than 1 minutes until you get the confirmation notification, the page will refresh automatically
+Then, Temple Wallet _(or whatever other wallet you choose)_ will ask you to sign the operation. Confirm it, and less than 1 minute after the confirmation notification, the page will be automatically refreshed to display your wine collection with your first NFT!
 
 Now you can see all NFTs
 
@@ -859,9 +872,9 @@ Now you can see all NFTs
 
 # :palm_tree: Conclusion :sun_with_face:
 
-You are able to create an NFT collection marketplace from the ligo library.
+You are able to create an NFT collection marketplace from the `ligo/fa` library.
 
-On next, training, you will add the Buy/Sell function to your smart contract and update the frontend to play with it
+On next training, you will add the Buy and Sell functions to your smart contract and update the frontend to allow these actions.
 
 [:arrow_right: NEXT (HTML version)](https://marigold-dev.github.io/training-nft-2)
 
