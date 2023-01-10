@@ -1,3 +1,5 @@
+## :round_pushpin: [See Github version and full code here](https://github.com/marigold-dev/training-nft-1)
+
 # training-nft-1
 
 Training n°1 for NFT marketplace
@@ -27,7 +29,7 @@ Plan of the training course :
 | single asset   | 0..1            | 1..n                     |
 | multi asset    | 0..n            | 1..n                     |
 
-![](https://i.imgflip.com/4dpglt.png)
+<img src="https://i.imgflip.com/4dpglt.png" style="width: 200px"/>
 
 ## :performing_arts: What are NFTs?
 

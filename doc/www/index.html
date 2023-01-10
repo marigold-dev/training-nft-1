@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Training nft n°1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;0,200;0,300;1,200&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
+      integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls"
+      crossorigin="anonymous"
+    />
+    <link href="./main.css" rel="stylesheet" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/images/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/images/favicon-32x32.png"
+    />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Training nft n°1" />
+    <meta
+      property="og:description"
+      content="Trainings nft decentralized application for Tezos blockchain made by Marigold"
+    />
+    <meta
+      property="og:url"
+      content="https://marigold-dev.github.io/training-nft-1/"
+    />
+    <meta property="og:site_name" content="Training nft n°1" />
+    <meta property="og:image:width" content="400" />
+    <meta property="og:image:height" content="400" />
+    <meta name="twitter:card" content="summary" />
+    <meta
+      name="twitter:description"
+      content="Trainings nft decentralized application for Tezos blockchain made by Marigold."
+    />
+    <meta name="twitter:title" content="Training nft n°1" />
+    <meta name="twitter:site" content="@tezos" />
+    <meta name="twitter:creator" content="@Marigold_Dev" />
+  </head>
+  <body>
+    <div class="container">
+      <input type="checkbox" class="toggle-button" />
+    </div>
+    <section>
+<h2>📍 <a href="https://github.com/marigold-dev/training-nft-1">See Github version and full code here</a></h2>
+</section>
+<section>
+<h1>training-nft-1</h1>
+<p>Training n°1 for NFT marketplace</p>
+<p>Introduction : Business objects managed by a blockchain are called <code>assets</code>. On Tezos you will find the term <code>Financial Asset or FA</code> with different version 1, 2 or 2.1.
+Here below different categorization of assets.</p>
+<p><img src="http://jingculturecommerce.com/wp-content/uploads/2021/03/nft-assets-1024x614.jpg" alt=""></p>
+</section>
+<section>
+<h1>🍷 Wine marketplace</h1>
+<p>We are going to build a Wine marketplace.
+You can play with the final demo here : <a href="https://demo.winefactory.marigold.dev/">https://demo.winefactory.marigold.dev/</a></p>
+<p><img src="./doc/nftfactory.png" alt="nftfactory.png"></p>
+<p>Plan of the training course :</p>
+<ul>
+<li><a href="https://github.com/marigold-dev/training-nft-1">NFT 1</a> : use FA2 nft template to understand the basics</li>
+<li><a href="https://github.com/marigold-dev/training-nft-2">NFT 2</a> : finish FA2 nft marketplace</li>
+<li><a href="https://github.com/marigold-dev/training-nft-3">NFT 3</a> : use FA2 single asset template to build another kind of marketplace</li>
+<li><a href="https://github.com/marigold-dev/training-nft-4">NFT 4</a> : use FA2 multi asset template to build last complex kind of marketplace</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Token template</th>
+<th># of token_type</th>
+<th># of item per token_type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>nft</td>
+<td>0..n</td>
+<td>1</td>
+</tr>
+<tr>
+<td>single asset</td>
+<td>0..1</td>
+<td>1..n</td>
+</tr>
+<tr>
+<td>multi asset</td>
+<td>0..n</td>
+<td>1..n</td>
+</tr>
+</tbody>
+</table>
+<img src="https://i.imgflip.com/4dpglt.png" style="width: 200px"/>
+<section>
+<h2>🎭 What are NFTs?</h2>
+<p>A non-fungible token is a unique and non-interchangeable unit of data stored on a digital ledger. NFTs can be used to represent easily-reproducible items such as photos, videos, audio, and other types of digital files as unique items, and use blockchain technology to establish a verified and public proof of ownership.</p>
+</section>
+<section>
+<h2>📂 What is IPFS?</h2>
+<p>The InterPlanetary File System is a protocol and peer-to-peer network for storing and sharing data in a distributed file system. IPFS uses content-addressing to uniquely identify each file in a global namespace connecting all computing devices. In this tutorial, we will be using <a href="https://www.pinata.cloud/">pinata</a> (free developer plan) to store the metadata for NFTs. An alternative would be to install a local IPFS node or an API gateway backend with usage quota.</p>
+</section>
+<section>
+<h2>📜 Smart Contracts</h2>
+<p>We will use two contracts for the marketplace. First will be the token contract. On Tezos FA2 is the standard for Non-fungible Token contracts. We will be using the <a href="https://packages.ligolang.org/package/@ligo/fa">template provided by Ligo</a> to build out the Token Contract. The template contains the basic entry points for building a Fungible or Non-fungible token including</p>
+<ul>
+<li>Transfer</li>
+<li>Balance_of</li>
+<li>Update_operators</li>
+</ul>
+<p>On a second time, we will import this contract into a second one that will be the marketplace unique contract. This contract will bring missing feature as :</p>
+<ul>
+<li>Mint</li>
+<li>Buy</li>
+<li>Sell</li>
+</ul>
+</section>
+</section>
+<section>
+<h1>📝 Prerequisites</h1>
+<p>Please install this software first on your machine :</p>
+<ul>
+<li>[ ] (Recommended) <a href="https://code.visualstudio.com/download">VS Code</a> : as text editor</li>
+<li>[ ] <a href="https://nodejs.org/en/download/">npm</a> : we will use a typescript React client app</li>
+<li>[ ] (Recommended) <a href="https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable">yarn</a> : because yet another package manager (https://www.geeksforgeeks.org/difference-between-npm-and-yarn/)</li>
+<li>[ ] <a href="https://github.com/ecadlabs/taqueria">taqueria</a> : Tezos Dapp project tooling (version &gt;= 0.24.2)</li>
+<li>[ ] (Optional) <a href="https://marketplace.visualstudio.com/items?itemName=ecadlabs.taqueria-vscode">taqueria VS Code extension</a> : visualize your project and execute tasks</li>
+<li>[ ] (Recommended) <a href="https://marketplace.visualstudio.com/items?itemName=ligolang-publish.ligo-vscode">ligo VS Code extension</a> : for smart contract highlighting, completion, etc ..</li>
+<li>[ ] (Recommended) <a href="https://templewallet.com/">Temple wallet</a> : an easy to use Tezos wallet in your browser (Or any other one with ghostnet support)</li>
+<li>[ ] <a href="https://docs.docker.com/engine/install/">Docker</a> Taqueria works with Docker running</li>
+<li>[ ] <a href="https://stedolan.github.io/jq/download/">jq</a> To be able to extract taqueria json data</li>
+</ul>
+</section>
+<section>
+<h1>📜 Smart contract</h1>
+<p>We will use taqueria to shape the project structure, then create the nft marketplace contract importing the <code>ligo/fa</code> libray</p>
+<blockquote>
+<p>Note : you will require to copy some code from this git repository later, so you can clone it if you want doing :</p>
+<pre class="hljs language-bash"><code>git <span class="hljs-built_in">clone</span> https://github.com/marigold-dev/training-nft-1.git
+</code></pre>
+</blockquote>
+<section>
+<h2>Taq'ify your project</h2>
+<pre class="hljs language-bash"><code>taq init training
+<span class="hljs-built_in">cd</span> training
+taq install @taqueria/plugin-ligo
+</code></pre>
+<blockquote>
+<p>⚠️ HACK note : create a dummy esy.json file with <code>{}</code> content on it. I will be used by the ligo package installer to not override the default package.json file of taqueria</p>
+</blockquote>
+<pre class="hljs language-bash"><code><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;{}&quot;</span> &gt; esy.json
+</code></pre>
+<p>Your project is ready</p>
+</section>
+<section>
+<h2>FA2 contract</h2>
+<p>We will rely on Ligo FA library. To understand in detail how works asset on Tezos, please read below notes</p>
+<blockquote>
+<p>Note : FA2 standard can be found here =&gt; <a href="https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-12/tzip-12.md">https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-12/tzip-12.md</a>
+Additional contract metadata can be added to easier display token picture,etc ... this is describe on TZIP-21 standard here <a href="https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-21/tzip-21.md">https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-21/tzip-21.md</a></p>
+</blockquote>
+<blockquote>
+<p>Note : Generic Contract metadata reference =&gt; <a href="https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-16/tzip-16.md">https://gitlab.com/tezos/tzip/-/blob/master/proposals/tzip-16/tzip-16.md</a></p>
+</blockquote>
+<p>Install the ligo fa library locally</p>
+<pre class="hljs language-bash"><code>TAQ_LIGO_IMAGE=ligolang/ligo:0.57.0 taq ligo --<span class="hljs-built_in">command</span> <span class="hljs-string">&quot;install @ligo/fa&quot;</span>
+</code></pre>
+</section>
+<section>
+<h2>NFT marketplace contract</h2>
+<p>Create the nft marketplace contract with taqueria</p>
+<pre class="hljs language-bash"><code>taq create contract nft.jsligo
+</code></pre>
+<p>Remove the default code and paste this code instead</p>
+<pre class="hljs"><code>#import &quot;@ligo/fa/lib/fa2/nft/NFT.jsligo&quot; &quot;NFT&quot;
+
+/* ERROR MAP FOR UI DISPLAY or TESTS
+    const errorMap : map&lt;string,string&gt; = Map.literal(list([
+      [&quot;0&quot;, &quot;Enter a positive and not null amount&quot;],
+      [&quot;1&quot;, &quot;Operation not allowed, you need to be administrator&quot;],
+      [&quot;2&quot;, &quot;You cannot sell more than your current balance&quot;],
+      [&quot;3&quot;, &quot;Cannot find the offer you entered for buying&quot;],
+      [&quot;4&quot;, &quot;You entered a quantity to buy than is more than the offer quantity&quot;],
+      [&quot;5&quot;, &quot;Not enough funds, you need to pay at least quantity * offer price to get the tokens&quot;],
+      [&quot;6&quot;, &quot;Cannot find the contract relative to implicit address&quot;],
+    ]));
+*/
+
+type storage =
+  {
+    administrators: set&lt;address&gt;,
+    ledger: NFT.Ledger.t,
+    metadata: NFT.Metadata.t,
+    token_metadata: NFT.TokenMetadata.t,
+    operators: NFT.Operators.t,
+    token_ids : set&lt;NFT.Storage.token_id&gt;
+  };
+
+type ret = [list&lt;operation&gt;, storage];
+
+type parameter =
+  | [&quot;Mint&quot;, nat,bytes,bytes,bytes,bytes] //token_id, name , description  ,symbol , ipfsUrl
+  | [&quot;AddAdministrator&quot; , address]
+  | [&quot;Transfer&quot;, NFT.transfer]
+  | [&quot;Balance_of&quot;, NFT.balance_of]
+  | [&quot;Update_operators&quot;, NFT.update_operators];
+
+
+const main = ([p, s]: [parameter,storage]): ret =&gt;
+    match(p, {
+     Mint: (p: [nat,bytes,bytes,bytes,bytes]) =&gt; [list([]),s],
+     AddAdministrator : (p : address) =&gt; {if(Set.mem(Tezos.get_sender(), s.administrators)){ return [list([]),{...s,administrators:Set.add(p, s.administrators)}]} else {return failwith(&quot;1&quot;);}} ,
+     Transfer: (p: NFT.transfer) =&gt; [list([]),s],
+     Balance_of: (p: NFT.balance_of) =&gt; [list([]),s],
+     Update_operators: (p: NFT.update_operator) =&gt; [list([]),s],
+     });
+</code></pre>
+<p>Explanations :</p>
+<ul>
+<li>the first line <code>#import &quot;@ligo/fa/lib/fa2/nft/NFT.jsligo&quot; &quot;NFT&quot;</code> imports the ligo FA library</li>
+<li><code>storage</code> definition is an extension of the imported library storage <code>(NFT.Ledger.t,NFT.Metadata.t,NFT.TokenMetadata.t,NFT.Operators.t,set&lt;NFT.Storage.token_id&gt;)</code></li>
+<li><code>storage</code> has more fields to support a set of <code>administrators</code></li>
+<li><code>parameter</code> definition is an extension of the imported library entrypoints <code>(NFT.transfer,NFT.balance_of,NFT.update_operators)</code></li>
+<li><code>parameter</code> has more entrypoints to allow to create nfts <code>Mint</code></li>
+<li><code>parameter</code> has an entrypoint <code>AddAdministrator</code>to add new administrators</li>
+</ul>
+<p>Compile the contract</p>
+<pre class="hljs language-bash"><code>TAQ_LIGO_IMAGE=ligolang/ligo:0.57.0 taq compile nft.jsligo
+</code></pre>
+<blockquote>
+<p>Note : to be sure that taqueria will use ligo v0.57 that contains the ligo package installer w/ Docker fix, we set the env var <code>TAQ_LIGO_IMAGE</code></p>
+</blockquote>
+<p>The contract compiles, now let's write <code>Transfer,Balance_of,Update_operators</code> entrypoints. We will do a passthrough call to the underlying library. On <code>main</code> function, <strong>replace the default cases code by this one</strong></p>
+<pre class="hljs"><code>     Transfer: (p: NFT.transfer) =&gt; {
+      const ret2 : [list&lt;operation&gt;, NFT.storage] = NFT.transfer(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
+     },
+     Balance_of: (p: NFT.balance_of) =&gt; {
+      const ret2 : [list&lt;operation&gt;, NFT.storage] = NFT.balance_of(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
+      },
+     Update_operators: (p: NFT.update_operator) =&gt; {
+      const ret2 : [list&lt;operation&gt;, NFT.storage] = NFT.update_ops(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
+      }
+</code></pre>
+<p>Explanations :</p>
+<ul>
+<li>the called function is taking the storage type of the library, so we send a partial object from our storage definition to match the type definition</li>
+<li>the return type contains also the storage type of the library, so we need to reconstruct the storage by copied the modified fields</li>
+</ul>
+<blockquote>
+<p>Note : Ligo team is working on merging type definitions. You could be able to do <code>type union</code> or <code>merge 2 objects</code> like in Typescript</p>
+</blockquote>
+<p>Let's add the <code>Mint</code> function now. Add the new function, and update the main function</p>
+<pre class="hljs"><code>const mint = (token_id : nat, name :bytes, description:bytes ,symbol :bytes, ipfsUrl:bytes, s: storage) : ret =&gt; {
+
+   if(! Set.mem(Tezos.get_sender(), s.administrators)) return failwith(&quot;1&quot;);
+
+   const token_info: map&lt;string, bytes&gt; =
+     Map.literal(list([
+      [&quot;name&quot;, name],
+      [&quot;description&quot;,description],
+      [&quot;interfaces&quot;, (bytes `[&quot;TZIP-12&quot;]`)],
+      [&quot;thumbnailUri&quot;, ipfsUrl],
+      [&quot;symbol&quot;,symbol],
+      [&quot;decimals&quot;, (bytes `0`)]
+     ])) as map&lt;string, bytes&gt;;
+
+
+    const metadata : bytes = bytes
+  `{
+      &quot;name&quot;:&quot;FA2 NFT Marketplace&quot;,
+      &quot;description&quot;:&quot;Example of FA2 implementation&quot;,
+      &quot;version&quot;:&quot;0.0.1&quot;,
+      &quot;license&quot;:{&quot;name&quot;:&quot;MIT&quot;},
+      &quot;authors&quot;:[&quot;Marigold&lt;contact@marigold.dev&gt;&quot;],
+      &quot;homepage&quot;:&quot;https://marigold.dev&quot;,
+      &quot;source&quot;:{
+        &quot;tools&quot;:[&quot;Ligo&quot;],
+        &quot;location&quot;:&quot;https://github.com/ligolang/contract-catalogue/tree/main/lib/fa2&quot;},
+      &quot;interfaces&quot;:[&quot;TZIP-012&quot;],
+      &quot;errors&quot;: [],
+      &quot;views&quot;: []
+      }` ;
+
+    return [list([]) as list&lt;operation&gt;,
+          {...s,
+     ledger: Big_map.add(token_id,Tezos.get_sender(),s.ledger) as NFT.Ledger.t,
+     metadata : Big_map.literal(list([[&quot;&quot;,  bytes `tezos-storage:data`],[&quot;data&quot;, metadata]])),
+     token_metadata: Big_map.add(token_id, {token_id: token_id,token_info:token_info},s.token_metadata),
+     operators: Big_map.empty as NFT.Operators.t,
+     token_ids : Set.add(token_id,s.token_ids)
+     }]};
+
+const main = ([p, s]: [parameter,storage]): ret =&gt;
+    match(p, {
+     Mint: (p: [nat,bytes,bytes,bytes,bytes]) =&gt; mint(p[0],p[1],p[2],p[3],p[4],s),
+     AddAdministrator : (p : address) =&gt; {if(Set.mem(Tezos.get_sender(), s.administrators)){ return [list([]),{...s,administrators:Set.add(p, s.administrators)}]} else {return failwith(&quot;1&quot;);}} ,
+     Transfer: (p: NFT.transfer) =&gt; [list([]),s],
+     Balance_of: (p: NFT.balance_of) =&gt; [list([]),s],
+     Update_operators: (p: NFT.update_operator) =&gt; [list([]),s],
+     });
+</code></pre>
+<p>Explanations :</p>
+<ul>
+<li><code>mint</code> function will allow you to create a unique NFT. You have to declare the name, description, symbol and ipfsUrl for the picture to display</li>
+<li>to simplify, we don't manage the increment of the token_id here it will be done by the front end later. We encourage you to manage this counter onchain to avoid overriding and existing nft. There is no rule to allocate a specific number to the token_id but people increment it from 0. Also, there is no rule if you have a burn function to reallocate the token_id to a removed index and just continue the sequence from the greatest index.</li>
+<li>most of fields are optional except <code>decimals</code> that is set to <code>0</code>. A unique nft does not have decimals, it is a unit</li>
+<li>by default, the <code>quantity</code> for an nft is <code>1</code>, that is why every bottle is unique and we don't need to set a total supply on each nft.</li>
+<li>if you want to know the <code>size of the nft collection</code>, look at <code>token_ids</code> size. This is used as a <code>cache</code> key index of the <code>token_metadata</code> big_map. By definition a big map in Tezos can be access through a key, but you need to know the key, there is no function to return the keyset. This is why we keep trace of all token_id in this set, so we can loop and read/update information on nfts</li>
+</ul>
+<p>We have finished the smart contract implementation for this first training, let's prepare the deployment to ghostnet.</p>
+<p>Edit the storage file <code>nft.storageList.jsligo</code> as it. (⚠️ you can change the <code>administrator</code> address to your own address or keep <code>alice</code>)</p>
+<pre class="hljs"><code>#include &quot;nft.jsligo&quot;
+const default_storage =
+  {administrators: Set.literal(list([&quot;tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb&quot;
+      as address]))
+    as set&lt;address&gt;,
+   ledger: Big_map.empty as NFT.Ledger.t,
+   metadata: Big_map.empty as NFT.Metadata.t,
+   token_metadata: Big_map.empty as NFT.TokenMetadata.t,
+   operators: Big_map.empty as NFT.Operators.t,
+   token_ids: Set.empty as set&lt;NFT.Storage.token_id&gt;
+   };
+</code></pre>
+<p>Compile again and deploy to ghostnet</p>
+<pre class="hljs language-bash"><code>TAQ_LIGO_IMAGE=ligolang/ligo:0.57.0 taq compile nft.jsligo
+taq install @taqueria/plugin-taquito
+taq deploy nft.tz -e <span class="hljs-string">&quot;testing&quot;</span>
+</code></pre>
+<blockquote>
+<p>Note : if it is the first time you use taqueria, I recommend to look at this training first <a href="https://github.com/marigold-dev/training-dapp-1#ghostnet-testnet-wallet">https://github.com/marigold-dev/training-dapp-1#ghostnet-testnet-wallet</a>
+For advanced users, just go to <code>.taq/config.json</code> and change the default account on path <code>/network/ghostnet/accounts</code> to alice settings (publicKey,publicKeyHash,privateKey) and then redeploy</p>
+<pre class="hljs language-json"><code><span class="hljs-attr">&quot;accounts&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+               <span class="hljs-attr">&quot;taqOperatorAccount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+                   <span class="hljs-attr">&quot;publicKey&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;edpkvGfYw3LyB1UcCahKQk4rF2tvbMUk8GFiTuMjL75uGXrpvKXhjn&quot;</span><span class="hljs-punctuation">,</span>
+                   <span class="hljs-attr">&quot;publicKeyHash&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb&quot;</span><span class="hljs-punctuation">,</span>
+                   <span class="hljs-attr">&quot;privateKey&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;edsk3QoqBuvdamxouPhin7swCvkQNgq4jP5KZPbwWNnwdZpSpJiEbq&quot;</span>
+               <span class="hljs-punctuation">}</span>
+           <span class="hljs-punctuation">}</span>
+</code></pre>
+</blockquote>
+<pre class="hljs"><code>┌──────────┬──────────────────────────────────────┬───────┬──────────────────┬────────────────────────────────┐
+│ Contract │ Address                              │ Alias │ Balance In Mutez │ Destination                    │
+├──────────┼──────────────────────────────────────┼───────┼──────────────────┼────────────────────────────────┤
+│ nft.tz   │ KT1QTwcQWpf4MRM5sjoGC6ASn4Y5fJNsTqWd │ nft   │ 0                │ https://ghostnet.ecadinfra.com │
+└──────────┴──────────────────────────────────────┴───────┴──────────────────┴────────────────────────────────┘
+</code></pre>
+<p>🎉 Hooray ! We have finished the backend 🎉</p>
+</section>
+</section>
+<section>
+<h1>🎭 NFT Marketplace front</h1>
+<section>
+<h2>Get the react boilerplate</h2>
+<p>To win time, we have a boilerplate ready for the UI here : <a href="https://github.com/marigold-dev/training-nft-1/tree/main/reactboilerplateapp">https://github.com/marigold-dev/training-nft-1/tree/main/reactboilerplateapp</a></p>
+<p>Copy this code into your folder (⚠️ assuming you have cloned this repo, and your current path is $REPO/training)</p>
+<pre class="hljs language-bash"><code><span class="hljs-built_in">cp</span> -r ../reactboilerplateapp/ ./app
+</code></pre>
+<blockquote>
+<p>Note : if you want to understand how it has been made from scratch look at this training =&gt; <a href="https://github.com/marigold-dev/training-dapp-1#construction_worker-dapp">https://github.com/marigold-dev/training-dapp-1#construction_worker-dapp</a></p>
+</blockquote>
+<p>Generate the typescript classes from Michelson code to your frontend app and run the server</p>
+<pre class="hljs language-bash"><code>taq install @taqueria/plugin-contract-types
+taq generate types ./app/src
+<span class="hljs-built_in">cd</span> app
+yarn install
+yarn run start
+</code></pre>
+<blockquote>
+<p>Note : On <code>Mac</code> 🍏, <code>sed</code> does not work as Unix, change the start script on package.json to
+<code>   &quot;start&quot;: &quot;if test -f .env; then sed -i '' \&quot;s/\\(REACT_APP_CONTRACT_ADDRESS *= *\\).*/\\1$(jq -r 'last(.tasks[]).output[0].address' ../.taq/testing-state.json)/\&quot; .env ; else jq -r '\&quot;REACT_APP_CONTRACT_ADDRESS=\&quot; + last(.tasks[]).output[0].address' ../.taq/testing-state.json &gt; .env ; fi &amp;&amp; react-app-rewired start&quot;,</code></p>
+</blockquote>
+<p>You have website ready ! You have :</p>
+<ul>
+<li>automatic pull from taqueria last deployed contract address at each start</li>
+<li>login/logout</li>
+<li>the general layout / navigation</li>
+</ul>
+<p>If you try to connect, then you are redirected <code>/</code> path that is also the wine catalogue.
+There is no bottle collections yet, so we need to create the mint page</p>
+</section>
+<section>
+<h2>Mint Page</h2>
+<p>Edit default Mint Page on <code>./src/MintPage.tsx</code></p>
+<section>
+<h3>Add a form to create the NFT</h3>
+<p>In <code>MintPage.tsx</code>, replace the <code>html</code> template by this one :</p>
+<pre class="hljs language-html"><code>    <span class="hljs-tag">&lt;<span class="hljs-name">Paper</span>&gt;</span>
+
+      {storage ? (
+        <span class="hljs-tag">&lt;<span class="hljs-name">Button</span>
+          <span class="hljs-attr">disabled</span>=<span class="hljs-string">{storage.administrators.indexOf(userAddress!</span> <span class="hljs-attr">as</span> <span class="hljs-attr">address</span>) &lt; <span class="hljs-attr">0</span>}
+          <span class="hljs-attr">sx</span>=<span class="hljs-string">{{</span>
+            <span class="hljs-attr">p:</span> <span class="hljs-attr">1</span>,
+            <span class="hljs-attr">position:</span> &quot;<span class="hljs-attr">absolute</span>&quot;,
+            <span class="hljs-attr">right:</span> &quot;<span class="hljs-attr">0</span>&quot;,
+            <span class="hljs-attr">display:</span> <span class="hljs-attr">formOpen</span> ? &quot;<span class="hljs-attr">none</span>&quot; <span class="hljs-attr">:</span> &quot;<span class="hljs-attr">block</span>&quot;,
+            <span class="hljs-attr">zIndex:</span> <span class="hljs-attr">1</span>,
+          }}
+          <span class="hljs-attr">onClick</span>=<span class="hljs-string">{toggleDrawer(!formOpen)}</span>
+        &gt;</span>
+          {&quot; Mint Form &quot; +
+            (storage!.administrators.indexOf(userAddress! as address) &lt; 0
+              ? &quot; (You are not admin)&quot;
+              : &quot;&quot;)}
+          <span class="hljs-tag">&lt;<span class="hljs-name">OpenWithIcon</span> /&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">Button</span>&gt;</span>
+      ) : (
+        &quot;&quot;
+      )}
+
+      <span class="hljs-tag">&lt;<span class="hljs-name">SwipeableDrawer</span>
+        <span class="hljs-attr">onClose</span>=<span class="hljs-string">{toggleDrawer(false)}</span>
+        <span class="hljs-attr">onOpen</span>=<span class="hljs-string">{toggleDrawer(true)}</span>
+        <span class="hljs-attr">anchor</span>=<span class="hljs-string">&quot;right&quot;</span>
+        <span class="hljs-attr">open</span>=<span class="hljs-string">{formOpen}</span>
+        <span class="hljs-attr">variant</span>=<span class="hljs-string">&quot;temporary&quot;</span>
+      &gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">Toolbar</span>
+          <span class="hljs-attr">sx</span>=<span class="hljs-string">{</span>
+            <span class="hljs-attr">isTablet</span>
+              ? { <span class="hljs-attr">marginTop:</span> &quot;<span class="hljs-attr">0</span>&quot;, <span class="hljs-attr">marginRight:</span> &quot;<span class="hljs-attr">0</span>&quot; }
+              <span class="hljs-attr">:</span> { <span class="hljs-attr">marginTop:</span> &quot;<span class="hljs-attr">35px</span>&quot;, <span class="hljs-attr">marginRight:</span> &quot;<span class="hljs-attr">125px</span>&quot; }
+          }
+        /&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">Box</span>
+          <span class="hljs-attr">sx</span>=<span class="hljs-string">{{</span>
+            <span class="hljs-attr">width:</span> <span class="hljs-attr">isTablet</span> ? &quot;<span class="hljs-attr">40vw</span>&quot; <span class="hljs-attr">:</span> &quot;<span class="hljs-attr">60vw</span>&quot;,
+            <span class="hljs-attr">borderColor:</span> &quot;<span class="hljs-attr">text.secondary</span>&quot;,
+            <span class="hljs-attr">borderStyle:</span> &quot;<span class="hljs-attr">solid</span>&quot;,
+            <span class="hljs-attr">borderWidth:</span> &quot;<span class="hljs-attr">1px</span>&quot;,
+
+            <span class="hljs-attr">height:</span> &quot;<span class="hljs-attr">calc</span>(<span class="hljs-attr">100vh</span> <span class="hljs-attr">-</span> <span class="hljs-attr">64px</span>)&quot;,
+          }}
+        &gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">Button</span>
+            <span class="hljs-attr">sx</span>=<span class="hljs-string">{{</span>
+              <span class="hljs-attr">position:</span> &quot;<span class="hljs-attr">absolute</span>&quot;,
+              <span class="hljs-attr">right:</span> &quot;<span class="hljs-attr">0</span>&quot;,
+              <span class="hljs-attr">display:</span> !<span class="hljs-attr">formOpen</span> ? &quot;<span class="hljs-attr">none</span>&quot; <span class="hljs-attr">:</span> &quot;<span class="hljs-attr">block</span>&quot;,
+            }}
+            <span class="hljs-attr">onClick</span>=<span class="hljs-string">{toggleDrawer(!formOpen)}</span>
+          &gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">Close</span> /&gt;</span>
+          <span class="hljs-tag">&lt;/<span class="hljs-name">Button</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">onSubmit</span>=<span class="hljs-string">{formik.handleSubmit}</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">Stack</span> <span class="hljs-attr">spacing</span>=<span class="hljs-string">{2}</span> <span class="hljs-attr">margin</span>=<span class="hljs-string">{2}</span> <span class="hljs-attr">alignContent</span>=<span class="hljs-string">{</span>&quot;<span class="hljs-attr">center</span>&quot;}&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">Typography</span> <span class="hljs-attr">variant</span>=<span class="hljs-string">&quot;h5&quot;</span>&gt;</span>Mint a new collection<span class="hljs-tag">&lt;/<span class="hljs-name">Typography</span>&gt;</span>
+
+              <span class="hljs-tag">&lt;<span class="hljs-name">TextField</span>
+                <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;standard-basic&quot;</span>
+                <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;token_id&quot;</span>
+                <span class="hljs-attr">label</span>=<span class="hljs-string">&quot;token_id&quot;</span>
+                <span class="hljs-attr">value</span>=<span class="hljs-string">{formik.values.token_id}</span>
+                <span class="hljs-attr">disabled</span>
+                <span class="hljs-attr">variant</span>=<span class="hljs-string">&quot;filled&quot;</span>
+              /&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">TextField</span>
+                <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;standard-basic&quot;</span>
+                <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;name&quot;</span>
+                <span class="hljs-attr">label</span>=<span class="hljs-string">&quot;name&quot;</span>
+                <span class="hljs-attr">required</span>
+                <span class="hljs-attr">value</span>=<span class="hljs-string">{formik.values.name}</span>
+                <span class="hljs-attr">onChange</span>=<span class="hljs-string">{formik.handleChange}</span>
+                <span class="hljs-attr">error</span>=<span class="hljs-string">{formik.touched.name</span> &amp;&amp; <span class="hljs-attr">Boolean</span>(<span class="hljs-attr">formik.errors.name</span>)}
+                <span class="hljs-attr">helperText</span>=<span class="hljs-string">{formik.touched.name</span> &amp;&amp; <span class="hljs-attr">formik.errors.name</span>}
+                <span class="hljs-attr">variant</span>=<span class="hljs-string">&quot;filled&quot;</span>
+              /&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">TextField</span>
+                <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;standard-basic&quot;</span>
+                <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;symbol&quot;</span>
+                <span class="hljs-attr">label</span>=<span class="hljs-string">&quot;symbol&quot;</span>
+                <span class="hljs-attr">required</span>
+                <span class="hljs-attr">value</span>=<span class="hljs-string">{formik.values.symbol}</span>
+                <span class="hljs-attr">onChange</span>=<span class="hljs-string">{formik.handleChange}</span>
+                <span class="hljs-attr">error</span>=<span class="hljs-string">{formik.touched.symbol</span> &amp;&amp; <span class="hljs-attr">Boolean</span>(<span class="hljs-attr">formik.errors.symbol</span>)}
+                <span class="hljs-attr">helperText</span>=<span class="hljs-string">{formik.touched.symbol</span> &amp;&amp; <span class="hljs-attr">formik.errors.symbol</span>}
+                <span class="hljs-attr">variant</span>=<span class="hljs-string">&quot;filled&quot;</span>
+              /&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">TextField</span>
+                <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;standard-basic&quot;</span>
+                <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;description&quot;</span>
+                <span class="hljs-attr">label</span>=<span class="hljs-string">&quot;description&quot;</span>
+                <span class="hljs-attr">required</span>
+                <span class="hljs-attr">multiline</span>
+                <span class="hljs-attr">minRows</span>=<span class="hljs-string">{2}</span>
+                <span class="hljs-attr">value</span>=<span class="hljs-string">{formik.values.description}</span>
+                <span class="hljs-attr">onChange</span>=<span class="hljs-string">{formik.handleChange}</span>
+                <span class="hljs-attr">error</span>=<span class="hljs-string">{</span>
+                  <span class="hljs-attr">formik.touched.description</span> &amp;&amp;
+                  <span class="hljs-attr">Boolean</span>(<span class="hljs-attr">formik.errors.description</span>)
+                }
+                <span class="hljs-attr">helperText</span>=<span class="hljs-string">{</span>
+                  <span class="hljs-attr">formik.touched.description</span> &amp;&amp; <span class="hljs-attr">formik.errors.description</span>
+                }
+                <span class="hljs-attr">variant</span>=<span class="hljs-string">&quot;filled&quot;</span>
+              /&gt;</span>
+
+              {pictureUrl ? (
+                <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">height</span>=<span class="hljs-string">{100}</span> <span class="hljs-attr">width</span>=<span class="hljs-string">{100}</span> <span class="hljs-attr">src</span>=<span class="hljs-string">{pictureUrl}</span> /&gt;</span>
+              ) : (
+                &quot;&quot;
+              )}
+              <span class="hljs-tag">&lt;<span class="hljs-name">Button</span> <span class="hljs-attr">variant</span>=<span class="hljs-string">&quot;contained&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">&quot;label&quot;</span> <span class="hljs-attr">color</span>=<span class="hljs-string">&quot;primary&quot;</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">AddCircleOutlined</span> /&gt;</span>
+                Upload an image
+                <span class="hljs-tag">&lt;<span class="hljs-name">input</span>
+                  <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;file&quot;</span>
+                  <span class="hljs-attr">hidden</span>
+                  <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;data&quot;</span>
+                  <span class="hljs-attr">onChange</span>=<span class="hljs-string">{(e:</span> <span class="hljs-attr">React.ChangeEvent</span>&lt;<span class="hljs-attr">HTMLInputElement</span>&gt;</span>) =&gt; {
+                    const data = e.target.files ? e.target.files[0] : null;
+                    if (data) {
+                      setFile(data);
+                    }
+                    e.preventDefault();
+                  }}
+                /&gt;
+              <span class="hljs-tag">&lt;/<span class="hljs-name">Button</span>&gt;</span>
+
+              <span class="hljs-tag">&lt;<span class="hljs-name">Button</span> <span class="hljs-attr">variant</span>=<span class="hljs-string">&quot;contained&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;submit&quot;</span>&gt;</span>
+                Mint
+              <span class="hljs-tag">&lt;/<span class="hljs-name">Button</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">Stack</span>&gt;</span>
+          <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">Box</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">SwipeableDrawer</span>&gt;</span>
+
+
+      <span class="hljs-tag">&lt;<span class="hljs-name">Typography</span> <span class="hljs-attr">variant</span>=<span class="hljs-string">&quot;h5&quot;</span>&gt;</span>Mint your wine collection<span class="hljs-tag">&lt;/<span class="hljs-name">Typography</span>&gt;</span>
+
+      {nftContratTokenMetadataMap.size != 0 ? (
+        &quot;//TODO&quot;
+      ) : (
+        <span class="hljs-tag">&lt;<span class="hljs-name">Typography</span> <span class="hljs-attr">sx</span>=<span class="hljs-string">{{</span> <span class="hljs-attr">py:</span> &quot;<span class="hljs-attr">2em</span>&quot; }} <span class="hljs-attr">variant</span>=<span class="hljs-string">&quot;h4&quot;</span>&gt;</span>
+          Sorry, there is not NFT yet, you need to mint bottles first
+        <span class="hljs-tag">&lt;/<span class="hljs-name">Typography</span>&gt;</span>
+      )}
+    <span class="hljs-tag">&lt;/<span class="hljs-name">Paper</span>&gt;</span>
+</code></pre>
+<p>Add <code>formik</code> form to your Component function MintPage</p>
+<pre class="hljs language-typescript"><code><span class="hljs-keyword">const</span> validationSchema = yup.<span class="hljs-title function_">object</span>({
+  <span class="hljs-attr">name</span>: yup.<span class="hljs-title function_">string</span>().required(<span class="hljs-string">&quot;Name is required&quot;</span>),
+  <span class="hljs-attr">description</span>: yup.<span class="hljs-title function_">string</span>().required(<span class="hljs-string">&quot;Description is required&quot;</span>),
+  <span class="hljs-attr">symbol</span>: yup.<span class="hljs-title function_">string</span>().required(<span class="hljs-string">&quot;Symbol is required&quot;</span>),
+});
+
+<span class="hljs-keyword">const</span> formik = <span class="hljs-title function_">useFormik</span>({
+  <span class="hljs-attr">initialValues</span>: {
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;&quot;</span>,
+    <span class="hljs-attr">description</span>: <span class="hljs-string">&quot;&quot;</span>,
+    <span class="hljs-attr">token_id</span>: <span class="hljs-number">0</span>,
+    <span class="hljs-attr">symbol</span>: <span class="hljs-string">&quot;WINE&quot;</span>,
+  } <span class="hljs-keyword">as</span> <span class="hljs-title class_">TZIP21TokenMetadata</span>,
+  <span class="hljs-attr">validationSchema</span>: validationSchema,
+  <span class="hljs-attr">onSubmit</span>: <span class="hljs-function">(<span class="hljs-params">values</span>) =&gt;</span> {
+    <span class="hljs-title function_">mint</span>(values);
+  },
+});
+</code></pre>
+<p>Again, on the Component function MintPage, add <code>pictureUrl</code> and <code>setFile</code> declaration to display the token image after pinning it to IPFS, and to get the upload file on the form</p>
+<pre class="hljs language-typescript"><code><span class="hljs-keyword">const</span> [pictureUrl, setPictureUrl] = useState&lt;<span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">&quot;&quot;</span>);
+<span class="hljs-keyword">const</span> [file, setFile] = useState&lt;<span class="hljs-title class_">File</span> | <span class="hljs-literal">null</span>&gt;(<span class="hljs-literal">null</span>);
+</code></pre>
+<p>Add drawer variables to manager the side-popup of the form</p>
+<pre class="hljs language-typescript"><code><span class="hljs-comment">//open mint drawer if admin</span>
+<span class="hljs-keyword">const</span> [formOpen, setFormOpen] = useState&lt;<span class="hljs-built_in">boolean</span>&gt;(<span class="hljs-literal">false</span>);
+
+<span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-keyword">if</span> (storage &amp;&amp; storage.<span class="hljs-property">administrators</span>.<span class="hljs-title function_">indexOf</span>(userAddress! <span class="hljs-keyword">as</span> address) &lt; <span class="hljs-number">0</span>)
+    <span class="hljs-title function_">setFormOpen</span>(<span class="hljs-literal">false</span>);
+  <span class="hljs-keyword">else</span> <span class="hljs-title function_">setFormOpen</span>(<span class="hljs-literal">true</span>);
+}, [userAddress]);
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">toggleDrawer</span> =
+  (<span class="hljs-params">open: <span class="hljs-built_in">boolean</span></span>) =&gt; <span class="hljs-function">(<span class="hljs-params">event: React.KeyboardEvent | React.MouseEvent</span>) =&gt;</span> {
+    <span class="hljs-keyword">if</span> (
+      event.<span class="hljs-property">type</span> === <span class="hljs-string">&quot;keydown&quot;</span> &amp;&amp;
+      ((event <span class="hljs-keyword">as</span> <span class="hljs-title class_">React</span>.<span class="hljs-property">KeyboardEvent</span>).<span class="hljs-property">key</span> === <span class="hljs-string">&quot;Tab&quot;</span> ||
+        (event <span class="hljs-keyword">as</span> <span class="hljs-title class_">React</span>.<span class="hljs-property">KeyboardEvent</span>).<span class="hljs-property">key</span> === <span class="hljs-string">&quot;Shift&quot;</span>)
+    ) {
+      <span class="hljs-keyword">return</span>;
+    }
+    <span class="hljs-title function_">setFormOpen</span>(open);
+  };
+</code></pre>
+<p>Fix missing imports at this step</p>
+<pre class="hljs language-typescript"><code><span class="hljs-keyword">import</span> { <span class="hljs-title class_">AddCircleOutlined</span>, <span class="hljs-title class_">Close</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@mui/icons-material&quot;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-title class_">OpenWithIcon</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@mui/icons-material/OpenWith&quot;</span>;
+<span class="hljs-keyword">import</span> {
+  <span class="hljs-title class_">Box</span>,
+  <span class="hljs-title class_">Button</span>,
+  <span class="hljs-title class_">Stack</span>,
+  <span class="hljs-title class_">SwipeableDrawer</span>,
+  <span class="hljs-title class_">TextField</span>,
+  <span class="hljs-title class_">Toolbar</span>,
+  useMediaQuery,
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@mui/material&quot;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-title class_">Paper</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@mui/material/Paper&quot;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-title class_">Typography</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@mui/material/Typography&quot;</span>;
+<span class="hljs-keyword">import</span> { useFormik } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;formik&quot;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-title class_">React</span>, { useEffect, useState } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;
+<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> yup <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;yup&quot;</span>;
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">TZIP21TokenMetadata</span>, <span class="hljs-title class_">UserContext</span>, <span class="hljs-title class_">UserContextType</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./App&quot;</span>;
+<span class="hljs-keyword">import</span> { address } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./type-aliases&quot;</span>;
+</code></pre>
+</section>
+<section>
+<h3>Add mint missing function</h3>
+<p>Add the mint function, also add missing imports :</p>
+<pre class="hljs language-typescript"><code><span class="hljs-keyword">import</span> { useSnackbar } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;notistack&quot;</span>;
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">BigNumber</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;bignumber.js&quot;</span>;
+<span class="hljs-keyword">import</span> { address, bytes, nat } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./type-aliases&quot;</span>;
+<span class="hljs-keyword">import</span> { char2Bytes } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@taquito/utils&quot;</span>;
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">TransactionInvalidBeaconError</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./TransactionInvalidBeaconError&quot;</span>;
+</code></pre>
+<pre class="hljs language-typescript"><code><span class="hljs-keyword">const</span> { enqueueSnackbar } = <span class="hljs-title function_">useSnackbar</span>();
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">mint</span> = <span class="hljs-keyword">async</span> (<span class="hljs-params">newTokenDefinition: TZIP21TokenMetadata</span>) =&gt; {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-comment">//IPFS</span>
+    <span class="hljs-keyword">if</span> (file) {
+      <span class="hljs-keyword">const</span> formData = <span class="hljs-keyword">new</span> <span class="hljs-title class_">FormData</span>();
+      formData.<span class="hljs-title function_">append</span>(<span class="hljs-string">&quot;file&quot;</span>, file);
+
+      <span class="hljs-keyword">const</span> <span class="hljs-attr">requestHeaders</span>: <span class="hljs-title class_">HeadersInit</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Headers</span>();
+      requestHeaders.<span class="hljs-title function_">set</span>(
+        <span class="hljs-string">&quot;pinata_api_key&quot;</span>,
+        <span class="hljs-string">`<span class="hljs-subst">${process.env.REACT_APP_PINATA_API_KEY}</span>`</span>
+      );
+      requestHeaders.<span class="hljs-title function_">set</span>(
+        <span class="hljs-string">&quot;pinata_secret_api_key&quot;</span>,
+        <span class="hljs-string">`<span class="hljs-subst">${process.env.REACT_APP_PINATA_API_SECRET}</span>`</span>
+      );
+
+      <span class="hljs-keyword">const</span> resFile = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(
+        <span class="hljs-string">&quot;https://api.pinata.cloud/pinning/pinFileToIPFS&quot;</span>,
+        {
+          <span class="hljs-attr">method</span>: <span class="hljs-string">&quot;post&quot;</span>,
+          <span class="hljs-attr">body</span>: formData,
+          <span class="hljs-attr">headers</span>: requestHeaders,
+        }
+      );
+
+      <span class="hljs-keyword">const</span> responseJson = <span class="hljs-keyword">await</span> resFile.<span class="hljs-title function_">json</span>();
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;responseJson&quot;</span>, responseJson);
+
+      <span class="hljs-keyword">const</span> thumbnailUri = <span class="hljs-string">`ipfs://<span class="hljs-subst">${responseJson.IpfsHash}</span>`</span>;
+      <span class="hljs-title function_">setPictureUrl</span>(
+        <span class="hljs-string">`https://gateway.pinata.cloud/ipfs/<span class="hljs-subst">${responseJson.IpfsHash}</span>`</span>
+      );
+
+      <span class="hljs-keyword">const</span> op = <span class="hljs-keyword">await</span> nftContrat!.<span class="hljs-property">methods</span>
+        .<span class="hljs-title function_">mint</span>(
+          <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigNumber</span>(newTokenDefinition.<span class="hljs-property">token_id</span>) <span class="hljs-keyword">as</span> nat,
+          <span class="hljs-title function_">char2Bytes</span>(newTokenDefinition.<span class="hljs-property">name</span>!) <span class="hljs-keyword">as</span> bytes,
+          <span class="hljs-title function_">char2Bytes</span>(newTokenDefinition.<span class="hljs-property">description</span>!) <span class="hljs-keyword">as</span> bytes,
+          <span class="hljs-title function_">char2Bytes</span>(newTokenDefinition.<span class="hljs-property">symbol</span>!) <span class="hljs-keyword">as</span> bytes,
+          <span class="hljs-title function_">char2Bytes</span>(thumbnailUri) <span class="hljs-keyword">as</span> bytes
+        )
+        .<span class="hljs-title function_">send</span>();
+
+      <span class="hljs-comment">//close directly the form</span>
+      <span class="hljs-title function_">setFormOpen</span>(<span class="hljs-literal">false</span>);
+      <span class="hljs-title function_">enqueueSnackbar</span>(
+        <span class="hljs-string">&quot;Wine collection is minting ... it will be ready on next block, wait for the confirmation message before minting another collection&quot;</span>,
+        { <span class="hljs-attr">variant</span>: <span class="hljs-string">&quot;info&quot;</span> }
+      );
+
+      <span class="hljs-keyword">await</span> op.<span class="hljs-title function_">confirmation</span>(<span class="hljs-number">2</span>);
+
+      <span class="hljs-title function_">enqueueSnackbar</span>(<span class="hljs-string">&quot;Wine collection minted&quot;</span>, { <span class="hljs-attr">variant</span>: <span class="hljs-string">&quot;success&quot;</span> });
+
+      <span class="hljs-title function_">refreshUserContextOnPageReload</span>(); <span class="hljs-comment">//force all app to refresh the context</span>
+    }
+  } <span class="hljs-keyword">catch</span> (error) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">table</span>(<span class="hljs-string">`Error: <span class="hljs-subst">${<span class="hljs-built_in">JSON</span>.stringify(error, <span class="hljs-literal">null</span>, <span class="hljs-number">2</span>)}</span>`</span>);
+    <span class="hljs-keyword">let</span> <span class="hljs-attr">tibe</span>: <span class="hljs-title class_">TransactionInvalidBeaconError</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">TransactionInvalidBeaconError</span>(
+      error
+    );
+    <span class="hljs-title function_">enqueueSnackbar</span>(tibe.<span class="hljs-property">data_message</span>, {
+      <span class="hljs-attr">variant</span>: <span class="hljs-string">&quot;error&quot;</span>,
+      <span class="hljs-attr">autoHideDuration</span>: <span class="hljs-number">10000</span>,
+    });
+  }
+};
+</code></pre>
+<p><img src="./doc/mintForm.png" alt="mintForm.png"></p>
+<p>Explanations :</p>
+<ul>
+<li>on Mint button click, we upload a file and then we call the <code>pinata API</code> to push the file to <code>IPFS</code>. It returns the hash</li>
+<li>hash is used in two different ways
+<ul>
+<li>https pinata gateway link (or any other ipfs http viewer)</li>
+<li>ipfs link for the backend thumbnail url</li>
+</ul>
+</li>
+<li>TZIP standard requires to store data in <code>bytes</code>. As there is no Michelson function to convert string to bytes (using Micheline data PACK will not work as it alters the final bytes), we do the conversion using <code>char2Bytes</code> on the frontend side</li>
+</ul>
+<blockquote>
+<p>Note : Finally, if you remember on the backend , we said that token_id increment management was done in the ui, so you can write this code. It is not a good security practice as it supposes that the counter is managed on frontend side, but it is ok for demo purpose.</p>
+</blockquote>
+<p>Add this code, everytime you have a new token minted, you increment the counter for the next one</p>
+<pre class="hljs language-typescript"><code><span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> {
+  (<span class="hljs-keyword">async</span> () =&gt; {
+    <span class="hljs-keyword">if</span> (storage &amp;&amp; storage.<span class="hljs-property">token_ids</span>.<span class="hljs-property">length</span> &gt; <span class="hljs-number">0</span>) {
+      formik.<span class="hljs-title function_">setFieldValue</span>(<span class="hljs-string">&quot;token_id&quot;</span>, storage?.<span class="hljs-property">token_ids</span>.<span class="hljs-property">length</span>);
+    }
+  })();
+}, [storage?.<span class="hljs-property">token_ids</span>]);
+</code></pre>
+</section>
+<section>
+<h3>Display all minted bottles</h3>
+<p>Replace the <code>&quot;//TODO&quot;</code> keyword by this template</p>
+<pre class="hljs language-html"><code><span class="hljs-tag">&lt;<span class="hljs-name">Box</span> <span class="hljs-attr">sx</span>=<span class="hljs-string">{{</span> <span class="hljs-attr">width:</span> &quot;<span class="hljs-attr">70vw</span>&quot; }}&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">SwipeableViews</span>
+            <span class="hljs-attr">axis</span>=<span class="hljs-string">&quot;x&quot;</span>
+            <span class="hljs-attr">index</span>=<span class="hljs-string">{activeStep}</span>
+            <span class="hljs-attr">onChangeIndex</span>=<span class="hljs-string">{handleStepChange}</span>
+            <span class="hljs-attr">enableMouseEvents</span>
+          &gt;</span>
+            {Array.from(nftContratTokenMetadataMap!.entries()).map(
+              ([token_id, token]) =&gt; (
+                <span class="hljs-tag">&lt;<span class="hljs-name">Card</span>
+                  <span class="hljs-attr">sx</span>=<span class="hljs-string">{{</span>
+                    <span class="hljs-attr">display:</span> &quot;<span class="hljs-attr">block</span>&quot;,
+                    <span class="hljs-attr">maxWidth:</span> &quot;<span class="hljs-attr">80vw</span>&quot;,
+                    <span class="hljs-attr">overflow:</span> &quot;<span class="hljs-attr">hidden</span>&quot;,
+                  }}
+                  <span class="hljs-attr">key</span>=<span class="hljs-string">{token_id.toString()}</span>
+                &gt;</span>
+                  <span class="hljs-tag">&lt;<span class="hljs-name">CardHeader</span>
+                    <span class="hljs-attr">titleTypographyProps</span>=<span class="hljs-string">{</span>
+                      <span class="hljs-attr">isTablet</span> ? { <span class="hljs-attr">fontSize:</span> &quot;<span class="hljs-attr">1.5em</span>&quot; } <span class="hljs-attr">:</span> { <span class="hljs-attr">fontSize:</span> &quot;<span class="hljs-attr">1em</span>&quot; }
+                    }
+                    <span class="hljs-attr">title</span>=<span class="hljs-string">{token.name}</span>
+                  /&gt;</span>
+
+                  <span class="hljs-tag">&lt;<span class="hljs-name">CardMedia</span>
+                    <span class="hljs-attr">sx</span>=<span class="hljs-string">{</span>
+                      <span class="hljs-attr">isTablet</span>
+                        ? {
+                            <span class="hljs-attr">width:</span> &quot;<span class="hljs-attr">auto</span>&quot;,
+                            <span class="hljs-attr">marginLeft:</span> &quot;<span class="hljs-attr">33</span>%&quot;,
+                            <span class="hljs-attr">maxHeight:</span> &quot;<span class="hljs-attr">50vh</span>&quot;,
+                          }
+                        <span class="hljs-attr">:</span> { <span class="hljs-attr">width:</span> &quot;<span class="hljs-attr">100</span>%&quot;, <span class="hljs-attr">maxHeight:</span> &quot;<span class="hljs-attr">40vh</span>&quot; }
+                    }
+                    <span class="hljs-attr">component</span>=<span class="hljs-string">&quot;img&quot;</span>
+                    <span class="hljs-attr">image</span>=<span class="hljs-string">{token.thumbnailUri?.replace(</span>
+                      &quot;<span class="hljs-attr">ipfs:</span>//&quot;,
+                      &quot;<span class="hljs-attr">https:</span>//<span class="hljs-attr">gateway.pinata.cloud</span>/<span class="hljs-attr">ipfs</span>/&quot;
+                    )}
+                  /&gt;</span>
+
+                  <span class="hljs-tag">&lt;<span class="hljs-name">CardContent</span>&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-name">Box</span>&gt;</span>
+                      <span class="hljs-tag">&lt;<span class="hljs-name">Typography</span>&gt;</span>{&quot;ID : &quot; + token_id}<span class="hljs-tag">&lt;/<span class="hljs-name">Typography</span>&gt;</span>
+                      <span class="hljs-tag">&lt;<span class="hljs-name">Typography</span>&gt;</span>{&quot;Symbol : &quot; + token.symbol}<span class="hljs-tag">&lt;/<span class="hljs-name">Typography</span>&gt;</span>
+                      <span class="hljs-tag">&lt;<span class="hljs-name">Typography</span>&gt;</span>
+                        {&quot;Description : &quot; + token.description}
+                      <span class="hljs-tag">&lt;/<span class="hljs-name">Typography</span>&gt;</span>
+                    <span class="hljs-tag">&lt;/<span class="hljs-name">Box</span>&gt;</span>
+                  <span class="hljs-tag">&lt;/<span class="hljs-name">CardContent</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">Card</span>&gt;</span>
+              )
+            )}
+          <span class="hljs-tag">&lt;/<span class="hljs-name">SwipeableViews</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">MobileStepper</span>
+            <span class="hljs-attr">variant</span>=<span class="hljs-string">&quot;text&quot;</span>
+            <span class="hljs-attr">steps</span>=<span class="hljs-string">{Array.from(nftContratTokenMetadataMap!.entries()).length}</span>
+            <span class="hljs-attr">position</span>=<span class="hljs-string">&quot;static&quot;</span>
+            <span class="hljs-attr">activeStep</span>=<span class="hljs-string">{activeStep}</span>
+            <span class="hljs-attr">nextButton</span>=<span class="hljs-string">{</span>
+              &lt;<span class="hljs-attr">Button</span>
+                <span class="hljs-attr">size</span>=<span class="hljs-string">&quot;small&quot;</span>
+                <span class="hljs-attr">onClick</span>=<span class="hljs-string">{handleNext}</span>
+                <span class="hljs-attr">disabled</span>=<span class="hljs-string">{</span>
+                  <span class="hljs-attr">activeStep</span> ===
+                  <span class="hljs-string">Array.from(nftContratTokenMetadataMap!.entries()).length</span> <span class="hljs-attr">-</span> <span class="hljs-attr">1</span>
+                }
+              &gt;</span>
+                Next
+                <span class="hljs-tag">&lt;<span class="hljs-name">KeyboardArrowRight</span> /&gt;</span>
+              <span class="hljs-tag">&lt;/<span class="hljs-name">Button</span>&gt;</span>
+            }
+            backButton={
+              <span class="hljs-tag">&lt;<span class="hljs-name">Button</span>
+                <span class="hljs-attr">size</span>=<span class="hljs-string">&quot;small&quot;</span>
+                <span class="hljs-attr">onClick</span>=<span class="hljs-string">{handleBack}</span>
+                <span class="hljs-attr">disabled</span>=<span class="hljs-string">{activeStep</span> === <span class="hljs-string">0}</span>
+              &gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">KeyboardArrowLeft</span> /&gt;</span>
+                Back
+              <span class="hljs-tag">&lt;/<span class="hljs-name">Button</span>&gt;</span>
+            }
+          /&gt;
+        <span class="hljs-tag">&lt;/<span class="hljs-name">Box</span>&gt;</span>
+</code></pre>
+<p>add missing imports and parameters</p>
+<pre class="hljs language-typescript"><code><span class="hljs-keyword">import</span> <span class="hljs-title class_">SwipeableViews</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react-swipeable-views&quot;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-title class_">OpenWithIcon</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@mui/icons-material/OpenWith&quot;</span>;
+<span class="hljs-keyword">import</span> {
+  <span class="hljs-title class_">Box</span>,
+  <span class="hljs-title class_">Button</span>,
+  <span class="hljs-title class_">CardHeader</span>,
+  <span class="hljs-title class_">CardMedia</span>,
+  <span class="hljs-title class_">MobileStepper</span>,
+  <span class="hljs-title class_">Stack</span>,
+  <span class="hljs-title class_">SwipeableDrawer</span>,
+  <span class="hljs-title class_">TextField</span>,
+  <span class="hljs-title class_">Toolbar</span>,
+  useMediaQuery,
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@mui/material&quot;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-title class_">Card</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@mui/material/Card&quot;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-title class_">CardContent</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@mui/material/CardContent&quot;</span>;
+<span class="hljs-keyword">import</span> {
+  <span class="hljs-title class_">AddCircleOutlined</span>,
+  <span class="hljs-title class_">Close</span>,
+  <span class="hljs-title class_">KeyboardArrowLeft</span>,
+  <span class="hljs-title class_">KeyboardArrowRight</span>,
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@mui/icons-material&quot;</span>;
+</code></pre>
+<pre class="hljs language-typescript"><code><span class="hljs-keyword">const</span> [activeStep, setActiveStep] = <span class="hljs-title class_">React</span>.<span class="hljs-title function_">useState</span>(<span class="hljs-number">0</span>);
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">handleNext</span> = (<span class="hljs-params"></span>) =&gt; {
+  <span class="hljs-title function_">setActiveStep</span>(<span class="hljs-function">(<span class="hljs-params">prevActiveStep</span>) =&gt;</span> prevActiveStep + <span class="hljs-number">1</span>);
+};
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">handleBack</span> = (<span class="hljs-params"></span>) =&gt; {
+  <span class="hljs-title function_">setActiveStep</span>(<span class="hljs-function">(<span class="hljs-params">prevActiveStep</span>) =&gt;</span> prevActiveStep - <span class="hljs-number">1</span>);
+};
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">handleStepChange</span> = (<span class="hljs-params">step: <span class="hljs-built_in">number</span></span>) =&gt; {
+  <span class="hljs-title function_">setActiveStep</span>(step);
+};
+</code></pre>
+</section>
+</section>
+<section>
+<h2>Let's play</h2>
+<ol>
+<li>Connect with your wallet an choose <code>alice</code> account (or the administrator you set on the smart contract earlier). You are redirected to the Administration /mint page as there is no nft minted yet</li>
+<li>Enter these values on the form for example :</li>
+</ol>
+<ul>
+<li>name : Saint Emilion - Franc la Rose</li>
+<li>symbol : SEMIL</li>
+<li>description : Grand cru 2007</li>
+</ul>
+<ol start="3">
+<li>Click on <code>Upload an image</code> an select a bottle picture on your computer</li>
+<li>Click on Mint button</li>
+</ol>
+<p><img src="./doc/minting.png" alt="minting.png"></p>
+<p>Your picture will be pushed to IPFS and will display, then you are asked to sign the mint operation</p>
+<ul>
+<li>Confirm operation</li>
+<li>Wait less than 1 minutes until you get the confirmation notification, the page will refresh automatically</li>
+</ul>
+<p>Now you can see all NFTs</p>
+<p><img src="./doc/winecollection.png" alt="winecollection.png"></p>
+</section>
+</section>
+<section>
+<h1>🌴 Conclusion 🌞</h1>
+<p>You are able to create an NFT collection marketplace from the ligo library.</p>
+<p>On next, training, you will add the Buy/Sell function to your smart contract and update the frontend to play with it</p>
+<p><a href="https://github.com/marigold-dev/training-nft-2">➡️ NEXT</a></p>
+</section>
+
+    <script>
+      const toggleSwitch = document.querySelector(".toggle-button");
+
+      function switchTheme(e) {
+        if (e.target.checked) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      }
+
+      toggleSwitch.addEventListener("change", switchTheme, false);
+    </script>
+  </body>
+</html>

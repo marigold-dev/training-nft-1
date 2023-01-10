@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Training nft n°1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;0,200;0,300;1,200&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
+      integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls"
+      crossorigin="anonymous"
+    />
+    <link href="./main.css" rel="stylesheet" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/images/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/images/favicon-32x32.png"
+    />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Training nft n°1" />
+    <meta
+      property="og:description"
+      content="Trainings nft decentralized application for Tezos blockchain made by Marigold"
+    />
+    <meta
+      property="og:url"
+      content="https://marigold-dev.github.io/training-nft-1/"
+    />
+    <meta property="og:site_name" content="Training nft n°1" />
+    <meta property="og:image:width" content="400" />
+    <meta property="og:image:height" content="400" />
+    <meta name="twitter:card" content="summary" />
+    <meta
+      name="twitter:description"
+      content="Trainings nft decentralized application for Tezos blockchain made by Marigold."
+    />
+    <meta name="twitter:title" content="Training nft n°1" />
+    <meta name="twitter:site" content="@tezos" />
+    <meta name="twitter:creator" content="@Marigold_Dev" />
+  </head>
+  <body>
+    <div class="container">
+      <input type="checkbox" class="toggle-button" />
+    </div>
+    {body}
+    <script>
+      const toggleSwitch = document.querySelector(".toggle-button");
+
+      function switchTheme(e) {
+        if (e.target.checked) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      }
+
+      toggleSwitch.addEventListener("change", switchTheme, false);
+    </script>
+  </body>
+</html>
