@@ -29,7 +29,7 @@ Plan of the training course :
 | single asset   | 0..1            | 1..n                     |
 | multi asset    | 0..n            | 1..n                     |
 
-<img src="https://i.imgflip.com/4dpglt.png" style="width: 200px"/>
+<img src="https://i.imgflip.com/4dpglt.png" style="width: 200px;margin:2"/>
 
 ## :performing_arts: What are NFTs?
 
