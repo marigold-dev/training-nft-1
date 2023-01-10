@@ -863,4 +863,6 @@ You are able to create an NFT collection marketplace from the ligo library.
 
 On next, training, you will add the Buy/Sell function to your smart contract and update the frontend to play with it
 
-[:arrow_right: NEXT](https://github.com/marigold-dev/training-nft-2)
+[:arrow_right: NEXT (HTML version)](https://marigold-dev.github.io/training-nft-2)
+
+[:arrow_right: NEXT (Github version)](https://github.com/marigold-dev/training-nft-2)
