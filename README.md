@@ -7,13 +7,21 @@ Training n°1 for NFT marketplace
 # Introduction
 
 Business objects managed by a blockchain are called `assets`. On Tezos you will find the term `Financial Asset or FA` with different version 1, 2 or 2.1.
+
 Here below different categorization of assets.
 
 ![](http://jingculturecommerce.com/wp-content/uploads/2021/03/nft-assets-1024x614.jpg)
 
 # :wine_glass: Wine marketplace
 
-We are going to build a Wine marketplace.
+We are going to build a Wine marketplace extending the `@ligo/fa` package from the [Ligo repository](https://packages.ligolang.org/). Goal is to showcase how to extend an existing smart contract and build a frontend on top of it.
+
+The Wine marketplace is adding these features on top a generic NFT contract :
+
+- mint new wine bottles
+- update wine bottle metadata details
+- buy wine bottles
+- sell wine bottles
 
 You can play with the [final demo](https://demo.winefactory.marigold.dev/).
 
@@ -22,7 +30,7 @@ You can play with the [final demo](https://demo.winefactory.marigold.dev/).
 Plan of the training course :
 
 - [NFT 1](https://github.com/marigold-dev/training-nft-1): use FA2 NFT template to understand the basics
-- [NFT 2](https://github.com/marigold-dev/training-nft-2): finish FA2 nft marketplace
+- [NFT 2](https://github.com/marigold-dev/training-nft-2): finish FA2 nft marketplace to introduce sales
 - [NFT 3](https://github.com/marigold-dev/training-nft-3): use FA2 single asset template to build another kind of marketplace
 - [NFT 4](https://github.com/marigold-dev/training-nft-4): use FA2 multi asset template to build last complex kind of marketplace
 
@@ -33,6 +41,8 @@ Plan of the training course :
 | multi asset    | 0..n            | 1..n                     |
 
 <img src="https://i.imgflip.com/4dpglt.png" style="width: 200px;margin:2em"/>
+
+> Note : because we are in web3, buy or sell features are a real payment system using onchain XTZ token as money. This differs from traditional web2 applications where you have to integrate payment system and so, pay extra fees.
 
 # Glossary
 
@@ -48,9 +58,9 @@ The InterPlanetary File System is a protocol and peer-to-peer network for storin
 
 We will use two contracts for the marketplace.
 
-### The token contract.
+### The token contract
 
-On Tezos FA2 is the standard for Non-fungible Token contracts. We will be using the [template provided by Ligo](https://packages.ligolang.org/package/@ligo/fa) to build out the Token Contract. The template contains the basic entrypoints for building a Fungible or Non-fungible token including:
+On Tezos, FA2 is the standard for Non-fungible Token contracts. We will be using the [template provided by Ligo](https://packages.ligolang.org/package/@ligo/fa) to build out the Token Contract. The template contains the basic entrypoints for building a Fungible or Non-fungible token including:
 
 - Transfer
 - Balance_of
@@ -175,12 +185,20 @@ const main = ([p, s]: [parameter,storage]): ret =>
 
 Explanations:
 
-- the first line `#import "@ligo/fa/lib/fa2/nft/NFT.jsligo" "NFT"` imports the ligo FA library
-- `storage` definition is an extension of the imported library storage `(NFT.Ledger.t,NFT.Metadata.t,NFT.TokenMetadata.t,NFT.Operators.t,set<NFT.Storage.token_id>)`
+- the first line `#import "@ligo/fa/lib/fa2/nft/NFT.jsligo" "NFT"` imports the ligo FA library that we are going to extend. We will add new entrypoints the the base code.
+- `storage` definition is an extension of the imported library storage, we point to the original types keeping same naming
+  - `NFT.Ledger.t` : keep/trace ownership of tokens
+  - `NFT.Metadata.t` : tzip-16 compliance
+  - `NFT.TokenMetadata.t` : tzip-12 compliance
+  - `NFT.Operators.t` : permissions part of FA2 standard
+  - `NFT.Storage.token_id>` : cache for keys of token_id bigmap
 - `storage` has more fields to support a set of `administrators`
-- `parameter` definition is an extension of the imported library entrypoints `(NFT.transfer,NFT.balance_of,NFT.update_operators)`
+- `parameter` definition is an extension of the imported library entrypoints
+  - `NFT.transfer` : to transfer NFTs
+  - `NFT.balance_of` : to check token balance for a specific user (on this template it will return always 1)
+  - `NFT.update_operators` : to allow other users to manager our NFT
 - `parameter` has more entrypoints to allow to create nfts `Mint`
-- `parameter` has an entrypoint `AddAdministrator`to add new administrators
+- `parameter` has an entrypoint `AddAdministrator`to add new administrators. Administrators will be allowed to mint NFTs
 
 Compile the contract
 
@@ -209,8 +227,8 @@ The contract compiles, now let's write `Transfer,Balance_of,Update_operators` en
 
 Explanations:
 
-- the called function is taking the storage type of the library, so we send a partial object from our storage definition to match the type definition
-- the return type contains also the storage type of the library, so we need to reconstruct the storage by copied the modified fields
+- every NFT.xxx() called function is taking the storage type of the NFT library, so we send a partial object from our storage definition to match the type definition
+- the return type contains also the storage type of the library, so we need to reconstruct the storage by copying the modified fields
 
 > Note : Ligo team is working on merging type definitions. You could be able to do `type union` or `merge 2 objects` like in Typescript
 
@@ -339,7 +357,11 @@ cp -r ../reactboilerplateapp/ ./app
 
 > Note : if you want to understand how it has been made from scratch look at [this training](https://github.com/marigold-dev/training-dapp-1#construction_worker-dapp)
 
-Generate the Typescript classes from Michelson code to your frontend app and run the server
+It is easier on frontend side to use typed objects. Taqueria provides a plugin to generate Typescript classes from your Michelson code.
+
+Install the plugin, then generate a representation of your smart contract objects that writes these files to your frontend app source code.
+
+Finally, run the server
 
 ```bash
 taq install @taqueria/plugin-contract-types
