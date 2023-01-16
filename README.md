@@ -78,7 +78,7 @@ On a second time, we will import the token contract into the marketplace unique 
 
 - [ ] (Recommended) [`VS Code`](https://code.visualstudio.com/download): as code editor
 - [ ] (Required) [`npm`](https://nodejs.org/en/download/): front-end is a typescript React client app
-- [ ] (Recommended) [`yarn`](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable): to build and run the front-end (see this article for more details about [differences bwteen `npm` and `yarn`](https://www.geeksforgeeks.org/difference-between-npm-and-yarn/))
+- [ ] (Recommended) [`yarn`](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable): to build and run the front-end (see this article for more details about [differences between `npm` and `yarn`](https://www.geeksforgeeks.org/difference-between-npm-and-yarn/))
 - [ ] (Required) [`taqueria`](https://github.com/ecadlabs/taqueria) : Tezos Dapp project tooling (version >= 0.24.2)
 - [ ] (Optional) [taqueria VS Code extension](https://marketplace.visualstudio.com/items?itemName=ecadlabs.taqueria-vscode) : visualize your project and execute tasks
 - [ ] (Recommended) [ligo VS Code extension](https://marketplace.visualstudio.com/items?itemName=ligolang-publish.ligo-vscode): for smart contract highlighting, completion, etc ..
