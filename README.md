@@ -203,7 +203,7 @@ Explanations:
 Compile the contract
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.60.0 taq compile nft.jsligo
+TAQ_LIGO_IMAGE=ligolang/ligo:0.63.2 taq compile nft.jsligo
 ```
 
 > Note : to be sure that taqueria will use a correct version of ligo containing the ligo package installer w/ Docker fix, we set the env var `TAQ_LIGO_IMAGE`
@@ -314,7 +314,7 @@ const default_storage =
 Compile again and deploy to ghostnet
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.60.0 taq compile nft.jsligo
+TAQ_LIGO_IMAGE=ligolang/ligo:0.63.2 taq compile nft.jsligo
 taq install @taqueria/plugin-taquito@next
 taq deploy nft.tz -e "testing"
 ```

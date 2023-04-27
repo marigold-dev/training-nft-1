@@ -1,16 +1,15 @@
 { parameter
     (or (or (or (address %addAdministrator)
                 (pair %balance_of
+                   (list %requests (pair (address %owner) (nat %token_id)))
                    (contract %callback
-                      (list (pair (nat %balance) (pair %request (address %owner) (nat %token_id)))))
-                   (list %requests (pair (address %owner) (nat %token_id)))))
+                      (list (pair (pair %request (address %owner) (nat %token_id)) (nat %balance))))))
             (or (pair %mint (pair (pair nat bytes) bytes bytes) bytes)
                 (list %transfer
-                   (pair (address %from_)
-                         (list %txs (pair (pair (nat %amount) (address %to_)) (nat %token_id)))))))
+                   (pair (address %from_) (list %txs (pair (address %to_) (nat %token_id) (nat %amount)))))))
         (list %update_operators
-           (or (pair %add_operator (pair (address %operator) (address %owner)) (nat %token_id))
-               (pair %remove_operator (pair (address %operator) (address %owner)) (nat %token_id))))) ;
+           (or (pair %add_operator (address %owner) (address %operator) (nat %token_id))
+               (pair %remove_operator (address %owner) (address %operator) (nat %token_id))))) ;
   storage
     (pair (pair (pair (set %administrators address) (big_map %ledger nat address))
                 (big_map %metadata string bytes)
@@ -28,14 +27,10 @@
                      SENDER ;
                      MEM ;
                      IF { DUP 2 ;
-                          CDR ;
                           DUP 3 ;
                           CAR ;
-                          CDR ;
-                          DUP 4 ;
+                          DUP ;
                           CAR ;
-                          CAR ;
-                          CDR ;
                           DIG 4 ;
                           CAR ;
                           CAR ;
@@ -44,9 +39,9 @@
                           PUSH bool True ;
                           SWAP ;
                           UPDATE ;
-                          PAIR ;
-                          PAIR ;
-                          PAIR ;
+                          UPDATE 1 ;
+                          UPDATE 1 ;
+                          UPDATE 1 ;
                           NIL operation ;
                           PAIR }
                         { DROP 2 ; PUSH string "1" ; FAILWITH } }
@@ -65,32 +60,26 @@
                      NOT ;
                      IF { DROP 3 ; PUSH string "1" ; FAILWITH }
                         { DUP 3 ;
-                          CDR ;
                           DUP 4 ;
                           CAR ;
-                          CDR ;
-                          DUP 5 ;
+                          DUP ;
+                          CAR ;
+                          DUP 6 ;
                           CAR ;
                           CAR ;
                           CDR ;
                           SENDER ;
-                          DUP 5 ;
+                          DUP 6 ;
                           SWAP ;
                           SOME ;
                           SWAP ;
                           UPDATE ;
-                          DUP 6 ;
-                          CAR ;
-                          CAR ;
-                          CAR ;
-                          PAIR ;
-                          PAIR ;
-                          PAIR ;
+                          UPDATE 2 ;
+                          UPDATE 1 ;
+                          UPDATE 1 ;
                           DUP ;
-                          CDR ;
-                          DUP 2 ;
                           CAR ;
-                          CDR ;
+                          DUP ;
                           CDR ;
                           EMPTY_BIG_MAP string bytes ;
                           PUSH bytes
@@ -102,13 +91,12 @@
                           SOME ;
                           PUSH string "" ;
                           UPDATE ;
-                          PAIR ;
-                          DIG 2 ;
-                          CAR ;
-                          CAR ;
-                          PAIR ;
-                          PAIR ;
-                          DUP 4 ;
+                          UPDATE 1 ;
+                          UPDATE 2 ;
+                          UPDATE 1 ;
+                          DUP ;
+                          CDR ;
+                          DUP 5 ;
                           CDR ;
                           CDR ;
                           EMPTY_MAP string bytes ;
@@ -116,14 +104,14 @@
                           SOME ;
                           PUSH string "decimals" ;
                           UPDATE ;
-                          DUP 5 ;
+                          DUP 6 ;
                           CAR ;
                           CDR ;
                           CDR ;
                           SOME ;
                           PUSH string "symbol" ;
                           UPDATE ;
-                          DUP 5 ;
+                          DUP 6 ;
                           CDR ;
                           SOME ;
                           PUSH string "thumbnailUri" ;
@@ -132,49 +120,38 @@
                           SOME ;
                           PUSH string "interfaces" ;
                           UPDATE ;
-                          DUP 5 ;
+                          DUP 6 ;
                           CAR ;
                           CDR ;
                           CAR ;
                           SOME ;
                           PUSH string "description" ;
                           UPDATE ;
-                          DIG 4 ;
+                          DIG 5 ;
                           CAR ;
                           CAR ;
                           CDR ;
                           SOME ;
                           PUSH string "name" ;
                           UPDATE ;
-                          DUP 4 ;
+                          DUP 5 ;
                           PAIR ;
-                          DUP 4 ;
+                          DUP 5 ;
                           SWAP ;
                           SOME ;
                           SWAP ;
                           UPDATE ;
-                          DUP 2 ;
-                          CDR ;
+                          UPDATE 2 ;
+                          UPDATE 2 ;
+                          DUP ;
                           CAR ;
-                          PAIR ;
-                          SWAP ;
-                          CAR ;
-                          PAIR ;
                           DUP ;
                           CDR ;
                           EMPTY_BIG_MAP (pair address address) (set nat) ;
-                          DUP 3 ;
-                          CAR ;
-                          CDR ;
-                          CAR ;
-                          PAIR ;
-                          DIG 2 ;
-                          CAR ;
-                          CAR ;
-                          PAIR ;
-                          PAIR ;
+                          UPDATE 2 ;
+                          UPDATE 2 ;
+                          UPDATE 1 ;
                           DUP ;
-                          CDR ;
                           CDR ;
                           DIG 3 ;
                           CDR ;
@@ -183,10 +160,8 @@
                           PUSH bool True ;
                           SWAP ;
                           UPDATE ;
-                          PAIR ;
-                          SWAP ;
-                          CAR ;
-                          PAIR ;
+                          UPDATE 1 ;
+                          UPDATE 2 ;
                           NIL operation ;
                           PAIR } }
                    { DROP ; NIL operation ; PAIR } } }
