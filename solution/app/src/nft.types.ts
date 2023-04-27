@@ -20,11 +20,11 @@ export type Storage = {
 type Methods = {
     addAdministrator: (param: address) => Promise<void>;
     balance_of: (
+        callback: contract,
         requests: Array<{
             owner: address;
             token_id: nat;
         }>,
-        callback: contract,
     ) => Promise<void>;
     mint: (
         _0: nat,
@@ -36,19 +36,19 @@ type Methods = {
     transfer: (param: Array<{
             from_: address;
             txs: Array<{
+                amount: nat;
                 to_: address;
                 token_id: nat;
-                amount: nat;
             }>;
         }>) => Promise<void>;
     add_operator: (
-        owner: address,
         operator: address,
+        owner: address,
         token_id: nat,
     ) => Promise<void>;
     remove_operator: (
-        owner: address,
         operator: address,
+        owner: address,
         token_id: nat,
     ) => Promise<void>;
 };
@@ -56,11 +56,11 @@ type Methods = {
 type MethodsObject = {
     addAdministrator: (param: address) => Promise<void>;
     balance_of: (params: {
+        callback: contract,
         requests: Array<{
             owner: address;
             token_id: nat;
         }>,
-        callback: contract,
     }) => Promise<void>;
     mint: (params: {
         0: nat,
@@ -72,19 +72,19 @@ type MethodsObject = {
     transfer: (param: Array<{
             from_: address;
             txs: Array<{
+                amount: nat;
                 to_: address;
                 token_id: nat;
-                amount: nat;
             }>;
         }>) => Promise<void>;
     add_operator: (params: {
-        owner: address,
         operator: address,
+        owner: address,
         token_id: nat,
     }) => Promise<void>;
     remove_operator: (params: {
-        owner: address,
         operator: address,
+        owner: address,
         token_id: nat,
     }) => Promise<void>;
 };

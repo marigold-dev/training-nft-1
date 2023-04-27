@@ -1,4 +1,14 @@
+import { AddCircleOutlined, Close } from "@mui/icons-material";
 import OpenWithIcon from "@mui/icons-material/OpenWith";
+import {
+  Box,
+  Button,
+  Stack,
+  SwipeableDrawer,
+  TextField,
+  Toolbar,
+  useMediaQuery,
+} from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useFormik } from "formik";
@@ -12,29 +22,21 @@ import { useSnackbar } from "notistack";
 import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
 import { address, bytes, nat } from "./type-aliases";
 
-import {
-  AddCircleOutlined,
-  Close,
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
-} from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  CardHeader,
-  CardMedia,
-  MobileStepper,
-  Stack,
-  SwipeableDrawer,
-  TextField,
-  Toolbar,
-  useMediaQuery,
-} from "@mui/material";
+import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
+import { CardHeader, CardMedia, MobileStepper } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import SwipeableViews from "react-swipeable-views";
 
+const validationSchema = yup.object({
+  name: yup.string().required("Name is required"),
+  description: yup.string().required("Description is required"),
+  symbol: yup.string().required("Symbol is required"),
+});
+
 export default function MintPage() {
+  const [pictureUrl, setPictureUrl] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
   const {
     userAddress,
     nftContrat,
@@ -42,29 +44,6 @@ export default function MintPage() {
     nftContratTokenMetadataMap,
     storage,
   } = React.useContext(UserContext) as UserContextType;
-
-  const isTablet = useMediaQuery("(min-width:600px)");
-
-  const validationSchema = yup.object({
-    name: yup.string().required("Name is required"),
-    description: yup.string().required("Description is required"),
-    symbol: yup.string().required("Symbol is required"),
-  });
-
-  const formik = useFormik({
-    initialValues: {
-      name: "",
-      description: "",
-      token_id: 0,
-      symbol: "WINE",
-    } as TZIP21TokenMetadata,
-    validationSchema: validationSchema,
-    onSubmit: (values) => {
-      mint(values);
-    },
-  });
-
-  const { enqueueSnackbar } = useSnackbar();
 
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -79,6 +58,49 @@ export default function MintPage() {
   const handleStepChange = (step: number) => {
     setActiveStep(step);
   };
+
+  //open mint drawer if admin
+  const [formOpen, setFormOpen] = useState<boolean>(false);
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      description: "",
+      token_id: 0,
+      symbol: "WINE",
+    } as TZIP21TokenMetadata,
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      mint(values);
+    },
+  });
+
+  useEffect(() => {
+    (async () => {
+      if (storage && storage.token_ids.length > 0) {
+        formik.setFieldValue("token_id", storage?.token_ids.length);
+      }
+    })();
+  }, [storage?.token_ids]);
+
+  useEffect(() => {
+    if (storage && storage.administrators.indexOf(userAddress! as address) < 0)
+      setFormOpen(false);
+    else setFormOpen(true);
+  }, [userAddress]);
+
+  const toggleDrawer =
+    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === "keydown" &&
+        ((event as React.KeyboardEvent).key === "Tab" ||
+          (event as React.KeyboardEvent).key === "Shift")
+      ) {
+        return;
+      }
+      setFormOpen(open);
+    };
+  const isTablet = useMediaQuery("(min-width:600px)");
+  const { enqueueSnackbar } = useSnackbar();
 
   const mint = async (newTokenDefinition: TZIP21TokenMetadata) => {
     try {
@@ -147,39 +169,6 @@ export default function MintPage() {
       });
     }
   };
-
-  useEffect(() => {
-    (async () => {
-      if (storage && storage.token_ids.length > 0) {
-        formik.setFieldValue("token_id", storage?.token_ids.length);
-      }
-    })();
-  }, [storage?.token_ids]);
-
-  const [pictureUrl, setPictureUrl] = useState<string>("");
-  const [file, setFile] = useState<File | null>(null);
-
-  //open mint drawer if admin
-  const [formOpen, setFormOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (storage && storage.administrators.indexOf(userAddress! as address) < 0)
-      setFormOpen(false);
-    else setFormOpen(true);
-  }, [userAddress]);
-
-  const toggleDrawer =
-    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
-      ) {
-        return;
-      }
-      setFormOpen(open);
-    };
-
   return (
     <Paper>
       {storage ? (

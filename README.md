@@ -79,7 +79,7 @@ On a second time, we will import the token contract into the marketplace unique 
 - [ ] (Recommended) [`VS Code`](https://code.visualstudio.com/download): as code editor
 - [ ] (Required) [`npm`](https://nodejs.org/en/download/): front-end is a typescript React client app
 - [ ] (Recommended) [`yarn`](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable): to build and run the front-end (see this article for more details about [differences between `npm` and `yarn`](https://www.geeksforgeeks.org/difference-between-npm-and-yarn/))
-- [ ] (Required) [`taqueria`](https://github.com/ecadlabs/taqueria) : Tezos Dapp project tooling (version >= 0.24.2)
+- [ ] (Required) [`taqueria` >= v0.28.5-rc](https://github.com/ecadlabs/taqueria) : Tezos Dapp project tooling (version >= 0.24.2)
 - [ ] (Optional) [taqueria VS Code extension](https://marketplace.visualstudio.com/items?itemName=ecadlabs.taqueria-vscode) : visualize your project and execute tasks
 - [ ] (Recommended) [ligo VS Code extension](https://marketplace.visualstudio.com/items?itemName=ligolang-publish.ligo-vscode): for smart contract highlighting, completion, etc ..
 - [ ] (Recommended) [Temple wallet](https://templewallet.com/): an easy to use Tezos wallet in your browser (Or any other one with ghostnet support)
@@ -101,10 +101,10 @@ We will use `taqueria` to shape the project structure, then create the NFT marke
 ```bash
 taq init training
 cd training
-taq install @taqueria/plugin-ligo
+taq install @taqueria/plugin-ligo@next
 ```
 
-> :warning: HACK note : create a dummy esy.json file with `{}` content on it. I will be used by the ligo package installer to not override the default package.json file of taqueria
+> :warning: Important HACK note : create a dummy esy.json file with `{}` content on it. I will be used by the ligo package installer to not override the default package.json file of taqueria
 
 ```bash
 echo "{}" > esy.json
@@ -125,7 +125,7 @@ We will rely on Ligo FA library. To understand in details how assets work on Tez
 Install the `ligo/fa` library locally:
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.57.0 taq ligo --command "install @ligo/fa"
+TAQ_LIGO_IMAGE=ligolang/ligo:0.63.2 taq ligo --command "install @ligo/fa"
 ```
 
 ## NFT marketplace contract
@@ -203,10 +203,10 @@ Explanations:
 Compile the contract
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.57.0 taq compile nft.jsligo
+TAQ_LIGO_IMAGE=ligolang/ligo:0.60.0 taq compile nft.jsligo
 ```
 
-> Note : to be sure that taqueria will use ligo v0.57 that contains the ligo package installer w/ Docker fix, we set the env var `TAQ_LIGO_IMAGE`
+> Note : to be sure that taqueria will use a correct version of ligo containing the ligo package installer w/ Docker fix, we set the env var `TAQ_LIGO_IMAGE`
 
 The contract compiles, now let's write `Transfer,Balance_of,Update_operators` entrypoints. We will do a passthrough call to the underlying library. On `main` function, **replace the default cases code by this one**
 
@@ -314,30 +314,39 @@ const default_storage =
 Compile again and deploy to ghostnet
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.57.0 taq compile nft.jsligo
-taq install @taqueria/plugin-taquito
+TAQ_LIGO_IMAGE=ligolang/ligo:0.60.0 taq compile nft.jsligo
+taq install @taqueria/plugin-taquito@next
 taq deploy nft.tz -e "testing"
 ```
 
 > Note : if it is the first time you use `taqueria`, I recommend to look at [this training first](https://github.com/marigold-dev/training-dapp-1#ghostnet-testnet-wallet)
 
-> For advanced users, just go to `.taq/config.json` and change the default account on path `/network/ghostnet/accounts` to alice settings (publicKey,publicKeyHash,privateKey) and then redeploy:
+> For advanced users, just go to `.taq/config.local.testing.json` and change the default account by alice one's (publicKey,publicKeyHash,privateKey) and then redeploy:
 >
 > ```json
-> "accounts": {
->                "taqOperatorAccount": {
->                    "publicKey": "edpkvGfYw3LyB1UcCahKQk4rF2tvbMUk8GFiTuMjL75uGXrpvKXhjn",
->                    "publicKeyHash": "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
->                    "privateKey": "edsk3QoqBuvdamxouPhin7swCvkQNgq4jP5KZPbwWNnwdZpSpJiEbq"
->                }
->            }
+> {
+>   "networkName": "ghostnet",
+>   "accounts": {
+>     "taqOperatorAccount": {
+>       "publicKey": "edpkvGfYw3LyB1UcCahKQk4rF2tvbMUk8GFiTuMjL75uGXrpvKXhjn",
+>       "publicKeyHash": "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
+>       "privateKey": "edsk3QoqBuvdamxouPhin7swCvkQNgq4jP5KZPbwWNnwdZpSpJiEbq"
+>     }
+>   }
+> }
 > ```
+
+Deploy again
+
+```bash
+taq deploy nft.tz -e "testing"
+```
 
 ```logs
 ┌──────────┬──────────────────────────────────────┬───────┬──────────────────┬────────────────────────────────┐
 │ Contract │ Address                              │ Alias │ Balance In Mutez │ Destination                    │
 ├──────────┼──────────────────────────────────────┼───────┼──────────────────┼────────────────────────────────┤
-│ nft.tz   │ KT1QTwcQWpf4MRM5sjoGC6ASn4Y5fJNsTqWd │ nft   │ 0                │ https://ghostnet.ecadinfra.com │
+│ nft.tz   │ KT1PLo2zWETRkmqUFEiGqQNVUPorWHVHgHMi │ nft   │ 0                │ https://ghostnet.ecadinfra.com │
 └──────────┴──────────────────────────────────────┴───────┴──────────────────┴────────────────────────────────┘
 ```
 
@@ -364,7 +373,7 @@ Install the plugin, then generate a representation of your smart contract object
 Finally, run the server
 
 ```bash
-taq install @taqueria/plugin-contract-types
+taq install @taqueria/plugin-contract-types@next
 taq generate types ./app/src
 cd app
 yarn install
