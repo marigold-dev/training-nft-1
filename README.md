@@ -125,7 +125,7 @@ We will rely on Ligo FA library. To understand in details how assets work on Tez
 Install the `ligo/fa` library locally:
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.63.2 taq ligo --command "install @ligo/fa"
+TAQ_LIGO_IMAGE=ligolang/ligo:0.64.2 taq ligo --command "install @ligo/fa"
 ```
 
 ## NFT marketplace contract
@@ -179,7 +179,7 @@ const main = ([p, s]: [parameter,storage]): ret =>
      AddAdministrator : (p : address) => {if(Set.mem(Tezos.get_sender(), s.administrators)){ return [list([]),{...s,administrators:Set.add(p, s.administrators)}]} else {return failwith("1");}} ,
      Transfer: (p: NFT.transfer) => [list([]),s],
      Balance_of: (p: NFT.balance_of) => [list([]),s],
-     Update_operators: (p: NFT.update_operator) => [list([]),s],
+     Update_operators: (p: NFT.update_operators) => [list([]),s],
      });
 ```
 
@@ -203,7 +203,7 @@ Explanations:
 Compile the contract
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.63.2 taq compile nft.jsligo
+TAQ_LIGO_IMAGE=ligolang/ligo:0.64.2 taq compile nft.jsligo
 ```
 
 > Note : to be sure that taqueria will use a correct version of ligo containing the ligo package installer w/ Docker fix, we set the env var `TAQ_LIGO_IMAGE`
@@ -219,7 +219,7 @@ The contract compiles, now let's write `Transfer,Balance_of,Update_operators` en
       const ret2 : [list<operation>, NFT.storage] = NFT.balance_of(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
       return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
       },
-     Update_operators: (p: NFT.update_operator) => {
+     Update_operators: (p: NFT.update_operators) => {
       const ret2 : [list<operation>, NFT.storage] = NFT.update_ops(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
       return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
       }
@@ -279,9 +279,18 @@ const main = ([p, s]: [parameter,storage]): ret =>
     match(p, {
      Mint: (p: [nat,bytes,bytes,bytes,bytes]) => mint(p[0],p[1],p[2],p[3],p[4],s),
      AddAdministrator : (p : address) => {if(Set.mem(Tezos.get_sender(), s.administrators)){ return [list([]),{...s,administrators:Set.add(p, s.administrators)}]} else {return failwith("1");}} ,
-     Transfer: (p: NFT.transfer) => [list([]),s],
-     Balance_of: (p: NFT.balance_of) => [list([]),s],
-     Update_operators: (p: NFT.update_operator) => [list([]),s],
+     Transfer: (p: NFT.transfer) => {
+      const ret2 : [list<operation>, NFT.storage] = NFT.transfer(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
+     },
+     Balance_of: (p: NFT.balance_of) => {
+      const ret2 : [list<operation>, NFT.storage] = NFT.balance_of(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
+      },
+     Update_operators: (p: NFT.update_operators) => {
+      const ret2 : [list<operation>, NFT.storage] = NFT.update_ops(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
+      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
+      }
      });
 ```
 
@@ -314,7 +323,7 @@ const default_storage =
 Compile again and deploy to ghostnet
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.63.2 taq compile nft.jsligo
+TAQ_LIGO_IMAGE=ligolang/ligo:0.64.2 taq compile nft.jsligo
 taq install @taqueria/plugin-taquito@next
 taq deploy nft.tz -e "testing"
 ```
