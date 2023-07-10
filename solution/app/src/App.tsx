@@ -3,7 +3,6 @@ import { BeaconWallet } from "@taquito/beacon-wallet";
 import { TezosToolkit } from "@taquito/taquito";
 import { TokenMetadata, tzip12, Tzip12Module } from "@taquito/tzip12";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-
 import { NftWalletType, Storage } from "./nft.types";
 import Paperbase from "./Paperbase";
 import { nat } from "./type-aliases";
