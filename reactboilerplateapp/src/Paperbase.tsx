@@ -1,9 +1,9 @@
-import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Toolbar from "@mui/material/Toolbar";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import * as React from "react";
+import { Box } from "@mui/material";
+import { CssBaseline } from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Toolbar } from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { UserContext, UserContextType } from "./App";
 import Header from "./Header";
