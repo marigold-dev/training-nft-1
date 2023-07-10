@@ -35,7 +35,7 @@ export default function Header(props: HeaderProps) {
       <Toolbar >
         <Grid container spacing={1} alignItems="center">
           <Grid item>
-            <img style={{ width: 15, height: 25, }} src="logo.png" />
+            <img style={{ width: 15, height: 25, }} src="logo.webp" />
           </Grid>
           <Grid item>
             <Typography variant="h5">NFT Wine Factory</Typography>

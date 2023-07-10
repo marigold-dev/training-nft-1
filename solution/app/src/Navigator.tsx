@@ -2,7 +2,7 @@ import SellIcon from "@mui/icons-material/Sell";
 import SettingsIcon from "@mui/icons-material/Settings";
 import WineBarIcon from "@mui/icons-material/WineBar";
 import { Stack } from "@mui/material";
-import Box from "@mui/material/Box";
+import { Box } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Drawer, { DrawerProps } from "@mui/material/Drawer";
 import MaterialLink from "@mui/material/Link";

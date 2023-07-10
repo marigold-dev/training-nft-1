@@ -30,7 +30,7 @@ const ConnectButton = ({
       await wallet.requestPermissions({
         network: {
           type: NetworkType.GHOSTNET,
-          rpcUrl: process.env["REACT_APP_TEZOS_NODE"]!,
+          rpcUrl: import.meta.env.VITE_TEZOS_NODE,
         },
       });
       // gets user's address

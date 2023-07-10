@@ -3,7 +3,7 @@ import { BeaconWallet } from "@taquito/beacon-wallet";
 import { TezosToolkit } from "@taquito/taquito";
 import { TokenMetadata, tzip12, Tzip12Module } from "@taquito/tzip12";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import "./App.css";
+
 import { NftWalletType, Storage } from "./nft.types";
 import Paperbase from "./Paperbase";
 import { nat } from "./type-aliases";
@@ -37,7 +37,7 @@ export type UserContextType = {
 };
 
 export let UserContext = React.createContext<UserContextType | null>(null);
-const nftContractAddress = process.env["REACT_APP_CONTRACT_ADDRESS"]!;
+const nftContractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
 
 function App() {
   const [storage, setStorage] = useState<Storage | null>(null);
@@ -49,7 +49,7 @@ function App() {
   >(new Map());
 
   const [Tezos, setTezos] = useState<TezosToolkit>(
-    new TezosToolkit(process.env["REACT_APP_TEZOS_NODE"]!)
+    new TezosToolkit(import.meta.env.VITE_TEZOS_NODE)
   );
   const [wallet, setWallet] = useState<BeaconWallet>(
     new BeaconWallet({
