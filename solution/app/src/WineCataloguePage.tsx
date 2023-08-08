@@ -6,18 +6,9 @@ import React from "react";
 import { UserContext, UserContextType } from "./App";
 
 export default function WineCataloguePage() {
-  const {
-    Tezos,
-    nftContratTokenMetadataMap,
-    setUserAddress,
-    setUserBalance,
-    wallet,
-    userAddress,
-    nftContrat,
-    refreshUserContextOnPageReload,
-    storage,
-  } = React.useContext(UserContext) as UserContextType;
-
+  const { nftContratTokenMetadataMap } = React.useContext(
+    UserContext
+  ) as UserContextType;
   const isDesktop = useMediaQuery("(min-width:1100px)");
   const isTablet = useMediaQuery("(min-width:600px)");
 

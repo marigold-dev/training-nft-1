@@ -37,7 +37,7 @@ export type UserContextType = {
 };
 
 export let UserContext = React.createContext<UserContextType | null>(null);
-const nftContractAddress = process.env["REACT_APP_CONTRACT_ADDRESS"]!;
+const nftContractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
 
 function App() {
   const [storage, setStorage] = useState<Storage | null>(null);
@@ -48,10 +48,10 @@ function App() {
     Map<number, TZIP21TokenMetadata>
   >(new Map());
 
-  const [Tezos, setTezos] = useState<TezosToolkit>(
-    new TezosToolkit(process.env["REACT_APP_TEZOS_NODE"]!)
+  const [Tezos, _] = useState<TezosToolkit>(
+    new TezosToolkit(import.meta.env.VITE_TEZOS_NODE)
   );
-  const [wallet, setWallet] = useState<BeaconWallet>(
+  const [wallet, __] = useState<BeaconWallet>(
     new BeaconWallet({
       name: "Training",
       preferredNetwork: NetworkType.GHOSTNET,

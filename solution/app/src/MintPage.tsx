@@ -1,8 +1,18 @@
-import { AddCircleOutlined, Close } from "@mui/icons-material";
+import {
+  AddCircleOutlined,
+  Close,
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+} from "@mui/icons-material";
 import OpenWithIcon from "@mui/icons-material/OpenWith";
 import {
   Box,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  MobileStepper,
   Stack,
   SwipeableDrawer,
   TextField,
@@ -11,56 +21,35 @@ import {
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import { char2Bytes } from "@taquito/utils";
+import { BigNumber } from "bignumber.js";
 import { useFormik } from "formik";
+import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import * as yup from "yup";
 import { TZIP21TokenMetadata, UserContext, UserContextType } from "./App";
-
-import { char2Bytes } from "@taquito/utils";
-import { BigNumber } from "bignumber.js";
-import { useSnackbar } from "notistack";
 import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
 import { address, bytes, nat } from "./type-aliases";
 
-import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
-import { CardHeader, CardMedia, MobileStepper } from "@mui/material";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import SwipeableViews from "react-swipeable-views";
 
-const validationSchema = yup.object({
-  name: yup.string().required("Name is required"),
-  description: yup.string().required("Description is required"),
-  symbol: yup.string().required("Symbol is required"),
-});
-
 export default function MintPage() {
-  const [pictureUrl, setPictureUrl] = useState<string>("");
-  const [file, setFile] = useState<File | null>(null);
   const {
     userAddress,
-    nftContrat,
-    refreshUserContextOnPageReload,
     nftContratTokenMetadataMap,
     storage,
+    refreshUserContextOnPageReload,
+    nftContrat,
   } = React.useContext(UserContext) as UserContextType;
 
-  const [activeStep, setActiveStep] = React.useState(0);
+  const isTablet = useMediaQuery("(min-width:600px)");
 
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
+  const validationSchema = yup.object({
+    name: yup.string().required("Name is required"),
+    description: yup.string().required("Description is required"),
+    symbol: yup.string().required("Symbol is required"),
+  });
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleStepChange = (step: number) => {
-    setActiveStep(step);
-  };
-
-  //open mint drawer if admin
-  const [formOpen, setFormOpen] = useState<boolean>(false);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -74,13 +63,11 @@ export default function MintPage() {
     },
   });
 
-  useEffect(() => {
-    (async () => {
-      if (storage && storage.token_ids.length > 0) {
-        formik.setFieldValue("token_id", storage?.token_ids.length);
-      }
-    })();
-  }, [storage?.token_ids]);
+  const [pictureUrl, setPictureUrl] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
+
+  //open mint drawer if admin
+  const [formOpen, setFormOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (storage && storage.administrators.indexOf(userAddress! as address) < 0)
@@ -99,7 +86,7 @@ export default function MintPage() {
       }
       setFormOpen(open);
     };
-  const isTablet = useMediaQuery("(min-width:600px)");
+
   const { enqueueSnackbar } = useSnackbar();
 
   const mint = async (newTokenDefinition: TZIP21TokenMetadata) => {
@@ -112,11 +99,11 @@ export default function MintPage() {
         const requestHeaders: HeadersInit = new Headers();
         requestHeaders.set(
           "pinata_api_key",
-          `${process.env.REACT_APP_PINATA_API_KEY}`
+          `${import.meta.env.VITE_PINATA_API_KEY}`
         );
         requestHeaders.set(
           "pinata_secret_api_key",
-          `${process.env.REACT_APP_PINATA_API_SECRET}`
+          `${import.meta.env.VITE_PINATA_API_SECRET}`
         );
 
         const resFile = await fetch(
@@ -169,6 +156,29 @@ export default function MintPage() {
       });
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      if (storage && storage.token_ids.length > 0) {
+        formik.setFieldValue("token_id", storage?.token_ids.length);
+      }
+    })();
+  }, [storage?.token_ids]);
+
+  const [activeStep, setActiveStep] = React.useState(0);
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleStepChange = (step: number) => {
+    setActiveStep(step);
+  };
+
   return (
     <Paper>
       {storage ? (

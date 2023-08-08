@@ -1,11 +1,10 @@
+import { createTheme, ThemeProvider } from "@mui/material";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as React from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
-import { UserContext, UserContextType } from "./App";
 import Header from "./Header";
 import MintPage from "./MintPage";
 import Navigator, { PagesPaths } from "./Navigator";
@@ -210,8 +209,6 @@ theme = {
 const drawerWidth = 256;
 
 export default function Paperbase() {
-  const { userAddress } = React.useContext(UserContext) as UserContextType;
-
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
 

@@ -4,18 +4,9 @@ import React, { Fragment } from "react";
 import { UserContext, UserContextType } from "./App";
 
 export default function OffersPage() {
-  const {
-    nftContrat,
-    nftContratTokenMetadataMap,
-    userAddress,
-    storage,
-    refreshUserContextOnPageReload,
-    Tezos,
-    setUserAddress,
-    setUserBalance,
-    wallet,
-  } = React.useContext(UserContext) as UserContextType;
-
+  const { nftContratTokenMetadataMap } = React.useContext(
+    UserContext
+  ) as UserContextType;
   const isDesktop = useMediaQuery("(min-width:1100px)");
   const isTablet = useMediaQuery("(min-width:600px)");
 

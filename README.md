@@ -79,7 +79,7 @@ On a second time, we will import the token contract into the marketplace unique 
 - [ ] (Recommended) [`VS Code`](https://code.visualstudio.com/download): as code editor
 - [ ] (Required) [`npm`](https://nodejs.org/en/download/): front-end is a typescript React client app
 - [ ] (Recommended) [`yarn`](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable): to build and run the front-end (see this article for more details about [differences between `npm` and `yarn`](https://www.geeksforgeeks.org/difference-between-npm-and-yarn/))
-- [ ] (Required) [`taqueria` >= v0.28.5-rc](https://github.com/ecadlabs/taqueria) : Tezos Dapp project tooling
+- [ ] (Required) [`taqueria` >= v0.37.0](https://github.com/ecadlabs/taqueria) : Tezos Dapp project tooling
 - [ ] (Optional) [taqueria VS Code extension](https://marketplace.visualstudio.com/items?itemName=ecadlabs.taqueria-vscode) : visualize your project and execute tasks
 - [ ] (Recommended) [ligo VS Code extension](https://marketplace.visualstudio.com/items?itemName=ligolang-publish.ligo-vscode): for smart contract highlighting, completion, etc ..
 - [ ] (Recommended) [Temple wallet](https://templewallet.com/): an easy to use Tezos wallet in your browser (Or any other one with ghostnet support)
@@ -125,7 +125,7 @@ We will rely on Ligo FA library. To understand in details how assets work on Tez
 Install the `ligo/fa` library locally:
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.64.2 taq ligo --command "install @ligo/fa"
+TAQ_LIGO_IMAGE=ligolang/ligo:0.70.1 taq ligo --command "install @ligo/fa"
 ```
 
 ## NFT marketplace contract
@@ -160,27 +160,10 @@ type storage =
     metadata: NFT.Metadata.t,
     token_metadata: NFT.TokenMetadata.t,
     operators: NFT.Operators.t,
-    token_ids : set<NFT.Storage.token_id>
+    token_ids : set<NFT.token_id>
   };
 
 type ret = [list<operation>, storage];
-
-type parameter =
-  | ["Mint", nat,bytes,bytes,bytes,bytes] //token_id, name , description  ,symbol , ipfsUrl
-  | ["AddAdministrator" , address]
-  | ["Transfer", NFT.transfer]
-  | ["Balance_of", NFT.balance_of]
-  | ["Update_operators", NFT.update_operators];
-
-
-const main = ([p, s]: [parameter,storage]): ret =>
-    match(p, {
-     Mint: (p: [nat,bytes,bytes,bytes,bytes]) => [list([]),s],
-     AddAdministrator : (p : address) => {if(Set.mem(Tezos.get_sender(), s.administrators)){ return [list([]),{...s,administrators:Set.add(p, s.administrators)}]} else {return failwith("1");}} ,
-     Transfer: (p: NFT.transfer) => [list([]),s],
-     Balance_of: (p: NFT.balance_of) => [list([]),s],
-     Update_operators: (p: NFT.update_operators) => [list([]),s],
-     });
 ```
 
 Explanations:
@@ -191,38 +174,89 @@ Explanations:
   - `NFT.Metadata.t` : tzip-16 compliance
   - `NFT.TokenMetadata.t` : tzip-12 compliance
   - `NFT.Operators.t` : permissions part of FA2 standard
-  - `NFT.Storage.token_id>` : cache for keys of token_id bigmap
+  - `NFT.Storage.token_ids` : cache for keys of token_id bigmap
 - `storage` has more fields to support a set of `administrators`
-- `parameter` definition is an extension of the imported library entrypoints
-  - `NFT.transfer` : to transfer NFTs
-  - `NFT.balance_of` : to check token balance for a specific user (on this template it will return always 1)
-  - `NFT.update_operators` : to allow other users to manager our NFT
-- `parameter` has more entrypoints to allow to create nfts `Mint`
-- `parameter` has an entrypoint `AddAdministrator`to add new administrators. Administrators will be allowed to mint NFTs
 
-Compile the contract
-
-```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.64.2 taq compile nft.jsligo
-```
-
-> Note : to be sure that taqueria will use a correct version of ligo containing the ligo package installer w/ Docker fix, we set the env var `TAQ_LIGO_IMAGE`
-
-The contract compiles, now let's write `Transfer,Balance_of,Update_operators` entrypoints. We will do a passthrough call to the underlying library. On `main` function, **replace the default cases code by this one**
+Let's write `transfer,balance_of,update_operators` entrypoints. We will do a passthrough call to the underlying library.
 
 ```ligolang
-     Transfer: (p: NFT.transfer) => {
-      const ret2 : [list<operation>, NFT.storage] = NFT.transfer(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
-     },
-     Balance_of: (p: NFT.balance_of) => {
-      const ret2 : [list<operation>, NFT.storage] = NFT.balance_of(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
-      },
-     Update_operators: (p: NFT.update_operators) => {
-      const ret2 : [list<operation>, NFT.storage] = NFT.update_ops(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
+@entry
+const transfer = (p: NFT.transfer, s: storage): ret => {
+  const ret2: [list<operation>, NFT.storage] =
+    NFT.transfer(
+      p,
+      {
+        ledger: s.ledger,
+        metadata: s.metadata,
+        token_metadata: s.token_metadata,
+        operators: s.operators,
+        token_ids: s.token_ids
       }
+    );
+  return [
+    ret2[0],
+    {
+      ...s,
+      ledger: ret2[1].ledger,
+      metadata: ret2[1].metadata,
+      token_metadata: ret2[1].token_metadata,
+      operators: ret2[1].operators,
+      token_ids: ret2[1].token_ids
+    }
+  ]
+};
+
+@entry
+const balance_of = (p: NFT.balance_of, s: storage): ret => {
+  const ret2: [list<operation>, NFT.storage] =
+    NFT.balance_of(
+      p,
+      {
+        ledger: s.ledger,
+        metadata: s.metadata,
+        token_metadata: s.token_metadata,
+        operators: s.operators,
+        token_ids: s.token_ids
+      }
+    );
+  return [
+    ret2[0],
+    {
+      ...s,
+      ledger: ret2[1].ledger,
+      metadata: ret2[1].metadata,
+      token_metadata: ret2[1].token_metadata,
+      operators: ret2[1].operators,
+      token_ids: ret2[1].token_ids
+    }
+  ]
+};
+
+@entry
+const update_operators = (p: NFT.update_operators, s: storage): ret => {
+  const ret2: [list<operation>, NFT.storage] =
+    NFT.update_ops(
+      p,
+      {
+        ledger: s.ledger,
+        metadata: s.metadata,
+        token_metadata: s.token_metadata,
+        operators: s.operators,
+        token_ids: s.token_ids
+      }
+    );
+  return [
+    ret2[0],
+    {
+      ...s,
+      ledger: ret2[1].ledger,
+      metadata: ret2[1].metadata,
+      token_metadata: ret2[1].token_metadata,
+      operators: ret2[1].operators,
+      token_ids: ret2[1].token_ids
+    }
+  ]
+};
 ```
 
 Explanations:
@@ -232,26 +266,32 @@ Explanations:
 
 > Note : Ligo team is working on merging type definitions. You could be able to do `type union` or `merge 2 objects` like in Typescript
 
-Let's add the `Mint` function now. Add the new function, and update the main function
+Let's add the `Mint` function now. Add the new function
 
 ```ligolang
-const mint = (token_id : nat, name :bytes, description:bytes ,symbol :bytes, ipfsUrl:bytes, s: storage) : ret => {
-
-   if(! Set.mem(Tezos.get_sender(), s.administrators)) return failwith("1");
-
-   const token_info: map<string, bytes> =
-     Map.literal(list([
-      ["name", name],
-      ["description",description],
-      ["interfaces", (bytes `["TZIP-12"]`)],
-      ["thumbnailUri", ipfsUrl],
-      ["symbol",symbol],
-      ["decimals", (bytes `0`)]
-     ])) as map<string, bytes>;
-
-
-    const metadata : bytes = bytes
-  `{
+@entry
+const mint = (
+  [token_id, name, description, symbol, ipfsUrl]
+    : [nat, bytes, bytes, bytes, bytes],
+  s: storage
+): ret => {
+  if (!Set.mem(Tezos.get_sender(), s.administrators)) return failwith("1");
+  const token_info: map<string, bytes> =
+    Map.literal(
+      list(
+        [
+          ["name", name],
+          ["description", description],
+          ["interfaces", (bytes `["TZIP-12"]`)],
+          ["thumbnailUri", ipfsUrl],
+          ["symbol", symbol],
+          ["decimals", (bytes `0`)]
+        ]
+      )
+    ) as map<string, bytes>;
+  const metadata: bytes =
+    bytes
+    `{
       "name":"FA2 NFT Marketplace",
       "description":"Example of FA2 implementation",
       "version":"0.0.1",
@@ -264,34 +304,26 @@ const mint = (token_id : nat, name :bytes, description:bytes ,symbol :bytes, ipf
       "interfaces":["TZIP-012"],
       "errors": [],
       "views": []
-      }` ;
-
-    return [list([]) as list<operation>,
-          {...s,
-     ledger: Big_map.add(token_id,Tezos.get_sender(),s.ledger) as NFT.Ledger.t,
-     metadata : Big_map.literal(list([["",  bytes `tezos-storage:data`],["data", metadata]])),
-     token_metadata: Big_map.add(token_id, {token_id: token_id,token_info:token_info},s.token_metadata),
-     operators: Big_map.empty as NFT.Operators.t,
-     token_ids : Set.add(token_id,s.token_ids)
-     }]};
-
-const main = ([p, s]: [parameter,storage]): ret =>
-    match(p, {
-     Mint: (p: [nat,bytes,bytes,bytes,bytes]) => mint(p[0],p[1],p[2],p[3],p[4],s),
-     AddAdministrator : (p : address) => {if(Set.mem(Tezos.get_sender(), s.administrators)){ return [list([]),{...s,administrators:Set.add(p, s.administrators)}]} else {return failwith("1");}} ,
-     Transfer: (p: NFT.transfer) => {
-      const ret2 : [list<operation>, NFT.storage] = NFT.transfer(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
-     },
-     Balance_of: (p: NFT.balance_of) => {
-      const ret2 : [list<operation>, NFT.storage] = NFT.balance_of(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
-      },
-     Update_operators: (p: NFT.update_operators) => {
-      const ret2 : [list<operation>, NFT.storage] = NFT.update_ops(p,{ledger:s.ledger,metadata:s.metadata,token_metadata:s.token_metadata,operators:s.operators,token_ids : s.token_ids});
-      return [ret2[0],{...s,ledger:ret2[1].ledger,metadata:ret2[1].metadata,token_metadata:ret2[1].token_metadata,operators:ret2[1].operators,token_ids:ret2[1].token_ids}];
-      }
-     });
+      }`;
+  return [
+    list([]) as list<operation>,
+    {
+      ...s,
+      ledger: Big_map.add(token_id, Tezos.get_sender(), s.ledger) as
+        NFT.Ledger.t,
+      metadata: Big_map.literal(
+        list([["", bytes `tezos-storage:data`], ["data", metadata]])
+      ),
+      token_metadata: Big_map.add(
+        token_id,
+        { token_id: token_id, token_info: token_info },
+        s.token_metadata
+      ),
+      operators: Big_map.empty as NFT.Operators.t,
+      token_ids: Set.add(token_id, s.token_ids)
+    }
+  ]
+};
 ```
 
 Explanations:
@@ -316,15 +348,15 @@ const default_storage =
    metadata: Big_map.empty as NFT.Metadata.t,
    token_metadata: Big_map.empty as NFT.TokenMetadata.t,
    operators: Big_map.empty as NFT.Operators.t,
-   token_ids: Set.empty as set<NFT.Storage.token_id>
+   token_ids: Set.empty as set<NFT.token_id>
    };
 ```
 
-Compile again and deploy to ghostnet
+Compile and deploy to ghostnet
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.64.2 taq compile nft.jsligo
-taq install @taqueria/plugin-taquito@next
+TAQ_LIGO_IMAGE=ligolang/ligo:0.71.0 taq compile nft.jsligo
+taq install @taqueria/plugin-taquito
 taq deploy nft.tz -e "testing"
 ```
 
@@ -355,7 +387,7 @@ taq deploy nft.tz -e "testing"
 ┌──────────┬──────────────────────────────────────┬───────┬──────────────────┬────────────────────────────────┐
 │ Contract │ Address                              │ Alias │ Balance In Mutez │ Destination                    │
 ├──────────┼──────────────────────────────────────┼───────┼──────────────────┼────────────────────────────────┤
-│ nft.tz   │ KT1PLo2zWETRkmqUFEiGqQNVUPorWHVHgHMi │ nft   │ 0                │ https://ghostnet.ecadinfra.com │
+│ nft.tz   │ KT1SdFLhhL4Z4n4hWoMPxpa1R5LAq25TwQFi │ nft   │ 0                │ https://ghostnet.ecadinfra.com │
 └──────────┴──────────────────────────────────────┴───────┴──────────────────┴────────────────────────────────┘
 ```
 
@@ -382,15 +414,15 @@ Install the plugin, then generate a representation of your smart contract object
 Finally, run the server
 
 ```bash
-taq install @taqueria/plugin-contract-types@next
+taq install @taqueria/plugin-contract-types
 taq generate types ./app/src
 cd app
 yarn install
-yarn run start
+yarn dev
 ```
 
 > Note : On `Mac` :green_apple:, `sed` does not work as Unix, change the start script on package.json to
-> `   "start": "if test -f .env; then sed -i '' \"s/\\(REACT_APP_CONTRACT_ADDRESS *= *\\).*/\\1$(jq -r 'last(.tasks[]).output[0].address' ../.taq/testing-state.json)/\" .env ; else jq -r '\"REACT_APP_CONTRACT_ADDRESS=\" + last(.tasks[]).output[0].address' ../.taq/testing-state.json > .env ; fi && react-app-rewired start",`
+> `   "dev": "if test -f .env; then sed -i '' \"s/\\(VITE_CONTRACT_ADDRESS *= *\\).*/\\1$(jq -r 'last(.tasks[]).output[0].address' ../.taq/testing-state.json)/\" .env ; else jq -r '\"VITE_CONTRACT_ADDRESS=\" + last(.tasks[]).output[0].address' ../.taq/testing-state.json > .env ; fi && vite",`
 
 Website is ready! You have:
 
@@ -668,11 +700,11 @@ const mint = async (newTokenDefinition: TZIP21TokenMetadata) => {
       const requestHeaders: HeadersInit = new Headers();
       requestHeaders.set(
         "pinata_api_key",
-        `${process.env.REACT_APP_PINATA_API_KEY}`
+        `${import.meta.env.VITE_PINATA_API_KEY}`
       );
       requestHeaders.set(
         "pinata_secret_api_key",
-        `${process.env.REACT_APP_PINATA_API_SECRET}`
+        `${import.meta.env.VITE_PINATA_API_SECRET}`
       );
 
       const resFile = await fetch(
@@ -869,6 +901,8 @@ import {
   KeyboardArrowRight,
 } from "@mui/icons-material";
 ```
+
+and some variables
 
 ```typescript
 const [activeStep, setActiveStep] = React.useState(0);

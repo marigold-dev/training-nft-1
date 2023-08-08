@@ -7,10 +7,10 @@ import { UserContext, UserContextType } from "./App";
 export default function MintPage() {
   const {
     userAddress,
-    nftContrat,
-    refreshUserContextOnPageReload,
     nftContratTokenMetadataMap,
     storage,
+    refreshUserContextOnPageReload,
+    nftContrat,
   } = React.useContext(UserContext) as UserContextType;
 
   const isTablet = useMediaQuery("(min-width:600px)");

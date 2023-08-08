@@ -32,23 +32,12 @@ const item = {
   },
 };
 
-const itemCategory = {
-  boxShadow: "0 -1px 0 rgb(255,255,255,0.1) inset",
-  py: 1.5,
-  px: 3,
-};
-
 export default function Navigator(props: DrawerProps) {
   const { ...other } = props;
   const location = useLocation();
-  const {
-    userAddress,
-    Tezos,
-    setUserAddress,
-    setUserBalance,
-    wallet,
-    nftContratTokenMetadataMap,
-  } = React.useContext(UserContext) as UserContextType;
+  const { userAddress, nftContratTokenMetadataMap } = React.useContext(
+    UserContext
+  ) as UserContextType;
 
   const [categories, setCategories] = useState<
     {
