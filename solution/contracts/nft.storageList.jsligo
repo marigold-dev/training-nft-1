@@ -5,7 +5,31 @@ const default_storage =
             list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address])
         ) as set<address>,
         ledger: Big_map.empty as NFT.Ledger.t,
-        metadata: Big_map.empty as NFT.Metadata.t,
+        metadata: Big_map.literal(
+            list(
+                [
+                    ["", bytes `tezos-storage:data`],
+                    [
+                        "data",
+                        bytes
+                        `{
+      "name":"FA2 NFT Marketplace",
+      "description":"Example of FA2 implementation",
+      "version":"0.0.1",
+      "license":{"name":"MIT"},
+      "authors":["Marigold<contact@marigold.dev>"],
+      "homepage":"https://marigold.dev",
+      "source":{
+        "tools":["Ligo"],
+        "location":"https://github.com/ligolang/contract-catalogue/tree/main/lib/fa2"},
+      "interfaces":["TZIP-012"],
+      "errors": [],
+      "views": []
+      }`
+                    ]
+                ]
+            )
+        ) as NFT.Metadata.t,
         token_metadata: Big_map.empty as NFT.TokenMetadata.t,
         operators: Big_map.empty as NFT.Operators.t,
         token_ids: Set.empty as set<NFT.token_id>

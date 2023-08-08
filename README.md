@@ -289,31 +289,12 @@ const mint = (
         ]
       )
     ) as map<string, bytes>;
-  const metadata: bytes =
-    bytes
-    `{
-      "name":"FA2 NFT Marketplace",
-      "description":"Example of FA2 implementation",
-      "version":"0.0.1",
-      "license":{"name":"MIT"},
-      "authors":["Marigold<contact@marigold.dev>"],
-      "homepage":"https://marigold.dev",
-      "source":{
-        "tools":["Ligo"],
-        "location":"https://github.com/ligolang/contract-catalogue/tree/main/lib/fa2"},
-      "interfaces":["TZIP-012"],
-      "errors": [],
-      "views": []
-      }`;
   return [
     list([]) as list<operation>,
     {
       ...s,
       ledger: Big_map.add(token_id, Tezos.get_sender(), s.ledger) as
         NFT.Ledger.t,
-      metadata: Big_map.literal(
-        list([["", bytes `tezos-storage:data`], ["data", metadata]])
-      ),
       token_metadata: Big_map.add(
         token_id,
         { token_id: token_id, token_info: token_info },
@@ -341,15 +322,40 @@ Edit the storage file `nft.storageList.jsligo` as it. (:warning: you can change 
 ```ligolang
 #include "nft.jsligo"
 const default_storage =
-  {administrators: Set.literal(list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb"
-      as address]))
-    as set<address>,
-   ledger: Big_map.empty as NFT.Ledger.t,
-   metadata: Big_map.empty as NFT.Metadata.t,
-   token_metadata: Big_map.empty as NFT.TokenMetadata.t,
-   operators: Big_map.empty as NFT.Operators.t,
-   token_ids: Set.empty as set<NFT.token_id>
-   };
+    {
+        administrators: Set.literal(
+            list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address])
+        ) as set<address>,
+        ledger: Big_map.empty as NFT.Ledger.t,
+        metadata: Big_map.literal(
+            list(
+                [
+                    ["", bytes `tezos-storage:data`],
+                    [
+                        "data",
+                        bytes
+                        `{
+      "name":"FA2 NFT Marketplace",
+      "description":"Example of FA2 implementation",
+      "version":"0.0.1",
+      "license":{"name":"MIT"},
+      "authors":["Marigold<contact@marigold.dev>"],
+      "homepage":"https://marigold.dev",
+      "source":{
+        "tools":["Ligo"],
+        "location":"https://github.com/ligolang/contract-catalogue/tree/main/lib/fa2"},
+      "interfaces":["TZIP-012"],
+      "errors": [],
+      "views": []
+      }`
+                    ]
+                ]
+            )
+        ) as NFT.Metadata.t,
+        token_metadata: Big_map.empty as NFT.TokenMetadata.t,
+        operators: Big_map.empty as NFT.Operators.t,
+        token_ids: Set.empty as set<NFT.token_id>
+    };
 ```
 
 Compile and deploy to ghostnet
