@@ -39,11 +39,11 @@ jobs:
       - name: Build
         run: cd ./doc ; node ./convert.js
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v3.0.0
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
           path: "doc/www"
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2
