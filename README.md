@@ -125,7 +125,7 @@ We will rely on Ligo FA library. To understand in details how assets work on Tez
 Install the `ligo/fa` library locally:
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.70.1 taq ligo --command "install @ligo/fa"
+TAQ_LIGO_IMAGE=ligolang/ligo:0.71.1 taq ligo --command "install @ligo/fa"
 ```
 
 ## NFT marketplace contract
