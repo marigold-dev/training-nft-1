@@ -35,14 +35,16 @@ type parameter =
 const transfer = (p: NFT.transfer, s: storage): ret => {
   const ret2: [list<operation>, NFT.storage] =
     NFT.transfer(
-      p,
-      {
-        ledger: s.ledger,
-        metadata: s.metadata,
-        token_metadata: s.token_metadata,
-        operators: s.operators,
-        token_ids: s.token_ids
-      }
+      [
+        p,
+        {
+          ledger: s.ledger,
+          metadata: s.metadata,
+          token_metadata: s.token_metadata,
+          operators: s.operators,
+          token_ids: s.token_ids
+        }
+      ]
     );
   return [
     ret2[0],
@@ -61,14 +63,16 @@ const transfer = (p: NFT.transfer, s: storage): ret => {
 const balance_of = (p: NFT.balance_of, s: storage): ret => {
   const ret2: [list<operation>, NFT.storage] =
     NFT.balance_of(
-      p,
-      {
-        ledger: s.ledger,
-        metadata: s.metadata,
-        token_metadata: s.token_metadata,
-        operators: s.operators,
-        token_ids: s.token_ids
-      }
+      [
+        p,
+        {
+          ledger: s.ledger,
+          metadata: s.metadata,
+          token_metadata: s.token_metadata,
+          operators: s.operators,
+          token_ids: s.token_ids
+        }
+      ]
     );
   return [
     ret2[0],
@@ -87,14 +91,16 @@ const balance_of = (p: NFT.balance_of, s: storage): ret => {
 const update_operators = (p: NFT.update_operators, s: storage): ret => {
   const ret2: [list<operation>, NFT.storage] =
     NFT.update_ops(
-      p,
-      {
-        ledger: s.ledger,
-        metadata: s.metadata,
-        token_metadata: s.token_metadata,
-        operators: s.operators,
-        token_ids: s.token_ids
-      }
+      [
+        p,
+        {
+          ledger: s.ledger,
+          metadata: s.metadata,
+          token_metadata: s.token_metadata,
+          operators: s.operators,
+          token_ids: s.token_ids
+        }
+      ]
     );
   return [
     ret2[0],

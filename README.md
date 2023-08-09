@@ -183,7 +183,7 @@ Let's write `transfer,balance_of,update_operators` entrypoints. We will do a pas
 @entry
 const transfer = (p: NFT.transfer, s: storage): ret => {
   const ret2: [list<operation>, NFT.storage] =
-    NFT.transfer(
+    NFT.transfer([
       p,
       {
         ledger: s.ledger,
@@ -191,7 +191,7 @@ const transfer = (p: NFT.transfer, s: storage): ret => {
         token_metadata: s.token_metadata,
         operators: s.operators,
         token_ids: s.token_ids
-      }
+      }]
     );
   return [
     ret2[0],
@@ -209,7 +209,7 @@ const transfer = (p: NFT.transfer, s: storage): ret => {
 @entry
 const balance_of = (p: NFT.balance_of, s: storage): ret => {
   const ret2: [list<operation>, NFT.storage] =
-    NFT.balance_of(
+    NFT.balance_of([
       p,
       {
         ledger: s.ledger,
@@ -217,7 +217,7 @@ const balance_of = (p: NFT.balance_of, s: storage): ret => {
         token_metadata: s.token_metadata,
         operators: s.operators,
         token_ids: s.token_ids
-      }
+      }]
     );
   return [
     ret2[0],
@@ -235,7 +235,7 @@ const balance_of = (p: NFT.balance_of, s: storage): ret => {
 @entry
 const update_operators = (p: NFT.update_operators, s: storage): ret => {
   const ret2: [list<operation>, NFT.storage] =
-    NFT.update_ops(
+    NFT.update_ops([
       p,
       {
         ledger: s.ledger,
@@ -243,7 +243,7 @@ const update_operators = (p: NFT.update_operators, s: storage): ret => {
         token_metadata: s.token_metadata,
         operators: s.operators,
         token_ids: s.token_ids
-      }
+      }]
     );
   return [
     ret2[0],
@@ -361,7 +361,7 @@ const default_storage =
 Compile and deploy to ghostnet
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.71.0 taq compile nft.jsligo
+TAQ_LIGO_IMAGE=ligolang/ligo:0.71.1 taq compile nft.jsligo
 taq install @taqueria/plugin-taquito
 taq deploy nft.tz -e "testing"
 ```
