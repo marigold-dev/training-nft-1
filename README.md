@@ -79,7 +79,7 @@ On a second time, we will import the token contract into the marketplace unique 
 - [ ] (Recommended) [`VS Code`](https://code.visualstudio.com/download): as code editor
 - [ ] (Required) [`npm`](https://nodejs.org/en/download/): front-end is a typescript React client app
 - [ ] (Recommended) [`yarn`](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable): to build and run the front-end (see this article for more details about [differences between `npm` and `yarn`](https://www.geeksforgeeks.org/difference-between-npm-and-yarn/))
-- [ ] (Required) [`taqueria` >= v0.37.0](https://github.com/ecadlabs/taqueria) : Tezos Dapp project tooling
+- [ ] (Required) [`taqueria` >= v0.40.0](https://github.com/ecadlabs/taqueria) : Tezos Dapp project tooling
 - [ ] (Optional) [taqueria VS Code extension](https://marketplace.visualstudio.com/items?itemName=ecadlabs.taqueria-vscode) : visualize your project and execute tasks
 - [ ] (Recommended) [ligo VS Code extension](https://marketplace.visualstudio.com/items?itemName=ligolang-publish.ligo-vscode): for smart contract highlighting, completion, etc ..
 - [ ] (Recommended) [Temple wallet](https://templewallet.com/): an easy to use Tezos wallet in your browser (Or any other one with ghostnet support)
@@ -101,7 +101,7 @@ We will use `taqueria` to shape the project structure, then create the NFT marke
 ```bash
 taq init training
 cd training
-taq install @taqueria/plugin-ligo@next
+taq install @taqueria/plugin-ligo
 ```
 
 > :warning: Important HACK note : create a dummy esy.json file with `{}` content on it. I will be used by the ligo package installer to not override the default package.json file of taqueria
@@ -125,7 +125,7 @@ We will rely on Ligo FA library. To understand in details how assets work on Tez
 Install the `ligo/fa` library locally:
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.71.1 taq ligo --command "install @ligo/fa"
+TAQ_LIGO_IMAGE=ligolang/ligo:0.73.0 taq ligo --command "install @ligo/fa"
 ```
 
 ## NFT marketplace contract
@@ -320,7 +320,8 @@ We have finished the smart contract implementation for this first training, let'
 Edit the storage file `nft.storageList.jsligo` as it. (:warning: you can change the `administrator` address to your own address or keep `alice`)
 
 ```ligolang
-#include "nft.jsligo"
+#import "nft.jsligo" "Contract"
+#import "@ligo/fa/lib/fa2/nft/NFT.jsligo" "NFT"
 const default_storage =
     {
         administrators: Set.literal(
@@ -361,7 +362,7 @@ const default_storage =
 Compile and deploy to ghostnet
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.71.1 taq compile nft.jsligo
+TAQ_LIGO_IMAGE=ligolang/ligo:0.73.0 taq compile nft.jsligo
 taq install @taqueria/plugin-taquito
 taq deploy nft.tz -e "testing"
 ```
