@@ -1,19 +1,18 @@
 #import "nft.jsligo" "Contract"
-#import "@ligo/fa/lib/fa2/nft/NFT.jsligo" "NFT"
-const default_storage =
-    {
-        administrators: Set.literal(
-            list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address])
-        ) as set<address>,
-        ledger: Big_map.empty as NFT.Ledger.t,
-        metadata: Big_map.literal(
-            list(
+
+const default_storage: Contract.storage = {
+    administrators: Set.literal(
+        list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address])
+    ) as set<address>,
+    ledger: Big_map.empty as Contract.NFT.Ledger.t,
+    metadata: Big_map.literal(
+        list(
+            [
+                ["", bytes `tezos-storage:data`],
                 [
-                    ["", bytes `tezos-storage:data`],
-                    [
-                        "data",
-                        bytes
-                        `{
+                    "data",
+                    bytes
+                    `{
       "name":"FA2 NFT Marketplace",
       "description":"Example of FA2 implementation",
       "version":"0.0.1",
@@ -27,11 +26,11 @@ const default_storage =
       "errors": [],
       "views": []
       }`
-                    ]
                 ]
-            )
-        ) as NFT.Metadata.t,
-        token_metadata: Big_map.empty as NFT.TokenMetadata.t,
-        operators: Big_map.empty as NFT.Operators.t,
-        token_ids: Set.empty as set<NFT.token_id>
-    };
+            ]
+        )
+    ) as Contract.NFT.Metadata.t,
+    token_metadata: Big_map.empty as Contract.NFT.TokenMetadata.t,
+    operators: Big_map.empty as Contract.NFT.Operators.t,
+    token_ids: Set.empty as set<Contract.NFT.token_id>
+};

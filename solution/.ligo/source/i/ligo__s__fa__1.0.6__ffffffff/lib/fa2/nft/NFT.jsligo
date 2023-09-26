@@ -3,7 +3,7 @@ export type token_id = nat;
 
 export type owner = address;
 
-namespace Operators {
+export namespace Operators {
    type operator = address;
    export type t = big_map<[owner, operator], set<token_id>>;
    // if transfer policy is Owner_or_operator_transfer
@@ -109,7 +109,7 @@ namespace Operators {
    }
 };
 
-namespace Ledger {
+export namespace Ledger {
    export type t = big_map<token_id, owner>;
    export const is_owner_of = (ledger: t, token_id: token_id, owner: address)
       : bool => {
@@ -167,7 +167,7 @@ export namespace TokenMetadata {
 };
 
 #import "../common/metadata.mligo" "Metadata"
-namespace Storage {
+export namespace Storage {
    export type t = {
       ledger: Ledger.t,
       operators: Operators.t,
@@ -211,7 +211,7 @@ export type atomic_trans =
    amount: nat
 };
 
-type transfer_from = {
+export type transfer_from = {
    from_: address,
    txs: list<atomic_trans>
 };
