@@ -1,4 +1,5 @@
 #import "@ligo/fa/lib/fa2/nft/NFT.jsligo" "NFT"
+
 /* ERROR MAP FOR UI DISPLAY or TESTS
     const errorMap : map<string,string> = Map.literal(list([
       ["0", "Enter a positive and not null amount"],
@@ -117,11 +118,16 @@ const update_operators = (p: NFT.update_operators, s: storage): ret => {
 
 @entry
 const mint = (
-  [token_id, name, description, symbol, ipfsUrl]
-    : [nat, bytes, bytes, bytes, bytes],
+  [token_id, name, description, symbol, ipfsUrl]: [
+    nat,
+    bytes,
+    bytes,
+    bytes,
+    bytes
+  ],
   s: storage
 ): ret => {
-  if (!Set.mem(Tezos.get_sender(), s.administrators)) return failwith("1");
+  if (! Set.mem(Tezos.get_sender(), s.administrators)) return failwith("1");
   const token_info: map<string, bytes> =
     Map.literal(
       list(

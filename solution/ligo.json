@@ -1,0 +1,4 @@
+{
+  "name": "app",
+  "dependencies": { "@ligo/fa": "^1.0.6" }
+}

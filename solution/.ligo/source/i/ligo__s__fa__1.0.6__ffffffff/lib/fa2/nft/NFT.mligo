@@ -1,9 +1,6 @@
-(**
-   This file implement the TZIP-12 protocol (a.k.a FA2) for NFT on Tezos
-   copyright Wulfman Corporation 2021
-*)
-
 #import "../common/errors.mligo" "Errors"
+
+type token_id = nat
 
 module Address = struct
    type t = address
@@ -13,7 +10,6 @@ end
 module Operators = struct
    type owner    = Address.t
    type operator = Address.t
-   type token_id = nat
    type t = ((owner * operator), token_id set) big_map
 
 (** if transfer policy is Owner_or_operator_transfer *)
@@ -72,7 +68,6 @@ module Operators = struct
 end
 
 module Ledger = struct
-   type token_id = nat
    type owner = Address.t
    type t = (token_id,owner) big_map
 
@@ -118,7 +113,6 @@ end
 #import "../common/metadata.mligo" "Metadata"
 
 module Storage = struct
-   type token_id = nat
    type t = {
       ledger : Ledger.t;
       operators : Operators.t;
@@ -162,16 +156,14 @@ type transfer_from = {
 }
 type transfer = transfer_from list
 
-let transfer (t:transfer) (s:storage) : operation list * storage =
+[@entry] let transfer (t:transfer) (s:storage) : operation list * storage =
    (* This function process the "txs" list. Since all transfer share the same "from_" address, we use a se *)
    let process_atomic_transfer (from_:Address.t) (ledger, t:Ledger.t * atomic_trans) =
-      let {to_;token_id;amount} = t in
-      if amount <> 1n then failwith Errors.wrong_amount
-      else 
-         let ()     = Storage.assert_token_exist s token_id in
-         let ()     = Operators.assert_authorisation s.operators from_ token_id in
-         let ledger = Ledger.transfer_token_from_user_to_user ledger token_id from_ to_ in
-         ledger
+      let {to_;token_id;amount = _} = t in
+      let ()     = Storage.assert_token_exist s token_id in
+      let ()     = Operators.assert_authorisation s.operators from_ token_id in
+      let ledger = Ledger.transfer_token_from_user_to_user ledger token_id from_ to_ in
+      ledger
    in
    let process_single_transfer (ledger, t:Ledger.t * transfer_from ) =
       let {from_;txs} = t in
@@ -198,7 +190,7 @@ type balance_of = [@layout:comb] {
 }
 
 (** Balance_of entrypoint *)
-let balance_of (b: balance_of) (s: storage) : operation list * storage =
+[@entry] let balance_of (b: balance_of) (s: storage) : operation list * storage =
    let {requests;callback} = b in
    let get_balance_info (request : request) : callback =
       let {owner;token_id} = request in
@@ -218,7 +210,7 @@ type operator = [@layout:comb] {
 type unit_update      = Add_operator of operator | Remove_operator of operator
 type update_operators = unit_update list
 
-let update_ops (updates: update_operators) (s: storage) : operation list * storage =
+[@entry] let update_operators (updates: update_operators) (s: storage) : operation list * storage =
    let update_operator (operators,update : Operators.t * unit_update) = match update with
       Add_operator    {owner=owner;operator=operator;token_id=token_id} -> Operators.add_operator    operators owner operator token_id
    |  Remove_operator {owner=owner;operator=operator;token_id=token_id} -> Operators.remove_operator operators owner operator token_id
@@ -236,32 +228,20 @@ let update_ops : update_operators -> storage -> operation list * storage =
 *)
 
 
-type parameter = [@layout:comb] | Transfer of transfer | Balance_of of balance_of | Update_operators of update_operators
-let main (p : parameter) (s : storage) = 
-  match p with
-     Transfer         p -> transfer   p s
-  |  Balance_of       p -> balance_of p s
-  |  Update_operators p -> update_ops p s
-
-
-[@view] let get_balance : ((Address.t * nat) * storage) -> nat =
-   fun (p, s : (Address.t * nat) * storage) ->
+[@view] let get_balance (p : Address.t * nat) (s : storage) =
       let (owner, token_id) = p in
       let balance_ = Storage.get_balance s owner token_id in
       balance_
 
-[@view] let total_supply : (nat * storage) -> nat =
-   fun ((token_id, s) : (nat * storage)) ->
+[@view] let total_supply (token_id :nat) (s : storage) =
       let () = Storage.assert_token_exist s token_id in
       1n
 
-[@view] let all_tokens : (unit * storage) -> nat set =
-   fun ((_, s) : (unit * storage)) -> s.token_ids
+[@view] let all_tokens (() : unit) (s : storage) : nat set =
+   s.token_ids
 
-[@view] let is_operator : (operator * storage) -> bool =
-   fun ((op, s) : (operator * storage)) ->
+[@view] let is_operator (op : operator) (s : storage) : bool =
       Operators.is_operator (s.operators, op.owner, op.operator, op.token_id)
 
-[@view] let token_metadata : (nat * storage) -> TokenMetadata.data =
-   fun ((p, s) : (nat * storage)) ->
+[@view] let token_metadata (p : nat) (s : storage) : TokenMetadata.data =
       TokenMetadata.get_token_metadata p s.token_metadata
