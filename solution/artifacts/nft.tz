@@ -14,8 +14,7 @@
           (big_map %ledger nat address)
           (big_map %metadata string bytes)
           (big_map %token_metadata nat (pair (nat %token_id) (map %token_info string bytes)))
-          (big_map %operators (pair address address) (set nat))
-          (set %token_ids nat)) ;
+          (big_map %operators (pair address address) (set nat))) ;
   code { LAMBDA
            address
            unit
@@ -26,6 +25,14 @@
              EQ ;
              IF { DROP ; UNIT } { FAILWITH } } ;
          LAMBDA
+           (pair (big_map nat (pair nat (map string bytes))) nat)
+           unit
+           { UNPAIR ;
+             SWAP ;
+             GET ;
+             IF_NONE { PUSH string "FA2_TOKEN_UNDEFINED" ; FAILWITH } { DROP } ;
+             UNIT } ;
+         LAMBDA
            (pair (big_map nat address) nat address)
            bool
            { UNPAIR 3 ;
@@ -34,20 +41,6 @@
              IF_NONE { PUSH string "option is None" ; FAILWITH } {} ;
              COMPARE ;
              EQ } ;
-         LAMBDA
-           (pair (pair (big_map nat address)
-                       (big_map (pair address address) (set nat))
-                       (set nat)
-                       (big_map nat (pair nat (map string bytes)))
-                       (big_map string bytes))
-                 nat)
-           unit
-           { UNPAIR ;
-             GET 7 ;
-             SWAP ;
-             GET ;
-             IF_NONE { PUSH string "FA2_TOKEN_UNDEFINED" ; FAILWITH } { DROP } ;
-             UNIT } ;
          DIG 3 ;
          UNPAIR ;
          IF_LEFT
@@ -72,7 +65,7 @@
                   SWAP ;
                   UPDATE ;
                   UPDATE 3 ;
-                  DUP 7 ;
+                  DIG 6 ;
                   GET 7 ;
                   EMPTY_MAP string bytes ;
                   PUSH bytes 0x30 ;
@@ -101,21 +94,14 @@
                   UPDATE ;
                   DUP 4 ;
                   PAIR ;
-                  DUP 4 ;
+                  DIG 3 ;
                   SWAP ;
                   SOME ;
                   SWAP ;
                   UPDATE ;
                   UPDATE 7 ;
                   EMPTY_BIG_MAP (pair address address) (set nat) ;
-                  UPDATE 9 ;
-                  DIG 2 ;
-                  GET 10 ;
-                  DIG 2 ;
-                  PUSH bool True ;
-                  SWAP ;
-                  UPDATE ;
-                  UPDATE 10 ;
+                  UPDATE 8 ;
                   NIL operation ;
                   PAIR } }
            { IF_LEFT
@@ -127,12 +113,10 @@
                  DUP 3 ;
                  GET 7 ;
                  DUP 4 ;
-                 GET 10 ;
+                 GET 8 ;
                  DUP 5 ;
-                 GET 9 ;
-                 DUP 6 ;
                  GET 3 ;
-                 PAIR 5 ;
+                 PAIR 4 ;
                  DUP ;
                  GET 3 ;
                  DIG 2 ;
@@ -235,20 +219,16 @@
                  UPDATE 3 ;
                  DUP 2 ;
                  CDR ;
-                 GET 8 ;
+                 GET 6 ;
                  UPDATE 5 ;
                  DUP 2 ;
                  CDR ;
-                 GET 7 ;
+                 GET 5 ;
                  UPDATE 7 ;
                  DUP 2 ;
                  CDR ;
                  GET 3 ;
-                 UPDATE 9 ;
-                 DUP 2 ;
-                 CDR ;
-                 GET 5 ;
-                 UPDATE 10 ;
+                 UPDATE 8 ;
                  SWAP ;
                  CAR }
                { DIG 4 ;
@@ -259,20 +239,19 @@
                      DUP 3 ;
                      GET 7 ;
                      DUP 4 ;
-                     GET 10 ;
+                     GET 8 ;
                      DUP 5 ;
-                     GET 9 ;
-                     DUP 6 ;
                      GET 3 ;
-                     PAIR 5 ;
+                     PAIR 4 ;
                      SWAP ;
                      UNPAIR ;
                      MAP { DUP ;
                            UNPAIR ;
                            DUP 2 ;
                            DUP 6 ;
+                           GET 5 ;
                            PAIR ;
-                           DUP 8 ;
+                           DUP 9 ;
                            SWAP ;
                            EXEC ;
                            DROP ;
@@ -282,7 +261,7 @@
                            DUP 6 ;
                            CAR ;
                            PAIR 3 ;
-                           DUP 8 ;
+                           DUP 7 ;
                            SWAP ;
                            EXEC ;
                            IF { DROP ; PUSH nat 1 } {} ;
@@ -307,20 +286,16 @@
                      UPDATE 3 ;
                      DUP 2 ;
                      CDR ;
-                     GET 8 ;
+                     GET 6 ;
                      UPDATE 5 ;
                      DUP 2 ;
                      CDR ;
-                     GET 7 ;
+                     GET 5 ;
                      UPDATE 7 ;
                      DUP 2 ;
                      CDR ;
                      GET 3 ;
-                     UPDATE 9 ;
-                     DUP 2 ;
-                     CDR ;
-                     GET 5 ;
-                     UPDATE 10 ;
+                     UPDATE 8 ;
                      SWAP ;
                      CAR }
                    { DUP 2 ;
@@ -328,12 +303,10 @@
                      DUP 3 ;
                      GET 7 ;
                      DUP 4 ;
-                     GET 10 ;
+                     GET 8 ;
                      DUP 5 ;
-                     GET 9 ;
-                     DUP 6 ;
                      GET 3 ;
-                     PAIR 5 ;
+                     PAIR 4 ;
                      DUP ;
                      CAR ;
                      DIG 2 ;
@@ -344,8 +317,9 @@
                                    DROP ;
                                    DUP 2 ;
                                    DUP 6 ;
+                                   GET 5 ;
                                    PAIR ;
-                                   DUP 8 ;
+                                   DUP 9 ;
                                    SWAP ;
                                    EXEC ;
                                    DROP ;
@@ -371,7 +345,7 @@
                                    DUP 4 ;
                                    DUP 6 ;
                                    PAIR 3 ;
-                                   DUP 10 ;
+                                   DUP 9 ;
                                    SWAP ;
                                    EXEC ;
                                    IF { DROP } { FAILWITH } ;
@@ -395,20 +369,16 @@
                      UPDATE 3 ;
                      DUP 2 ;
                      CDR ;
-                     GET 8 ;
+                     GET 6 ;
                      UPDATE 5 ;
                      DUP 2 ;
                      CDR ;
-                     GET 7 ;
+                     GET 5 ;
                      UPDATE 7 ;
                      DUP 2 ;
                      CDR ;
                      GET 3 ;
-                     UPDATE 9 ;
-                     DUP 2 ;
-                     CDR ;
-                     GET 5 ;
-                     UPDATE 10 ;
+                     UPDATE 8 ;
                      SWAP ;
                      CAR } } ;
              PAIR } } }

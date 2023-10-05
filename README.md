@@ -112,12 +112,6 @@ cd training
 taq install @taqueria/plugin-ligo
 ```
 
-> :warning: Important hack: create a dummy esy.json file with `{}` content on it. I will be used by the ligo package installer to not override the default package.json file of taqueria
-
-```bash
-echo "{}" > esy.json
-```
-
 **Your project is ready!**
 
 ### FA2 contract
@@ -133,6 +127,7 @@ We will rely on the Ligo FA library. To understand in detail how assets work on 
 Install the `ligo/fa` library locally:
 
 ```bash
+echo '{ "name": "app", "dependencies": { "@ligo/fa": "^1.0.7" } }' >> ligo.json
 TAQ_LIGO_IMAGE=ligolang/ligo:1.0.0 taq ligo --command "install @ligo/fa"
 ```
 
@@ -144,10 +139,10 @@ Create the NFT marketplace contract with `taqueria`
 taq create contract nft.jsligo
 ```
 
-Remove the default code and paste this code instead
+Remove the default code and paste the code below
 
 ```ligolang
-#import "@ligo/fa/lib/fa2/nft/NFT.jsligo" "NFT"
+#import "@ligo/fa/lib/fa2/nft/nft.impl.jsligo" "FA2Impl"
 
 /* ERROR MAP FOR UI DISPLAY or TESTS
     const errorMap : map<string,string> = Map.literal(list([
@@ -161,45 +156,41 @@ Remove the default code and paste this code instead
     ]));
 */
 
-type storage =
-  {
-    administrators: set<address>,
-    ledger: NFT.Ledger.t,
-    metadata: NFT.Metadata.t,
-    token_metadata: NFT.TokenMetadata.t,
-    operators: NFT.Operators.t,
-    token_ids : set<NFT.token_id>
-  };
+export type storage = {
+  administrators: set<address>,
+  ledger: FA2Impl.NFT.ledger,
+  metadata: FA2Impl.TZIP16.metadata,
+  token_metadata: FA2Impl.TZIP12.tokenMetadata,
+  operators: FA2Impl.NFT.operators
+};
 
 type ret = [list<operation>, storage];
 ```
 
 Explanations:
 
-- the first line `#import "@ligo/fa/lib/fa2/nft/NFT.jsligo" "NFT"` imports the Ligo FA library that we are going to extend. We will add new entrypoints the the base code.
+- the first line `#import "@ligo/fa/lib/fa2/nft/nft.impl.jsligo" "FA2Impl"` imports the Ligo FA library implmentation we want to extend. We will add new entrypoints the the base code.
 - `storage` definition is an extension of the imported library storage, we point to the original types keeping the same naming
-  - `NFT.Ledger.t` : keep/trace ownership of tokens
-  - `NFT.Metadata.t` : tzip-16 compliance
-  - `NFT.TokenMetadata.t` : tzip-12 compliance
-  - `NFT.Operators.t` : permissions part of FA2 standard
-  - `set<NFT.token_id>` : cache for keys of token_id bigmap
+  - `FA2Impl.NFT.ledger` : keep/trace ownership of tokens
+  - `FA2Impl.TZIP16.metadata` : tzip-16 compliance
+  - `FA2Impl.TZIP12.tokenMetadata` : tzip-12 compliance
+  - `FA2Impl.NFT.operators` : permissions part of FA2 standard
 - `storage` has more fields to support a set of `administrators`
 
 Let's write `transfer,balance_of,update_operators` entrypoints. We will do a passthrough call to the underlying library.
 
 ```ligolang
 @entry
-const transfer = (p: NFT.transfer, s: storage): ret => {
-  const ret2: [list<operation>, NFT.storage] =
-    NFT.transfer([
+const transfer = (p: FA2Impl.TZIP12.transfer, s: storage): ret => {
+  const ret2: [list<operation>, FA2Impl.NFT.storage] =
+    FA2Impl.NFT.transfer(
       p,
       {
         ledger: s.ledger,
         metadata: s.metadata,
         token_metadata: s.token_metadata,
         operators: s.operators,
-        token_ids: s.token_ids
-      }]
+      }
     );
   return [
     ret2[0],
@@ -209,23 +200,21 @@ const transfer = (p: NFT.transfer, s: storage): ret => {
       metadata: ret2[1].metadata,
       token_metadata: ret2[1].token_metadata,
       operators: ret2[1].operators,
-      token_ids: ret2[1].token_ids
     }
   ]
 };
 
 @entry
-const balance_of = (p: NFT.balance_of, s: storage): ret => {
-  const ret2: [list<operation>, NFT.storage] =
-    NFT.balance_of([
+const balance_of = (p: FA2Impl.TZIP12.balance_of, s: storage): ret => {
+  const ret2: [list<operation>, FA2Impl.NFT.storage] =
+    FA2Impl.NFT.balance_of(
       p,
       {
         ledger: s.ledger,
         metadata: s.metadata,
         token_metadata: s.token_metadata,
         operators: s.operators,
-        token_ids: s.token_ids
-      }]
+      }
     );
   return [
     ret2[0],
@@ -235,23 +224,21 @@ const balance_of = (p: NFT.balance_of, s: storage): ret => {
       metadata: ret2[1].metadata,
       token_metadata: ret2[1].token_metadata,
       operators: ret2[1].operators,
-      token_ids: ret2[1].token_ids
     }
   ]
 };
 
 @entry
-const update_operators = (p: NFT.update_operators, s: storage): ret => {
-  const ret2: [list<operation>, NFT.storage] =
-    NFT.update_ops([
+const update_operators = (p: FA2Impl.TZIP12.update_operators, s: storage): ret => {
+  const ret2: [list<operation>, FA2Impl.NFT.storage] =
+    FA2Impl.NFT.update_operators(
       p,
       {
         ledger: s.ledger,
         metadata: s.metadata,
         token_metadata: s.token_metadata,
         operators: s.operators,
-        token_ids: s.token_ids
-      }]
+      }
     );
   return [
     ret2[0],
@@ -261,29 +248,33 @@ const update_operators = (p: NFT.update_operators, s: storage): ret => {
       metadata: ret2[1].metadata,
       token_metadata: ret2[1].token_metadata,
       operators: ret2[1].operators,
-      token_ids: ret2[1].token_ids
     }
   ]
 };
 ```
 
-Explanations:
+Explanation:
 
-- every NFT.xxx() called function is taking the storage type of the NFT library, so we send a partial object from our storage definition to match the type definition
+- every `FA2Impl.NFT.xxx()` called function is taking the storage type of the NFT library, so we send a partial object from our storage definition to match the type definition
 - the return type contains also the storage type of the library, so we need to reconstruct the storage by copying the modified fields
 
-> Note : The LIGO team is working on merging type definitions, so you then can do `type union` or `merge 2 objects` like in Typescript
+> Note : The LIGO team is working on a feature to merge type definitions, so you would be able to do `type union` and `merge 2 objects` like in Typescript
 
-Let's add the `Mint` function now. Add the new function
+Let's add the `Mint` function now. Add the new entrypoint
 
 ```ligolang
 @entry
 const mint = (
-  [token_id, name, description, symbol, ipfsUrl]
-    : [nat, bytes, bytes, bytes, bytes],
+  [token_id, name, description, symbol, ipfsUrl]: [
+    nat,
+    bytes,
+    bytes,
+    bytes,
+    bytes
+  ],
   s: storage
 ): ret => {
-  if (!Set.mem(Tezos.get_sender(), s.administrators)) return failwith("1");
+  if (! Set.mem(Tezos.get_sender(), s.administrators)) return failwith("1");
   const token_info: map<string, bytes> =
     Map.literal(
       list(
@@ -302,48 +293,52 @@ const mint = (
     {
       ...s,
       ledger: Big_map.add(token_id, Tezos.get_sender(), s.ledger) as
-        NFT.Ledger.t,
+        FA2Impl.NFT.ledger,
       token_metadata: Big_map.add(
         token_id,
         { token_id: token_id, token_info: token_info },
         s.token_metadata
       ),
-      operators: Big_map.empty as NFT.Operators.t,
-      token_ids: Set.add(token_id, s.token_ids)
+      operators: Big_map.empty as FA2Impl.NFT.operators,
     }
   ]
 };
 ```
 
-Explanations:
+Explanation:
 
 - `mint` function will allow you to create a unique NFT. You have to declare the name, description, symbol, and ipfsUrl for the picture to display
 - to simplify, we don't manage the increment of the token_id here it will be done by the front end later. We encourage you to manage this counter on-chain to avoid overriding an existing NFT. There is no rule to allocate a specific number to the token_id but people increment it from 0. Also, there is no rule if you have a burn function to reallocate the token_id to a removed index and just continue the sequence from the greatest index.
 - most of the fields are optional except `decimals` that is set to `0`. A unique NFT does not have decimals, it is a unit
 - by default, the `quantity` for an NFT is `1`, that is why every bottle is unique and we don't need to set a total supply on each NFT.
-- if you want to know the `size of the NFT collection`, look at `token_ids` size. This is used as a `cache` key index of the `token_metadata` big_map. By definition, a big map in Tezos can be accessed through a key, but you need to know the key, there is no function to return the keyset. This is why we keep a trace of all token_id in this set, so we can loop and read/update information on NFTs
+- if you want to know the `size of the NFT collection`, we will require an indexer on the frontend side. It is not possible to have this information on the contract (because we deal with a big_map that has not a .keys() function returning the keys) unless you add and additional element on the storage to cache it
 
 We have finished the smart contract implementation for this first training, let's prepare the deployment to ghostnet.
 
-Edit the storage file `nft.storageList.jsligo` as it. (:warning: you can change the `administrator` address to your own address or keep `alice`)
+Compile the file to create a default taqueria initial storage and parameter file
+
+```bash
+TAQ_LIGO_IMAGE=ligolang/ligo:1.0.0 taq compile nft.jsligo
+```
+
+Edit the new storage file `nft.storageList.jsligo` as it. (:warning: you can change the `administrator` address to your own address or keep alice address `tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb`)
 
 ```ligolang
 #import "nft.jsligo" "Contract"
-#import "@ligo/fa/lib/fa2/nft/NFT.jsligo" "NFT"
-const default_storage =
-    {
-        administrators: Set.literal(
-            list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address])
-        ) as set<address>,
-        ledger: Big_map.empty as NFT.Ledger.t,
-        metadata: Big_map.literal(
-            list(
+
+const default_storage = {
+    administrators: Set.literal(
+        list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address])
+    ) as set<address>,
+    ledger: Big_map.empty as Contract.FA2Impl.NFT.ledger,
+    metadata: Big_map.literal(
+        list(
+            [
+                ["", bytes `tezos-storage:data`],
                 [
-                    ["", bytes `tezos-storage:data`],
-                    [
-                        "data",
-                        bytes
-                        `{
+                    "data",
+                    bytes
+                    `{
       "name":"FA2 NFT Marketplace",
       "description":"Example of FA2 implementation",
       "version":"0.0.1",
@@ -357,20 +352,19 @@ const default_storage =
       "errors": [],
       "views": []
       }`
-                    ]
                 ]
-            )
-        ) as NFT.Metadata.t,
-        token_metadata: Big_map.empty as NFT.TokenMetadata.t,
-        operators: Big_map.empty as NFT.Operators.t,
-        token_ids: Set.empty as set<NFT.token_id>
-    };
+            ]
+        )
+    ) as Contract.FA2Impl.TZIP16.metadata,
+    token_metadata: Big_map.empty as Contract.FA2Impl.TZIP12.tokenMetadata,
+    operators: Big_map.empty as Contract.FA2Impl.NFT.operators,
+};
 ```
 
 Compile and deploy to ghostnet
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.73.0 taq compile nft.jsligo
+TAQ_LIGO_IMAGE=ligolang/ligo:1.0.0 taq compile nft.jsligo
 taq install @taqueria/plugin-taquito
 taq deploy nft.tz -e "testing"
 ```
@@ -402,7 +396,7 @@ taq deploy nft.tz -e "testing"
 ┌──────────┬──────────────────────────────────────┬───────┬──────────────────┬────────────────────────────────┐
 │ Contract │ Address                              │ Alias │ Balance In Mutez │ Destination                    │
 ├──────────┼──────────────────────────────────────┼───────┼──────────────────┼────────────────────────────────┤
-│ nft.tz   │ KT1SdFLhhL4Z4n4hWoMPxpa1R5LAq25TwQFi │ nft   │ 0                │ https://ghostnet.ecadinfra.com │
+│ nft.tz   │ KT18sgGX5nu4BzwV2JtpQy4KCqc8cZU5MwnN │ nft   │ 0                │ https://ghostnet.ecadinfra.com │
 └──────────┴──────────────────────────────────────┴───────┴──────────────────┴────────────────────────────────┘
 ```
 
@@ -455,7 +449,7 @@ Edit default Mint Page on `./src/MintPage.tsx`
 
 ### Add a form to create the NFT
 
-In `MintPage.tsx`, replace the `HTML` template with this one :
+In `MintPage.tsx`, replace the `HTML` template starting with `<Paper>` tag with this one :
 
 ```html
     <Paper>
@@ -612,7 +606,9 @@ In `MintPage.tsx`, replace the `HTML` template with this one :
     </Paper>
 ```
 
-Add `formik` form to your Component function inside the same `MintPage.tsx` file:
+Inside your `MintPage` Component function, all all following elements :
+
+- A `formik` form :
 
 ```typescript
 const validationSchema = yup.object({
@@ -635,14 +631,14 @@ const formik = useFormik({
 });
 ```
 
-Now, add `pictureUrl` and `setFile` declaration to display the token image after pinning it to IPFS, and to get the upload file on the form:
+- two fields : `pictureUrl` and `file` declaration to display the token image after pinning it to IPFS, and to get the upload file on the form:
 
 ```typescript
 const [pictureUrl, setPictureUrl] = useState<string>("");
 const [file, setFile] = useState<File | null>(null);
 ```
 
-Add drawer variables to manage the side popup of the form:
+- drawer variables to manage the side popup of the form:
 
 ```typescript
 //open mint drawer if admin
@@ -667,7 +663,7 @@ const toggleDrawer =
   };
 ```
 
-Finally, fix the missing imports:
+Finally, fix the missing imports at the beginning of the file :
 
 ```typescript
 import { AddCircleOutlined, Close } from "@mui/icons-material";
@@ -692,7 +688,7 @@ import { address } from "./type-aliases";
 
 ### Add mint missing function
 
-Add the `mint` function and related imports :
+Add related imports :
 
 ```typescript
 import { useSnackbar } from "notistack";
@@ -701,6 +697,8 @@ import { address, bytes, nat } from "./type-aliases";
 import { char2Bytes } from "@taquito/utils";
 import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
 ```
+
+Add the `mint` function inside your `MintPage` Component function
 
 ```typescript
 const { enqueueSnackbar } = useSnackbar();
@@ -775,6 +773,8 @@ const mint = async (newTokenDefinition: TZIP21TokenMetadata) => {
 };
 ```
 
+> Note : organize/fix duplicated import declarations if necessary
+
 ![mintForm.png](./doc/mintForm.png)
 
 Explanations:
@@ -787,16 +787,16 @@ Explanations:
 
 > Note : Finally, if you remember on the backend , we said that token_id increment management was done in the ui, so you can write this code. It is not a good security practice as it supposes that the counter is managed on frontend side, but it is ok for demo purpose.
 
-Add this code, every time you have a new token minted, you increment the counter for the next one
+Add this code inside your `MintPage` Component function , every time you have a new token minted, you increment the counter for the next one
 
 ```typescript
 useEffect(() => {
   (async () => {
-    if (storage && storage.token_ids.length > 0) {
-      formik.setFieldValue("token_id", storage?.token_ids.length);
+    if (nftContratTokenMetadataMap && nftContratTokenMetadataMap.size > 0) {
+      formik.setFieldValue("token_id", nftContratTokenMetadataMap.size);
     }
   })();
-}, [storage?.token_ids]);
+}, [nftContratTokenMetadataMap?.size]);
 ```
 
 ### Display all minted bottles
@@ -890,7 +890,7 @@ Replace the `"//TODO"` keyword with this template
         </Box>
 ```
 
-Add missing imports and parameters
+Add missing imports at beginning of the file
 
 ```typescript
 import SwipeableViews from "react-swipeable-views";
@@ -917,7 +917,7 @@ import {
 } from "@mui/icons-material";
 ```
 
-and some variables
+and some variables inside your `MintPage` Component function
 
 ```typescript
 const [activeStep, setActiveStep] = React.useState(0);

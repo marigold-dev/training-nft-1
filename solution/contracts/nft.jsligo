@@ -1,4 +1,4 @@
-#import "@ligo/fa/lib/fa2/nft/NFT.jsligo" "NFT"
+#import "@ligo/fa/lib/fa2/nft/nft.impl.jsligo" "FA2Impl"
 
 /* ERROR MAP FOR UI DISPLAY or TESTS
     const errorMap : map<string,string> = Map.literal(list([
@@ -14,26 +14,24 @@
 
 export type storage = {
   administrators: set<address>,
-  ledger: NFT.Ledger.t,
-  metadata: NFT.Metadata.t,
-  token_metadata: NFT.TokenMetadata.t,
-  operators: NFT.Operators.t,
-  token_ids: set<NFT.token_id>
+  ledger: FA2Impl.NFT.ledger,
+  metadata: FA2Impl.TZIP16.metadata,
+  token_metadata: FA2Impl.TZIP12.tokenMetadata,
+  operators: FA2Impl.NFT.operators
 };
 
 type ret = [list<operation>, storage];
 
 @entry
-const transfer = (p: NFT.transfer, s: storage): ret => {
-  const ret2: [list<operation>, NFT.storage] =
-    NFT.transfer(
+const transfer = (p: FA2Impl.TZIP12.transfer, s: storage): ret => {
+  const ret2: [list<operation>, FA2Impl.NFT.storage] =
+    FA2Impl.NFT.transfer(
       p,
       {
         ledger: s.ledger,
         metadata: s.metadata,
         token_metadata: s.token_metadata,
         operators: s.operators,
-        token_ids: s.token_ids
       }
     );
   return [
@@ -44,22 +42,20 @@ const transfer = (p: NFT.transfer, s: storage): ret => {
       metadata: ret2[1].metadata,
       token_metadata: ret2[1].token_metadata,
       operators: ret2[1].operators,
-      token_ids: ret2[1].token_ids
     }
   ]
 };
 
 @entry
-const balance_of = (p: NFT.balance_of, s: storage): ret => {
-  const ret2: [list<operation>, NFT.storage] =
-    NFT.balance_of(
+const balance_of = (p: FA2Impl.TZIP12.balance_of, s: storage): ret => {
+  const ret2: [list<operation>, FA2Impl.NFT.storage] =
+    FA2Impl.NFT.balance_of(
       p,
       {
         ledger: s.ledger,
         metadata: s.metadata,
         token_metadata: s.token_metadata,
         operators: s.operators,
-        token_ids: s.token_ids
       }
     );
   return [
@@ -70,22 +66,20 @@ const balance_of = (p: NFT.balance_of, s: storage): ret => {
       metadata: ret2[1].metadata,
       token_metadata: ret2[1].token_metadata,
       operators: ret2[1].operators,
-      token_ids: ret2[1].token_ids
     }
   ]
 };
 
 @entry
-const update_operators = (p: NFT.update_operators, s: storage): ret => {
-  const ret2: [list<operation>, NFT.storage] =
-    NFT.update_operators(
+const update_operators = (p: FA2Impl.TZIP12.update_operators, s: storage): ret => {
+  const ret2: [list<operation>, FA2Impl.NFT.storage] =
+    FA2Impl.NFT.update_operators(
       p,
       {
         ledger: s.ledger,
         metadata: s.metadata,
         token_metadata: s.token_metadata,
         operators: s.operators,
-        token_ids: s.token_ids
       }
     );
   return [
@@ -96,7 +90,6 @@ const update_operators = (p: NFT.update_operators, s: storage): ret => {
       metadata: ret2[1].metadata,
       token_metadata: ret2[1].token_metadata,
       operators: ret2[1].operators,
-      token_ids: ret2[1].token_ids
     }
   ]
 };
@@ -131,14 +124,13 @@ const mint = (
     {
       ...s,
       ledger: Big_map.add(token_id, Tezos.get_sender(), s.ledger) as
-        NFT.Ledger.t,
+        FA2Impl.NFT.ledger,
       token_metadata: Big_map.add(
         token_id,
         { token_id: token_id, token_info: token_info },
         s.token_metadata
       ),
-      operators: Big_map.empty as NFT.Operators.t,
-      token_ids: Set.add(token_id, s.token_ids)
+      operators: Big_map.empty as FA2Impl.NFT.operators,
     }
   ]
 };

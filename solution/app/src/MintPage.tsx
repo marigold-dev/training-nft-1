@@ -21,17 +21,18 @@ import {
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { char2Bytes } from "@taquito/utils";
-import { BigNumber } from "bignumber.js";
 import { useFormik } from "formik";
-import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import * as yup from "yup";
 import { TZIP21TokenMetadata, UserContext, UserContextType } from "./App";
-import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
-import { address, bytes, nat } from "./type-aliases";
+import { address } from "./type-aliases";
 
+import { char2Bytes } from "@taquito/utils";
+import { BigNumber } from "bignumber.js";
+import { useSnackbar } from "notistack";
 import SwipeableViews from "react-swipeable-views";
+import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
+import { bytes, nat } from "./type-aliases";
 
 export default function MintPage() {
   const {
@@ -159,11 +160,11 @@ export default function MintPage() {
 
   useEffect(() => {
     (async () => {
-      if (storage && storage.token_ids.length > 0) {
-        formik.setFieldValue("token_id", storage?.token_ids.length);
+      if (nftContratTokenMetadataMap && nftContratTokenMetadataMap.size > 0) {
+        formik.setFieldValue("token_id", nftContratTokenMetadataMap.size);
       }
     })();
-  }, [storage?.token_ids]);
+  }, [nftContratTokenMetadataMap?.size]);
 
   const [activeStep, setActiveStep] = React.useState(0);
 
