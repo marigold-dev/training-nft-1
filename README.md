@@ -133,7 +133,7 @@ We will rely on the Ligo FA library. To understand in detail how assets work on 
 Install the `ligo/fa` library locally:
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:0.73.0 taq ligo --command "install @ligo/fa"
+TAQ_LIGO_IMAGE=ligolang/ligo:1.0.0 taq ligo --command "install @ligo/fa"
 ```
 
 ### NFT marketplace contract
