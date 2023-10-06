@@ -1264,10 +1264,10 @@
     swagger2openapi "^7.0.8"
     typescript "^4.9.3"
 
-"@tzkt/sdk-api@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@tzkt/sdk-api/-/sdk-api-2.2.0.tgz#0462e6d887c95301bae6e5bff5bec11d20a43b25"
-  integrity sha512-CgmW9FZmjZEDW+32ahFoj7Wov9Dtx8vWfareWu3XjE8rqnN2/k+aSPfubIeAB3hjF6PKTrCocWMMd7lIpdEr0g==
+"@tzkt/sdk-api@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@tzkt/sdk-api/-/sdk-api-2.2.1.tgz#7f0743d3e8d36a18ffe013098c1ae34b9da0bfe0"
+  integrity sha512-WV4Dw6x1dSDC4PvdUi6lnQCxaeDsuzCkCMiLD5+fPufEB6GhQ1c5l2xN49boy/CJn4Ghr4VSh5/2eCKItEkPqQ==
   dependencies:
     "@tzkt/oazapfts" "^4.5.2"
 

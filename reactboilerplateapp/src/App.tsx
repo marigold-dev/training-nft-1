@@ -2,12 +2,12 @@ import { NetworkType } from "@airgap/beacon-types";
 import { BeaconWallet } from "@taquito/beacon-wallet";
 import { TezosToolkit } from "@taquito/taquito";
 import { TokenMetadata, tzip12, Tzip12Module } from "@taquito/tzip12";
+import * as api from "@tzkt/sdk-api";
+import { BigNumber } from "bignumber.js";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import "./App.css";
 import { NftWalletType, Storage } from "./nft.types";
 import Paperbase from "./Paperbase";
-import { nat } from "./type-aliases";
-
 export type TZIP21TokenMetadata = TokenMetadata & {
   artifactUri?: string; //A URI (as defined in the JSON Schema Specification) to the asset.
   displayUri?: string; //A URI (as defined in the JSON Schema Specification) to an image of the asset.
@@ -40,6 +40,8 @@ export let UserContext = React.createContext<UserContextType | null>(null);
 const nftContractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
 
 function App() {
+  api.defaults.baseUrl = "https://api.ghostnet.tzkt.io";
+
   const [storage, setStorage] = useState<Storage | null>(null);
   const [userAddress, setUserAddress] = useState<string>("");
   const [userBalance, setUserBalance] = useState<number>(0);
@@ -69,12 +71,22 @@ function App() {
         nftContractAddress
       );
       const storage = (await nftContrat.storage()) as Storage;
+
+      const token_metadataBigMapId = (
+        storage.token_metadata as unknown as { id: BigNumber }
+      ).id.toNumber();
+
+      const token_ids = await api.bigMapsGetKeys(token_metadataBigMapId, {
+        micheline: "Json",
+        active: true,
+      });
+
       await Promise.all(
-        storage.token_ids.map(async (token_id: nat) => {
+        token_ids.map(async (token_id: api.BigMapKey) => {
           let tokenMetadata: TZIP21TokenMetadata = (await c
             .tzip12()
-            .getTokenMetadata(token_id.toNumber())) as TZIP21TokenMetadata;
-          nftContratTokenMetadataMap.set(token_id.toNumber(), tokenMetadata);
+            .getTokenMetadata(token_id.key)) as TZIP21TokenMetadata;
+          nftContratTokenMetadataMap.set(token_id.key, tokenMetadata);
         })
       );
       setNftContratTokenMetadataMap(new Map(nftContratTokenMetadataMap)); //new Map to force refresh
