@@ -127,7 +127,7 @@ We will rely on the Ligo FA library. To understand in detail how assets work on 
 Install the `ligo/fa` library locally:
 
 ```bash
-echo '{ "name": "app", "dependencies": { "@ligo/fa": "^1.0.7" } }' >> ligo.json
+echo '{ "name": "app", "dependencies": { "@ligo/fa": "^1.0.8" } }' >> ligo.json
 TAQ_LIGO_IMAGE=ligolang/ligo:1.0.0 taq ligo --command "install @ligo/fa"
 ```
 
