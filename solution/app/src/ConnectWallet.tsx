@@ -13,7 +13,7 @@ type ButtonProps = {
   setUserAddress: Dispatch<SetStateAction<string>>;
   setUserBalance: Dispatch<SetStateAction<number>>;
   wallet: BeaconWallet;
-  nftContratTokenMetadataMap: Map<number, TZIP21TokenMetadata>;
+  nftContratTokenMetadataMap: Map<string, TZIP21TokenMetadata>;
 };
 
 const ConnectButton = ({

@@ -29,9 +29,9 @@ export type UserContextType = {
   nftContractAddress: string;
   nftContrat: NftWalletType | null;
   setNftContrat: Dispatch<SetStateAction<NftWalletType | null>>;
-  nftContratTokenMetadataMap: Map<number, TZIP21TokenMetadata>;
+  nftContratTokenMetadataMap: Map<string, TZIP21TokenMetadata>;
   setNftContratTokenMetadataMap: Dispatch<
-    SetStateAction<Map<number, TZIP21TokenMetadata>>
+    SetStateAction<Map<string, TZIP21TokenMetadata>>
   >;
   refreshUserContextOnPageReload: () => Promise<void>;
 };
@@ -47,7 +47,7 @@ function App() {
   const [userBalance, setUserBalance] = useState<number>(0);
   const [nftContrat, setNftContrat] = useState<NftWalletType | null>(null);
   const [nftContratTokenMetadataMap, setNftContratTokenMetadataMap] = useState<
-    Map<number, TZIP21TokenMetadata>
+    Map<string, TZIP21TokenMetadata>
   >(new Map());
 
   const [Tezos, _] = useState<TezosToolkit>(

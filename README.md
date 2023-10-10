@@ -326,7 +326,7 @@ Edit the new storage file `nft.storageList.jsligo` as it. (:warning: you can cha
 ```ligolang
 #import "nft.jsligo" "Contract"
 
-const default_storage = {
+const default_storage : Contract.storage = {
     administrators: Set.literal(
         list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address])
     ) as set<address>,
