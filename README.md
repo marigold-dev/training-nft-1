@@ -420,7 +420,7 @@ taq deploy nft.tz -e "testing"
 └──────────┴──────────────────────────────────────┴───────┴──────────────────┴────────────────────────────────┘
 ```
 
-** We have finished the backend! **
+**We have finished the backend!**
 
 ## NFT Marketplace frontend
 
@@ -471,7 +471,7 @@ Edit default Mint Page on `./src/MintPage.tsx`
 
 #### Add a form to create the NFT
 
-In `MintPage.tsx`, replace the `HTML` template with this one :
+In `MintPage.tsx`, replace the `HTML` template starting with `<Paper>` with this one :
 
 ```html
     <Paper>
@@ -912,7 +912,7 @@ Replace the `"//TODO"` keyword with this template
         </Box>
 ```
 
-Add missing imports at beginning of the file
+Finally, your imports at beginning of the file should be like this :
 
 ```typescript
 import SwipeableViews from "react-swipeable-views";
@@ -937,6 +937,17 @@ import {
   KeyboardArrowLeft,
   KeyboardArrowRight,
 } from "@mui/icons-material";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import { useFormik } from "formik";
+import React, { useEffect, useState } from "react";
+import * as yup from "yup";
+import { TZIP21TokenMetadata, UserContext, UserContextType } from "./App";
+import { useSnackbar } from "notistack";
+import { BigNumber } from "bignumber.js";
+import { address, bytes, nat } from "./type-aliases";
+import { char2Bytes } from "@taquito/utils";
+import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
 ```
 
 and some variables inside your `MintPage` Component function
