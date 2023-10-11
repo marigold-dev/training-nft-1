@@ -937,17 +937,13 @@ const handleStepChange = (step: number) => {
 
 ## Let's play
 
-1. Connect with your wallet and choose `alice` account _(or the administrator you set on the smart contract earlier)_. You are redirected to the Administration /mint page as there is no NFT minted yet.
-
-2. Create your first wine bottle, for example:
-
-- `name`: Saint Emilion - Franc la Rose
-- `symbol`: SEMIL
-- `description`: Grand cru 2007
-
-3. Click on `Upload an image` and select a bottle picture on your computer
-
-4. Click on the Mint button
+- Connect with your wallet and choose `alice` account _(or the administrator you set on the smart contract earlier)_. You are redirected to the Administration /mint page as there is no NFT minted yet.
+- Create your first wine bottle, for example:
+  - `name`: Saint Emilion - Franc la Rose
+  - `symbol`: SEMIL
+  - `description`: Grand cru 2007
+- Click on `Upload an image` and select a bottle picture on your computer
+- Click on the Mint button
 
 ![minting.png](./doc/minting.png)
 
