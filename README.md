@@ -300,6 +300,8 @@ const mint = (
           ["name", name],
           ["description", description],
           ["interfaces", (bytes `["TZIP-12"]`)],
+          ["artifactUri", ipfsUrl],
+          ["displayUri", ipfsUrl],
           ["thumbnailUri", ipfsUrl],
           ["symbol", symbol],
           ["decimals", (bytes `0`)]
