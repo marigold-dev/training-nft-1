@@ -142,8 +142,8 @@ Next, you need to build the FA2 contract which relies on the Ligo FA library. To
 Install the `ligo/fa` library locally:
 
 ```bash
-echo '{ "name": "app", "dependencies": { "@ligo/fa": "^1.0.8" } }' >> ligo.json
-TAQ_LIGO_IMAGE=ligolang/ligo:1.0.0 taq ligo --command "install @ligo/fa"
+echo '{ "name": "app", "dependencies": { "@ligo/fa": "^1.0.9" } }' >> ligo.json
+TAQ_LIGO_IMAGE=ligolang/ligo:1.1.0 taq ligo --command "install @ligo/fa"
 ```
 
 ### Step 3: NFT marketplace contract
@@ -337,7 +337,7 @@ Smart contract implementation for this first training is finished, let's prepare
 Compile the file to create a default taqueria initial storage and parameter file
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:1.0.0 taq compile nft.jsligo
+TAQ_LIGO_IMAGE=ligolang/ligo:1.1.0 taq compile nft.jsligo
 ```
 
 Edit the new storage file `nft.storageList.jsligo` as it. (:warning: you can change the `administrator` address to your own address or keep alice address `tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb`)
@@ -383,7 +383,7 @@ const default_storage : Contract.storage = {
 Compile and deploy to ghostnet
 
 ```bash
-TAQ_LIGO_IMAGE=ligolang/ligo:1.0.0 taq compile nft.jsligo
+TAQ_LIGO_IMAGE=ligolang/ligo:1.1.0 taq compile nft.jsligo
 taq install @taqueria/plugin-taquito
 taq deploy nft.tz -e "testing"
 ```
