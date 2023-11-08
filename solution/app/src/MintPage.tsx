@@ -1,4 +1,9 @@
-import SwipeableViews from "react-swipeable-views";
+import {
+  AddCircleOutlined,
+  Close,
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+} from "@mui/icons-material";
 import OpenWithIcon from "@mui/icons-material/OpenWith";
 import {
   Box,
@@ -14,23 +19,19 @@ import {
 } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import {
-  AddCircleOutlined,
-  Close,
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
-} from "@mui/icons-material";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import { char2Bytes } from "@taquito/utils";
+import { BigNumber } from "bignumber.js";
 import { useFormik } from "formik";
+import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
+import SwipeableViews from "react-swipeable-views";
 import * as yup from "yup";
 import { TZIP21TokenMetadata, UserContext, UserContextType } from "./App";
-import { useSnackbar } from "notistack";
-import { BigNumber } from "bignumber.js";
-import { address, bytes, nat } from "./type-aliases";
-import { char2Bytes } from "@taquito/utils";
 import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
+import { address, bytes, nat } from "./type-aliases";
+
 export default function MintPage() {
   const {
     userAddress,

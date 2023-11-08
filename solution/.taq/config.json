@@ -44,7 +44,7 @@
         "testing": {
             "type": "simple",
             "label": "ghostnet",
-            "rpcUrl": "https://ghostnet.ecadinfra.com"
+            "rpcUrl": "https://ghostnet.tezos.marigold.dev"
         },
         "production": {
             "type": "simple",
@@ -60,6 +60,10 @@
         {
             "type": "npm",
             "name": "@taqueria/plugin-taquito"
+        },
+        {
+            "type": "npm",
+            "name": "@taqueria/plugin-octez-client"
         },
         {
             "type": "npm",
