@@ -14,6 +14,8 @@
        ]));
    */
 
+
+
 export type storage = FA2Impl.storage<int>;
 
 
@@ -24,13 +26,7 @@ const transfer = (p: FA2Impl.TZIP12.transfer, s: storage): ret => {
   const ret2: [list<operation>, storage] =
     FA2Impl.transfer(
       p,
-      {
-        ledger: s.ledger,
-        metadata: s.metadata,
-        token_metadata: s.token_metadata,
-        operators: s.operators,
-        extension : s.extension
-      }
+      s
     );
   return [
     ret2[0],
@@ -50,13 +46,7 @@ const balance_of = (p: FA2Impl.TZIP12.balance_of, s: storage): ret => {
   const ret2: [list<operation>, storage] =
     FA2Impl.balance_of(
       p,
-      {
-        ledger: s.ledger,
-        metadata: s.metadata,
-        token_metadata: s.token_metadata,
-        operators: s.operators,
-         extension : s.extension
-      }
+     s
     );
   return [
     ret2[0],
@@ -75,13 +65,7 @@ const update_operators = (p: FA2Impl.TZIP12.update_operators, s: storage): ret =
   const ret2: [list<operation>, storage] =
     FA2Impl.update_operators(
       p,
-      {
-        ledger: s.ledger,
-        metadata: s.metadata,
-        token_metadata: s.token_metadata,
-        operators: s.operators,
-         extension : s.extension
-      }
+      s
     );
   return [
     ret2[0],
