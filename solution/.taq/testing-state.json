@@ -26,6 +26,18 @@
                     "alias": "nft"
                 }
             ]
+        },
+        "@taqueria/plugin-taquito.deploy.1699872896612": {
+            "task": "deploy",
+            "plugin": "@taqueria/plugin-taquito",
+            "time": 1699872896612,
+            "output": [
+                {
+                    "contract": "nft.tz",
+                    "address": "KT1PBkqvCfSFaoSztuLd5AEGtWFhhEqMD81V",
+                    "alias": "nft"
+                }
+            ]
         }
     }
 }

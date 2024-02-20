@@ -1,0 +1,88 @@
+#import "../lib/main.mligo" "FA2"
+
+import Contract = FA2.NFT
+
+// FIXME These files make no sense and should probably be removed
+// but here we're just showcasing how to import the library
+
+export type storage = {
+    administrators: set<address>,
+    ledger: Contract.ledger,
+    metadata: Contract.TZIP16.metadata,
+    token_metadata: Contract.TZIP12.tokenMetadata,
+    operators: Contract.operators,
+};
+
+type ret = [list<operation>, storage];
+
+@entry
+const transfer = (p: Contract.TZIP12.transfer, s: storage): ret => {
+    const ret2: [list<operation>, Contract.storage] =
+        Contract.transfer(
+            p,
+            {
+                ledger: s.ledger,
+                metadata: s.metadata,
+                token_metadata: s.token_metadata,
+                operators: s.operators,
+            }
+        );
+    return [
+        ret2[0],
+        {
+            ...s,
+            ledger: ret2[1].ledger,
+            metadata: ret2[1].metadata,
+            token_metadata: ret2[1].token_metadata,
+            operators: ret2[1].operators,
+        }
+    ]
+};
+
+@entry
+const balance_of = (p: Contract.TZIP12.balance_of, s: storage): ret => {
+    const ret2: [list<operation>, Contract.storage] =
+        Contract.balance_of(
+            p,
+            {
+                ledger: s.ledger,
+                metadata: s.metadata,
+                token_metadata: s.token_metadata,
+                operators: s.operators,
+            }
+        );
+    return [
+        ret2[0],
+        {
+            ...s,
+            ledger: ret2[1].ledger,
+            metadata: ret2[1].metadata,
+            token_metadata: ret2[1].token_metadata,
+            operators: ret2[1].operators,
+        }
+    ]
+};
+
+@entry
+const update_operators = (p: Contract.TZIP12.update_operators, s: storage): ret => {
+    const ret2: [list<operation>, Contract.storage] =
+        Contract.update_operators(
+            p,
+            {
+                ledger: s.ledger,
+                metadata: s.metadata,
+                token_metadata: s.token_metadata,
+                operators: s.operators,
+            }
+        );
+    return [
+        ret2[0],
+        {
+            ...s,
+            ledger: ret2[1].ledger,
+            metadata: ret2[1].metadata,
+            token_metadata: ret2[1].token_metadata,
+            operators: ret2[1].operators,
+        }
+    ]
+};

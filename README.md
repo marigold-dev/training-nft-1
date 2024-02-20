@@ -113,8 +113,8 @@ Follow these steps to set up a Taqueria project:
 1. Install the `ligo/fa` library, which provides templates for creating FA2 tokens:
 
    ```bash
-   echo '{ "name": "app", "dependencies": { "@ligo/fa": "^1.0.9" } }' >> ligo.json
-   TAQ_LIGO_IMAGE=ligolang/ligo:1.1.0 taq ligo --command "install @ligo/fa"
+   echo '{ "name": "app", "dependencies": { "@ligo/fa": "^1.1.1" } }' >> ligo.json
+   TAQ_LIGO_IMAGE=ligolang/ligo:1.3.0 taq ligo --command "install @ligo/fa"
    ```
 
 This command can take some time because it downloads and installs the `@ligo/fa` package.
@@ -328,7 +328,7 @@ The code also defines the type for the value that entrypoints return: a list of 
 1. Save the contract and compile it by running this command:
 
    ```bash
-   TAQ_LIGO_IMAGE=ligolang/ligo:1.1.0 taq compile nft.jsligo
+   TAQ_LIGO_IMAGE=ligolang/ligo:1.3.0 taq compile nft.jsligo
    ```
 
    Taqueria compiles the contract to the file `artifacts/nft.tz`.
@@ -384,7 +384,7 @@ The code also defines the type for the value that entrypoints return: a list of 
 1. Compile the contract:
 
    ```bash
-   TAQ_LIGO_IMAGE=ligolang/ligo:1.1.0 taq compile nft.jsligo
+   TAQ_LIGO_IMAGE=ligolang/ligo:1.3.0 taq compile nft.jsligo
    ```
 
 1. Use one of these options to set up a Ghostnet account to use to deploy (originate) the contract:
