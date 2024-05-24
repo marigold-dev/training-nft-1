@@ -1,10 +1,14 @@
 #import "nft.jsligo" "Contract"
 
+#import "@ligo/fa/lib/fa2/nft/extendable_nft.impl.jsligo" "FA2Impl"
+
 const default_storage: Contract.storage = {
-    administrators: Set.literal(
-        list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address])
-    ) as set<address>,
-    ledger: Big_map.empty as Contract.FA2Impl.NFT.ledger,
+    extension: {
+        administrators: Set.literal(
+            list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address])
+        ) as set<address>
+    },
+    ledger: Big_map.empty as FA2Impl.ledger,
     metadata: Big_map.literal(
         list(
             [
@@ -29,7 +33,7 @@ const default_storage: Contract.storage = {
                 ]
             ]
         )
-    ) as Contract.FA2Impl.TZIP16.metadata,
-    token_metadata: Big_map.empty as Contract.FA2Impl.TZIP12.tokenMetadata,
-    operators: Big_map.empty as Contract.FA2Impl.NFT.operators,
+    ) as FA2Impl.TZIP16.metadata,
+    token_metadata: Big_map.empty as FA2Impl.TZIP12.tokenMetadata,
+    operators: Big_map.empty as FA2Impl.operators,
 };
