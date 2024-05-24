@@ -1,6 +1,8 @@
 ---
 title: Build an NFT marketplace
-lastUpdated: 8th November 2023
+authors: "Benjamin Fuentes (Marigold)"
+last_update:
+  date: 22 May 2024
 ---
 
 This tutorial guides you through creating a web application that allows users to buy and sell NFTs of different types.
@@ -25,7 +27,7 @@ You will learn:
 1. Make sure that you have installed these tools:
 
    - [npm](https://nodejs.org/en/download/): NPM is required to install the web application's dependencies
-   - [Taqueria](https://taqueria.io/), version 0.43.0 or later: Taqueria is a platform that manages the contracts and front ends for Tezos dApps
+   - [Taqueria](https://taqueria.io/), version 0.50.0 or later: Taqueria is a platform that manages the contracts and front ends for Tezos dApps
    - [Docker](https://docs.docker.com/engine/install/): Docker is required to run Taqueria
    - [jq](https://stedolan.github.io/jq/download/): Some commands use the `jq` program to extract JSON data
    - [`yarn`](https://yarnpkg.com/): The frontend application uses yarn to build and run (see this article for details about [differences between `npm` and `yarn`](https://www.geeksforgeeks.org/difference-between-npm-and-yarn/))
@@ -51,7 +53,7 @@ In this tutorial, you use the LIGO template for FA2 tokens to create these types
 | Single-asset   | 1                     | Any number                    |
 | Multi-asset    | Any number            | Any number                    |
 
-When you create your own applications, you can choose the token type that is appropriate for your use case.
+When you create your applications, you can choose the token type that is appropriate for your use case.
 
 ## What is IPFS?
 
@@ -64,7 +66,7 @@ In this tutorial, you use [Pinata](https://www.pinata.cloud/)'s free developer p
 
 ## Tutorial application
 
-This tutorial was originally created by [Marigold](https://www.marigold.dev/), which hosts versions of the tutorial application after each part of the tutorial:
+This tutorial is created by [Marigold](https://www.marigold.dev/), which hosts versions of the tutorial application after each part of the tutorial:
 
 - [Part 1](https://github.com/marigold-dev/training-nft-1)
 - [Part 2](https://github.com/marigold-dev/training-nft-2)
@@ -86,7 +88,9 @@ When you're ready, go to [Part 1: Minting tokens](./build-an-nft-marketplace/par
 ---
 
 title: 'Part 1: Minting tokens'
-lastUpdated: 8th November 2023
+authors: 'Benjamin Fuentes (Marigold)'
+last_update:
+date: 22 May 2024
 
 ---
 
@@ -113,15 +117,15 @@ Follow these steps to set up a Taqueria project:
 1. Install the `ligo/fa` library, which provides templates for creating FA2 tokens:
 
    ```bash
-   echo '{ "name": "app", "dependencies": { "@ligo/fa": "^1.1.1" } }' >> ligo.json
-   TAQ_LIGO_IMAGE=ligolang/ligo:1.3.0 taq ligo --command "install @ligo/fa"
+   echo '{ "name": "app", "dependencies": { "@ligo/fa": "^1.4.2" } }' >> ligo.json
+   TAQ_LIGO_IMAGE=ligolang/ligo:1.6.0 taq ligo --command "install @ligo/fa"
    ```
 
 This command can take some time because it downloads and installs the `@ligo/fa` package.
 
 ## Creating an FA2 contract from a template
 
-The `ligo/fa` library provides a template that saves you from having to implement all of the FA2 standard yourself.
+The `ligo/fa` library provides a template that saves you from having to implement all of the FA2 standards yourself.
 Follow these steps to create a contract that is based on the template and implements the required endpoints:
 
 1. Create a contract to manage your NFTs:
@@ -133,29 +137,25 @@ Follow these steps to create a contract that is based on the template and implem
 1. Open the `contracts/nft.jsligo` file in any text editor and replace the default code with this code:
 
    ```ligolang
-   #import "@ligo/fa/lib/fa2/nft/nft.impl.jsligo" "FA2Impl"
+   #import "@ligo/fa/lib/fa2/nft/extendable_nft.impl.jsligo" "FA2Impl"
 
-   /* ERROR MAP FOR UI DISPLAY or TESTS
-       const errorMap : map<string,string> = Map.literal(list([
-         ["0", "Enter a positive and not null amount"],
-         ["1", "Operation not allowed, you need to be administrator"],
-         ["2", "You cannot sell more than your current balance"],
-         ["3", "Cannot find the offer you entered for buying"],
-         ["4", "You entered a quantity to buy than is more than the offer quantity"],
-         ["5", "Not enough funds, you need to pay at least quantity * offer price to get the tokens"],
-         ["6", "Cannot find the contract relative to implicit address"],
-       ]));
-   */
+    /* ERROR MAP FOR UI DISPLAY or TESTS
+          const errorMap : map<string,string> = Map.literal(list([
+            ["0", "Enter a positive and not null amount"],
+            ["1", "Operation not allowed, you need to be administrator"],
+            ["2", "You cannot sell more than your current balance"],
+            ["3", "Cannot find the offer you entered for buying"],
+            ["4", "You entered a quantity to buy than is more than the offer quantity"],
+            ["5", "Not enough funds, you need to pay at least quantity * offer price to get the tokens"],
+            ["6", "Cannot find the contract relative to implicit address"],
+          ]));
+      */
+    export type Extension = { administrators: set<address> }
 
-   export type storage = {
-     administrators: set<address>,
-     ledger: FA2Impl.NFT.ledger,
-     metadata: FA2Impl.TZIP16.metadata,
-     token_metadata: FA2Impl.TZIP12.tokenMetadata,
-     operators: FA2Impl.NFT.operators
-   };
+    export type storage = FA2Impl.storage<Extension>; // extension administrators
 
-   type ret = [list<operation>, storage];
+
+    type ret = [list<operation>, storage];
    ```
 
 The first line of this code imports the FA2 template as the `FA2Impl` object.
@@ -174,77 +174,51 @@ The code also defines the type for the value that entrypoints return: a list of 
 1. Add code to implement the required `transfer`, `balance_of`, and `update_operators` entrypoints:
 
    ```ligolang
-   @entry
-   const transfer = (p: FA2Impl.TZIP12.transfer, s: storage): ret => {
-     const ret2: [list<operation>, FA2Impl.NFT.storage] =
-       FA2Impl.NFT.transfer(
-         p,
-         {
-           ledger: s.ledger,
-           metadata: s.metadata,
-           token_metadata: s.token_metadata,
-           operators: s.operators,
-         }
-       );
-     return [
-       ret2[0],
-       {
-         ...s,
-         ledger: ret2[1].ledger,
-         metadata: ret2[1].metadata,
-         token_metadata: ret2[1].token_metadata,
-         operators: ret2[1].operators,
-       }
-     ]
-   };
 
-   @entry
-   const balance_of = (p: FA2Impl.TZIP12.balance_of, s: storage): ret => {
-     const ret2: [list<operation>, FA2Impl.NFT.storage] =
-       FA2Impl.NFT.balance_of(
-         p,
-         {
-           ledger: s.ledger,
-           metadata: s.metadata,
-           token_metadata: s.token_metadata,
-           operators: s.operators,
-         }
-       );
-     return [
-       ret2[0],
-       {
-         ...s,
-         ledger: ret2[1].ledger,
-         metadata: ret2[1].metadata,
-         token_metadata: ret2[1].token_metadata,
-         operators: ret2[1].operators,
-       }
-     ]
-   };
+    @entry
+    const transfer = (p: FA2Impl.TZIP12.transfer, s: storage): ret => {
+      const ret2: [list<operation>, storage] = FA2Impl.transfer(p, s);
+      return [
+        ret2[0],
+        {
+          ...s,
+          ledger: ret2[1].ledger,
+          metadata: ret2[1].metadata,
+          token_metadata: ret2[1].token_metadata,
+          operators: ret2[1].operators,
+        }
+      ]
+    };
 
-   @entry
-   const update_operators = (p: FA2Impl.TZIP12.update_operators, s: storage): ret => {
-     const ret2: [list<operation>, FA2Impl.NFT.storage] =
-       FA2Impl.NFT.update_operators(
-         p,
-         {
-           ledger: s.ledger,
-           metadata: s.metadata,
-           token_metadata: s.token_metadata,
-           operators: s.operators,
-         }
-       );
-     return [
-       ret2[0],
-       {
-         ...s,
-         ledger: ret2[1].ledger,
-         metadata: ret2[1].metadata,
-         token_metadata: ret2[1].token_metadata,
-         operators: ret2[1].operators,
-       }
-     ]
-   };
+    @entry
+    const balance_of = (p: FA2Impl.TZIP12.balance_of, s: storage): ret => {
+      const ret2: [list<operation>, storage] = FA2Impl.balance_of(p, s);
+      return [
+        ret2[0],
+        {
+          ...s,
+          ledger: ret2[1].ledger,
+          metadata: ret2[1].metadata,
+          token_metadata: ret2[1].token_metadata,
+          operators: ret2[1].operators,
+        }
+      ]
+    };
+
+    @entry
+    const update_operators = (p: FA2Impl.TZIP12.update_operators, s: storage): ret => {
+      const ret2: [list<operation>, storage] = FA2Impl.update_operators(p, s);
+      return [
+        ret2[0],
+        {
+          ...s,
+          ledger: ret2[1].ledger,
+          metadata: ret2[1].metadata,
+          token_metadata: ret2[1].token_metadata,
+          operators: ret2[1].operators,
+        }
+      ]
+    };
    ```
 
    You will add other entrypoints later, but these are the three entrypoints that every FA2 contract must have.
@@ -263,48 +237,51 @@ The code also defines the type for the value that entrypoints return: a list of 
 1. After those entrypoints, add code for the `mint` entrypoint:
 
    ```ligolang
-   @entry
-   const mint = (
-     [token_id, name, description, symbol, ipfsUrl]: [
-       nat,
-       bytes,
-       bytes,
-       bytes,
-       bytes
-     ],
-     s: storage
-   ): ret => {
-     if (! Set.mem(Tezos.get_sender(), s.administrators)) return failwith("1");
-     const token_info: map<string, bytes> =
-       Map.literal(
-         list(
-           [
-             ["name", name],
-             ["description", description],
-             ["interfaces", (bytes `["TZIP-12"]`)],
-             ["artifactUri", ipfsUrl],
-             ["displayUri", ipfsUrl],
-             ["thumbnailUri", ipfsUrl],
-             ["symbol", symbol],
-             ["decimals", (bytes `0`)]
-           ]
-         )
-       ) as map<string, bytes>;
-     return [
-       list([]) as list<operation>,
-       {
-         ...s,
-         ledger: Big_map.add(token_id, Tezos.get_sender(), s.ledger) as
-           FA2Impl.NFT.ledger,
-         token_metadata: Big_map.add(
-           token_id,
-           { token_id: token_id, token_info: token_info },
-           s.token_metadata
-         ),
-         operators: Big_map.empty as FA2Impl.NFT.operators,
-       }
-     ]
-   };
+
+    @entry
+    const mint = (
+      [token_id, name, description, symbol, ipfsUrl]: [
+        nat,
+        bytes,
+        bytes,
+        bytes,
+        bytes
+      ],
+      s: storage
+    ): ret => {
+      if (! Set.mem(Tezos.get_sender(), s.extension.administrators)) return failwith(
+        "1"
+      );
+      const token_info: map<string, bytes> =
+        Map.literal(
+          list(
+            [
+              ["name", name],
+              ["description", description],
+              ["interfaces", (bytes `["TZIP-12"]`)],
+              ["artifactUri", ipfsUrl],
+              ["displayUri", ipfsUrl],
+              ["thumbnailUri", ipfsUrl],
+              ["symbol", symbol],
+              ["decimals", (bytes `0`)]
+            ]
+          )
+        ) as map<string, bytes>;
+      return [
+        list([]) as list<operation>,
+        {
+          ...s,
+          ledger: Big_map.add(token_id, Tezos.get_sender(), s.ledger) as
+            FA2Impl.ledger,
+          token_metadata: Big_map.add(
+            token_id,
+            { token_id: token_id, token_info: token_info },
+            s.token_metadata
+          ),
+          operators: Big_map.empty as FA2Impl.operators,
+        }
+      ]
+    };
    ```
 
    The FA2 standard does not require a mint entrypoint, but you can add one if you want to allow the contract to create more tokens after it is originated.
@@ -316,8 +293,8 @@ The code also defines the type for the value that entrypoints return: a list of 
    Then it creates a token metadata object with information from the parameters and adds it to the `token_metadata` big-map in the storage.
    Note that the `decimals` metadata field is set to 0 because the token is an NFT and therefore has only one unit.
 
-   Note that there is no built-in way to get the number of tokens in the contract code; the big-map does not have a function such as `keys()` or `length()`.
-   If you want to keep track of the number of tokens, you must add an additional element in the storage and increment it when tokens are created or destroyed.
+   Note that there is no built-in way to get the number of tokens in the contract code; the Bigmap does not have a function such as `keys()` or `length()`.
+   If you want to keep track of the number of tokens, you must add an element in the storage and increment it when tokens are created or destroyed.
    You can also get the number of tokens by analyzing the contract's storage from an off-chain application.
 
 1. Run one of these commands to accept or decline LIGO's analytics policy:
@@ -328,7 +305,7 @@ The code also defines the type for the value that entrypoints return: a list of 
 1. Save the contract and compile it by running this command:
 
    ```bash
-   TAQ_LIGO_IMAGE=ligolang/ligo:1.3.0 taq compile nft.jsligo
+   TAQ_LIGO_IMAGE=ligolang/ligo:1.6.0 taq compile nft.jsligo
    ```
 
    Taqueria compiles the contract to the file `artifacts/nft.tz`.
@@ -375,7 +352,7 @@ The code also defines the type for the value that entrypoints return: a list of 
    ```
 
    This code sets the initial value of the storage.
-   In this case, the storage includes metadata about the contract and empty big-maps for the ledger, token metadata, and operators.
+   In this case, the storage includes metadata about the contract and empty Bigmaps for the ledger, token metadata, and operators.
    It sets the test account Alice as the administrator, which is the only account that can mint tokens.
 
 1. Optional: Add your address as an administrator or replace Alice's address with your own.
@@ -384,7 +361,7 @@ The code also defines the type for the value that entrypoints return: a list of 
 1. Compile the contract:
 
    ```bash
-   TAQ_LIGO_IMAGE=ligolang/ligo:1.3.0 taq compile nft.jsligo
+   TAQ_LIGO_IMAGE=ligolang/ligo:1.6.0 taq compile nft.jsligo
    ```
 
 1. Use one of these options to set up a Ghostnet account to use to deploy (originate) the contract:
