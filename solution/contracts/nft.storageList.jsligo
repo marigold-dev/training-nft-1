@@ -17,19 +17,19 @@ const default_storage: Contract.storage = {
                     "data",
                     bytes
                     `{
-         "name":"FA2 NFT Marketplace",
-         "description":"Example of FA2 implementation",
-         "version":"0.0.1",
-         "license":{"name":"MIT"},
-         "authors":["Marigold<contact@marigold.dev>"],
-         "homepage":"https://marigold.dev",
-         "source":{
-           "tools":["Ligo"],
-           "location":"https://github.com/ligolang/contract-catalogue/tree/main/lib/fa2"},
-         "interfaces":["TZIP-012"],
-         "errors": [],
-         "views": []
-         }`
+            "name":"FA2 NFT Marketplace",
+            "description":"Example of FA2 implementation",
+            "version":"0.0.1",
+            "license":{"name":"MIT"},
+            "authors":["Marigold<contact@marigold.dev>"],
+            "homepage":"https://marigold.dev",
+            "source":{
+              "tools":["Ligo"],
+              "location":"https://github.com/ligolang/contract-catalogue/tree/main/lib/fa2"},
+            "interfaces":["TZIP-012"],
+            "errors": [],
+            "views": []
+            }`
                 ]
             ]
         )

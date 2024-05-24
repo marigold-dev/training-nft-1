@@ -31,6 +31,7 @@ import * as yup from "yup";
 import { TZIP21TokenMetadata, UserContext, UserContextType } from "./App";
 import { TransactionInvalidBeaconError } from "./TransactionInvalidBeaconError";
 import { address, bytes, nat } from "./type-aliases";
+
 export default function MintPage() {
   const {
     userAddress,
