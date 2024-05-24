@@ -1,4 +1,4 @@
-import { NetworkType } from "@airgap/beacon-sdk";
+import { NetworkType } from "@airgap/beacon-dapp";
 import { Wallet } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { BeaconWallet } from "@taquito/beacon-wallet";

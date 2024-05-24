@@ -1,5 +1,5 @@
 ---
-title: Build an NFT marketplace
+title: "Build an NFT marketplace"
 authors: "Benjamin Fuentes (Marigold)"
 last_update:
   date: 22 May 2024
@@ -66,7 +66,7 @@ In this tutorial, you use [Pinata](https://www.pinata.cloud/)'s free developer p
 
 ## Tutorial application
 
-This tutorial is created by [Marigold](https://www.marigold.dev/), which hosts versions of the tutorial application after each part of the tutorial:
+This tutorial is created by Marigold and hosts versions of the tutorial application after each part of the tutorial:
 
 - [Part 1](https://github.com/marigold-dev/training-nft-1)
 - [Part 2](https://github.com/marigold-dev/training-nft-2)
@@ -150,7 +150,7 @@ Follow these steps to create a contract that is based on the template and implem
             ["6", "Cannot find the contract relative to implicit address"],
           ]));
       */
-    export type Extension = { administrators: set<address> }
+    export type Extension = { administrators: set<address> };
 
     export type storage = FA2Impl.storage<Extension>; // extension administrators
 
@@ -316,39 +316,44 @@ The code also defines the type for the value that entrypoints return: a list of 
    ```ligolang
    #import "nft.jsligo" "Contract"
 
-   const default_storage : Contract.storage = {
-       administrators: Set.literal(
-           list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address])
-       ) as set<address>,
-       ledger: Big_map.empty as Contract.FA2Impl.NFT.ledger,
-       metadata: Big_map.literal(
-           list(
-               [
-                   ["", bytes `tezos-storage:data`],
-                   [
-                       "data",
-                       bytes
-                       `{
-         "name":"FA2 NFT Marketplace",
-         "description":"Example of FA2 implementation",
-         "version":"0.0.1",
-         "license":{"name":"MIT"},
-         "authors":["Marigold<contact@marigold.dev>"],
-         "homepage":"https://marigold.dev",
-         "source":{
-           "tools":["Ligo"],
-           "location":"https://github.com/ligolang/contract-catalogue/tree/main/lib/fa2"},
-         "interfaces":["TZIP-012"],
-         "errors": [],
-         "views": []
-         }`
-                   ]
-               ]
-           )
-       ) as Contract.FA2Impl.TZIP16.metadata,
-       token_metadata: Big_map.empty as Contract.FA2Impl.TZIP12.tokenMetadata,
-       operators: Big_map.empty as Contract.FA2Impl.NFT.operators,
-   };
+    #import "@ligo/fa/lib/fa2/nft/extendable_nft.impl.jsligo" "FA2Impl"
+
+    const default_storage: Contract.storage = {
+        extension: {
+            administrators: Set.literal(
+                list(["tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address])
+            ) as set<address>
+        },
+        ledger: Big_map.empty as FA2Impl.ledger,
+        metadata: Big_map.literal(
+            list(
+                [
+                    ["", bytes `tezos-storage:data`],
+                    [
+                        "data",
+                        bytes
+                        `{
+            "name":"FA2 NFT Marketplace",
+            "description":"Example of FA2 implementation",
+            "version":"0.0.1",
+            "license":{"name":"MIT"},
+            "authors":["Marigold<contact@marigold.dev>"],
+            "homepage":"https://marigold.dev",
+            "source":{
+              "tools":["Ligo"],
+              "location":"https://github.com/ligolang/contract-catalogue/tree/main/lib/fa2"},
+            "interfaces":["TZIP-012"],
+            "errors": [],
+            "views": []
+            }`
+                    ]
+                ]
+            )
+        ) as FA2Impl.TZIP16.metadata,
+        token_metadata: Big_map.empty as FA2Impl.TZIP12.tokenMetadata,
+        operators: Big_map.empty as FA2Impl.operators,
+    };
+
    ```
 
    This code sets the initial value of the storage.
@@ -366,7 +371,7 @@ The code also defines the type for the value that entrypoints return: a list of 
 
 1. Use one of these options to set up a Ghostnet account to use to deploy (originate) the contract:
 
-   - To use your own account, open the `.taq/config.local.testing.json` file and add your public key, address, and private key, so the file looks like this:
+   - To use your account, open the `.taq/config.local.testing.json` file and add your public key, address, and private key, so the file looks like this:
 
      ```json
      {
@@ -383,6 +388,8 @@ The code also defines the type for the value that entrypoints return: a list of 
 
      Then make sure that the account has tez on Ghostnet.
      Use the faucet at https://faucet.ghostnet.teztnets.xyz to get tez if you need it.
+
+   **OR**
 
    - To let Taqueria generate an account for you, follow these steps:
 
@@ -428,7 +435,7 @@ To save time, this tutorial provides a starter React application.
    taq generate types ./app/src
    ```
 
-1. If you are using a Mac, edit the default `dev` script in the `app/package.json` file to look like this:
+1. **IF YOU ARE ON A MAC**, edit the default `dev` script in the `app/package.json` file to look like this:
 
    ```json
    {
@@ -444,8 +451,7 @@ To save time, this tutorial provides a starter React application.
 
    ```bash
    cd app
-   yarn install
-   yarn dev
+   yarn && yarn dev
    ```
 
    This application contains basic navigation and the ability to connect to wallets.
@@ -454,7 +460,7 @@ To save time, this tutorial provides a starter React application.
    Because Taqueria automatically keeps track of your deployed contract, the application automatically accesses the contract and shows that there are no NFTs in it yet.
    The application looks like this:
 
-   ![The starter NFT marketplace application, showing no NFTs and a button to connect to wallets](/img/tutorials/nft-marketplace-starter.png)
+   ![The starter NFT marketplace application is showing no NFTs and a button to connect to wallets](/img/tutorials/nft-marketplace-starter.png)
 
 ## Adding a mint page
 
@@ -462,14 +468,14 @@ The mint page uses a form that accepts information and an image and sends a tran
 
 1. Open the file `./app/src/MintPage.tsx`.
 
-1. Replace the return value of the function (the `<Paper>` tag) with the following code:
+1. Replace the return value of the function (i.e. the `<Paper>` tag) with the following code:
 
    ```html
    <Paper>
 
      {storage ? (
        <Button
-         disabled={storage.administrators.indexOf(userAddress! as address) < 0}
+         disabled={storage.extension.indexOf(userAddress! as address) < 0}
          sx={{
            p: 1,
            position: "absolute",
@@ -480,7 +486,7 @@ The mint page uses a form that accepts information and an image and sends a tran
          onClick={toggleDrawer(!formOpen)}
        >
          {" Mint Form " +
-           (storage!.administrators.indexOf(userAddress! as address) < 0
+           (storage!.extension.indexOf(userAddress! as address) < 0
              ? " (You are not admin)"
              : "")}
          <OpenWithIcon />
@@ -661,7 +667,7 @@ The mint page uses a form that accepts information and an image and sends a tran
    const [formOpen, setFormOpen] = useState<boolean>(false);
 
    useEffect(() => {
-     if (storage && storage.administrators.indexOf(userAddress! as address) < 0)
+     if (storage && storage.extension.indexOf(userAddress! as address) < 0)
        setFormOpen(false);
      else setFormOpen(true);
    }, [userAddress]);
@@ -804,8 +810,8 @@ The mint page uses a form that accepts information and an image and sends a tran
 1. In the file `app/.env`, replace the default `VITE_PINATA_API_KEY` and `VITE_PINATA_API_SECRET` values with your Pinata API key and API secret.
    If you don't have a Pinata API key, see the [Configure IPFS storage](../create-an-nft/nft-taquito#configure-ipfs-storage) section of the tutorial [Create a contract and web app that mints NFTs](../create-an-nft/nft-taquito).
 
-Now the form has a working mint page.
-In the next section, you use it to mint NFTs.
+   Now the form has a working mint page.
+   In the next section, you use it to mint NFTs.
 
 ## Minting NFTs
 
@@ -818,7 +824,7 @@ Mint at least one NFT so you can see it in the site and contract:
 
    The app goes to the `/mint` page, which looks like this:
 
-   ![The mint page, showing the form to create tokens](/img/tutorials/nft-marketplace-1-mint-form.png)
+   ![The mint page shows the form to create tokens](/img/tutorials/nft-marketplace-1-mint-form.png)
 
 1. Enter information about a bottle of wine.
 
@@ -836,16 +842,16 @@ Mint at least one NFT so you can see it in the site and contract:
 
    ![Waiting for confirmation that the NFT was minted](/img/tutorials/nft-marketplace-1-minting.png)
 
-When the NFT has been minted, the application updates the UI but it does not have code to show the NFTs yet.
-You can see the NFT by getting the contract address, which starts with `KT1`, from the `config.local.testing.json` file and looking it up in a block explorer.
+   When the NFT has been minted, the application updates the UI but it does not have code to show the NFTs yet.
+   You can see the NFT by getting the contract address, which starts with `KT1`, from the `config.local.testing.json` file and looking it up in a block explorer.
 
-For example, this is how https://ghostnet.tzkt.io/ shows the tokens in the contract, on the "Tokens" tab.
-Because the contract is FA2-compatible, the block explorer automatically shows information about the tokens:
+   For example, this is how https://ghostnet.tzkt.io/ shows the tokens in the contract, on the "Tokens" tab.
+   Because the contract is FA2-compatible, the block explorer automatically shows information about the tokens:
 
-![The TzKT block explorer, showing the token in the contract](/img/tutorials/nft-marketplace-1-tzkt-token.png)
+   ![The TzKT block explorer is showing the token in the contract](/img/tutorials/nft-marketplace-1-tzkt-token.png)
 
-Now the application can mint NFTs.
-In the next section, you display the NFTs on a catalog page.
+   Now the application can mint NFTs.
+   In the next section, you display the NFTs on a catalog page.
 
 ## Displaying tokens
 
@@ -994,12 +1000,12 @@ Follow these steps to show the tokens that you have minted:
 
 1. Open the web page in the browser again and see that the NFT you created is shown, as in this picture:
 
-![The mint page, showing one existing NFT](/img/tutorials/nft-marketplace-1-collection.png)
+![The mint page is showing one existing NFT](/img/tutorials/nft-marketplace-1-collection.png)
 
 ## Summary
 
 Now you can create FA2-compatible NFTs with the `@ligo/fa` library and show them on a web page.
 
-In the next section, you add the buy and sell functions to smart contract and update the frontend application to allow these actions.
+In the next section, you add the buy and sell functions to the smart contract and update the frontend application to allow these actions.
 
 When you are ready, continue to [Part 2: Buying and selling tokens](./part-2).

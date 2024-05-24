@@ -1,4 +1,4 @@
-import { NetworkType } from "@airgap/beacon-types";
+import { NetworkType } from "@airgap/beacon-dapp";
 import { BeaconWallet } from "@taquito/beacon-wallet";
 import { TezosToolkit } from "@taquito/taquito";
 import { TokenMetadata, tzip12, Tzip12Module } from "@taquito/tzip12";

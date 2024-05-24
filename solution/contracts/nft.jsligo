@@ -11,7 +11,7 @@
          ["6", "Cannot find the contract relative to implicit address"],
        ]));
    */
-export type Extension = { administrators: set<address> }
+export type Extension = { administrators: set<address> };
 
 export type storage = FA2Impl.storage<Extension>; // extension administrators
 
