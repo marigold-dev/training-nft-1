@@ -136,7 +136,7 @@ Follow these steps to create a contract that is based on the template and implem
 
 1. Open the `contracts/nft.jsligo` file in any text editor and replace the default code with this code:
 
-   ```ligolang
+   ```jsligo
    #import "@ligo/fa/lib/fa2/nft/extendable_nft.impl.jsligo" "FA2Impl"
 
     /* ERROR MAP FOR UI DISPLAY or TESTS
@@ -173,7 +173,7 @@ The code also defines the type for the value that entrypoints return: a list of 
 
 1. Add code to implement the required `transfer`, `balance_of`, and `update_operators` entrypoints:
 
-   ```ligolang
+   ```jsligo
 
     @entry
     const transfer = (p: FA2Impl.TZIP12.transfer, s: storage): ret => {
@@ -236,7 +236,7 @@ The code also defines the type for the value that entrypoints return: a list of 
 
 1. After those entrypoints, add code for the `mint` entrypoint:
 
-   ```ligolang
+   ```jsligo
 
     @entry
     const mint = (
@@ -291,7 +291,7 @@ The code also defines the type for the value that entrypoints return: a list of 
 
    First, this code verifies that the transaction sender is one of the administrators.
    Then it creates a token metadata object with information from the parameters and adds it to the `token_metadata` big-map in the storage.
-   Note that the `decimals` metadata field is set to 0 because the token is an NFT and therefore has only one unit.
+   Note that the `decimals` metadata field is set to 0 because the token is an NFT and therefore doesn't need any decimal places in its quantity.
 
    Note that there is no built-in way to get the number of tokens in the contract code; the Bigmap does not have a function such as `keys()` or `length()`.
    If you want to keep track of the number of tokens, you must add an element in the storage and increment it when tokens are created or destroyed.
@@ -313,7 +313,7 @@ The code also defines the type for the value that entrypoints return: a list of 
 
 1. Open the file `contracts/nft.storageList.jsligo` and replace it with this code :
 
-   ```ligolang
+   ```jsligo
    #import "nft.jsligo" "Contract"
 
     #import "@ligo/fa/lib/fa2/nft/extendable_nft.impl.jsligo" "FA2Impl"
@@ -387,7 +387,7 @@ The code also defines the type for the value that entrypoints return: a list of 
      ```
 
      Then make sure that the account has tez on Ghostnet.
-     Use the faucet at https://faucet.ghostnet.teztnets.xyz to get tez if you need it.
+     Use the faucet at https://faucet.ghostnet.teztnets.com to get tez if you need it.
 
    **OR**
 
@@ -396,7 +396,7 @@ The code also defines the type for the value that entrypoints return: a list of 
      1. Run the command `taq deploy nft.tz -e "testing"`, which will fail because you do not have an account configured in Taqueria.
         The response includes the address of an account that Taqueria generated for you and added to the `.taq/config.local.testing.json` file automatically.
 
-     1. Fund the account from the faucet at https://faucet.ghostnet.teztnets.xyz.
+     1. Fund the account from the faucet at https://faucet.ghostnet.teztnets.com.
 
 1. Compile and deploy the contract to Ghostnet by running this command:
 
@@ -455,7 +455,7 @@ To save time, this tutorial provides a starter React application.
    ```
 
    This application contains basic navigation and the ability to connect to wallets.
-   For a tutorial that includes connecting to wallets, see [Build your first app on Tezos](../build-your-first-app).
+   For a tutorial that includes connecting to wallets, see [Build a simple web application](../build-your-first-app).
 
    Because Taqueria automatically keeps track of your deployed contract, the application automatically accesses the contract and shows that there are no NFTs in it yet.
    The application looks like this:
@@ -760,7 +760,7 @@ The mint page uses a form that accepts information and an image and sends a tran
    ```
 
    This function accepts the data that the user puts in the form.
-   It uploads the image to IPFS via Pinata and gets the IPFS hash, which is the basis for the link to the published file.
+   It uploads the image to IPFS via Pinata and gets the IPFS hash, which identifies the published file and allows clients to request it later.
 
    Then it calls the contract's `mint` entrypoint and passes the NFT data as bytes, as the TZIP-12 standard requires for NFT metadata.
 
